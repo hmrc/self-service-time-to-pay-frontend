@@ -24,8 +24,10 @@ import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.DirectDebitTd
+import testsupport.testdata.{DirectDebitTd, TdAll}
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
+
+import java.time.LocalDate
 
 class ViewPaymentPlanPageSpec extends ViewPaymentPlanPageBaseSpec {
   override val overrideConfig: Map[String, Any] = Map(
@@ -49,6 +51,7 @@ trait ViewPaymentPlanPageBaseSpec extends ItSpec {
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+    DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))
     DirectDebitStub.postPaymentPlan
     ArrangementStub.postTtpArrangement
 

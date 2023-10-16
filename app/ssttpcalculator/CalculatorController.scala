@@ -25,29 +25,30 @@ import journey.{Journey, JourneyService, PaymentToday, PaymentTodayAmount}
 import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, payTodayForm, selectPlanForm}
-import model.{PaymentPlanOption, PaymentSchedule}
+import model.{AddWorkingDaysResult, PaymentPlanOption, PaymentSchedule}
 import ssttpcalculator.legacy.CalculatorService
-import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 import CalculatorType._
+import bankholidays.DateCalculatorService
 import play.api.data.Form
+import times.ClockProvider
 import util.Logging
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class CalculatorController @Inject() (
-    mcc:                 MessagesControllerComponents,
-    paymentPlansService: PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
-    instalmentsService:  InstalmentsService, // calculator type feature flag: used by PaymentOptimised calculator feature
-    calculatorService:   CalculatorService, // calculator type feature flag: used by Legacy calculator feature
-    as:                  Actions,
-    journeyService:      JourneyService,
-    requestSupport:      RequestSupport,
-    views:               Views,
-    clockProvider:       ClockProvider,
-    interestRateService: InterestRateService
+    mcc:                   MessagesControllerComponents,
+    paymentPlansService:   PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
+    calculatorService:     CalculatorService, // calculator type feature flag: used by Legacy calculator feature
+    as:                    Actions,
+    journeyService:        JourneyService,
+    requestSupport:        RequestSupport,
+    views:                 Views,
+    clockProvider:         ClockProvider,
+    interestRateService:   InterestRateService,
+    dateCalculatorService: DateCalculatorService
 )(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendBaseController(mcc) with Logging {
 
@@ -167,22 +168,27 @@ class CalculatorController @Inject() (
         case Legacy =>
           journeyLogger.info(s"Using legacy calculator")
 
-          val availablePaymentSchedules = calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth)
-          val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
-          val defaultPlanOptions = calculatorService.defaultSchedules(closestSchedule, availablePaymentSchedules)
+          getDateFirstPaymentCanBeTaken(journey).map { dateFirstPaymentCanBeTaken =>
+            val availablePaymentSchedules =
+              calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth, dateFirstPaymentCanBeTaken)
+            val closestSchedule =
+              calculatorService.closestScheduleEqualOrLessThan(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
+            val defaultPlanOptions =
+              calculatorService.defaultSchedules(closestSchedule, availablePaymentSchedules)
 
-          defaultPlanOptions.values.toSeq.sortBy(_.instalmentAmount).headOption match {
-            case None =>
-              journeyLogger.info(s"Legacy calculator - No viable plans available: redirecting to 'We cannot agree your payment plan'")
-              Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
+            defaultPlanOptions.values.toSeq.sortBy(_.instalmentAmount).headOption match {
+              case None =>
+                journeyLogger.info(s"Legacy calculator - No viable plans available: redirecting to 'We cannot agree your payment plan'")
+                Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
 
-            case Some(_) =>
-              val minCustomAmount = defaultPlanOptions.values.toSeq.maxBy(_.instalmentAmount).instalmentAmount
-              val maxCustomAmount = availablePaymentSchedules.maxBy(_.instalmentAmount).instalmentAmount
-              val planOptions: Map[PaymentPlanOption, PaymentSchedule] = allPlanOptions(defaultPlanOptions, journey)
+              case Some(_) =>
+                val minCustomAmount = defaultPlanOptions.values.toSeq.maxBy(_.instalmentAmount).instalmentAmount
+                val maxCustomAmount = availablePaymentSchedules.maxBy(_.instalmentAmount).instalmentAmount
+                val planOptions: Map[PaymentPlanOption, PaymentSchedule] = allPlanOptions(defaultPlanOptions, journey)
 
-              journeyLogger.info(s"Legacy calculator - Displaying plans: ${planOptions.keys}")
-              okPlanForm(Legacy, minCustomAmount, maxCustomAmount, planOptions, journey.maybePlanSelection)
+                journeyLogger.info(s"Legacy calculator - Displaying plans: ${planOptions.keys}")
+                okPlanForm(Legacy, minCustomAmount, maxCustomAmount, planOptions, journey.maybePlanSelection)
+            }
           }
 
         case PaymentOptimised =>
@@ -212,6 +218,23 @@ class CalculatorController @Inject() (
     }
   }
 
+  private def getDateFirstPaymentCanBeTaken(journey: Journey)(implicit request: Request[_]): Future[AddWorkingDaysResult] = {
+    val today = clockProvider.nowDate()
+    val numberOfWorkingDaysToAdd = 5
+
+    lazy val calculate5WorkingsDays =
+      if (appConfig.useDateCalculatorService) dateCalculatorService.addWorkingDays(today, numberOfWorkingDaysToAdd)
+      else Future.successful(today.plusDays(10))
+
+    journey.maybeDateFirstPaymentCanBeTaken.map(Future.successful).getOrElse(
+      for {
+        fiveWorkingDaysFromNow <- calculate5WorkingsDays
+        addWorkingDaysResult = AddWorkingDaysResult(today, numberOfWorkingDaysToAdd, fiveWorkingDaysFromNow)
+        _ <- journeyService.saveJourney(journey.copy(maybeDateFirstPaymentCanBeTaken = Some(addWorkingDaysResult)))
+      } yield addWorkingDaysResult
+    )
+  }
+
   def submitCalculateInstalments(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Submit 'Calculate instalments'")
@@ -223,7 +246,7 @@ class CalculatorController @Inject() (
         case CalculatorType.Legacy =>
           journeyLogger.info(s"Using legacy calculator")
 
-          val availablePaymentSchedules = calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth)
+          val availablePaymentSchedules = calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth, journey.dateFirstPaymentCanBeTaken)
           val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
           val defaultPlanOptions = calculatorService.defaultSchedules(closestSchedule, availablePaymentSchedules)
 
@@ -350,7 +373,8 @@ class CalculatorController @Inject() (
           calculatorService.allAvailableSchedules(
             journey.taxpayer.selfAssessment,
             journey.safeUpfrontPayment,
-            journey.maybePaymentDayOfMonth
+            journey.maybePaymentDayOfMonth,
+            journey.dateFirstPaymentCanBeTaken
           )
         )
       case PaymentOptimised =>

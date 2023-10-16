@@ -17,6 +17,7 @@
 package testsupport.testdata
 
 import play.api.libs.json.JsObject
+import ssttpcalculator.model.AddWorkingDaysResult
 import testsupport.JsonSyntax._
 import timetopaytaxpayer.cor.model._
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
@@ -37,6 +38,8 @@ object TdAll {
   val frozenDateStringLong: String = "2019-11-25T13:41:01.666"
   val localDateTime: LocalDateTime = LocalDateTime.parse(frozenDateStringLong)
   val instant: Instant = localDateTime.toInstant(ZoneOffset.UTC)
+
+  val dateFirstPaymentCanBeTaken = AddWorkingDaysResult(localDateTime.toLocalDate, 5, localDateTime.toLocalDate.plusDays(10))
 
   private val debit1Amount = 2500
   private val debit2Amount = 2400

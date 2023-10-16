@@ -80,4 +80,6 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
 
   //Config for Legacy calculator
   lazy val legacyMaxLengthOfPaymentPlan: Int = servicesConfig.getInt("legacyCalculatorConfig.maximumLengthOfPaymentPlan")
+
+  lazy val useDateCalculatorService = servicesConfig.getBoolean("features.call-date-calculator-service")
 }

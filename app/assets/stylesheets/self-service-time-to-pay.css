@@ -242,10 +242,10 @@ input.accountName{
     height: 1.9em;
 }
 @media (min-width: 48.0625em){
-    #id_summary ..govuk-summary-list__key {
+    #id_summary .govuk-summary-list__key {
         width: 70%;
     }
-    .summary_payment ..govuk-summary-list__key {
+    .summary_payment .govuk-summary-list__key {
         width: 50%;
     }
 }

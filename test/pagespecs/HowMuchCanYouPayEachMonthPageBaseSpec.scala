@@ -24,8 +24,10 @@ import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.DisplayDefaultPlanOptionsTd
+import testsupport.testdata.{DisplayDefaultPlanOptionsTd, TdAll}
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeLargeEnoughForTwoDefaultPlans, netIncomeTooSmallForPlan}
+
+import java.time.LocalDate
 
 class HowMuchCanYouPayEachMonthPageSpec extends HowMuchCanYouPayEachMonthPageBaseSpec {
 
@@ -73,6 +75,8 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
+    DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))
+
     getBanksIsSuccessful()
     startPage.open()
     startPage.assertInitialPageIsDisplayed()

@@ -17,18 +17,26 @@
 package ssttpaffordability
 
 import akka.util.Timeout
-import journey.JourneyId
-import org.scalatest.time.{Seconds, Span}
+import journey.Statuses.InProgress
+import journey.{Journey, JourneyId, JourneyService, PaymentToday}
+
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
 import testsupport.stubs.{AuditStub, AuthStub}
 import testsupport.testdata.TdRequest.FakeRequestOps
-import testsupport.{ItSpec, RichMatchers, WireMockSupport}
+import testsupport.{ItSpec, WireMockSupport}
 import uk.gov.hmrc.http.SessionKeys
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import play.api.libs.json.{JsObject, Json}
+import ssttpaffordability.model.Expense.HousingExp
+import ssttpaffordability.model.IncomeCategory.MonthlyIncome
+import ssttpaffordability.model._
+import testsupport.testdata.TdAll
+import uk.gov.hmrc.selfservicetimetopay.models._
+import _root_.model.enumsforforms.TypesOfBankAccount
 
+import java.time.LocalDateTime
 import java.util.UUID
 
 class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
@@ -47,31 +55,46 @@ class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
         AuthStub.authorise()
 
         val journeyId = JourneyId("62ce7631b7602426d74f83b0")
+        val journey = Journey(
+          _id                       = journeyId,
+          status                    = InProgress,
+          createdOn                 = LocalDateTime.now(),
+          maybeTypeOfAccountDetails = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true)),
+          maybeBankDetails          = None,
+          maybeTaxpayer             = Some(TdAll.taxpayer),
+          maybePaymentToday         = Some(PaymentToday(false)),
+          maybeIncome               = Some(Income(IncomeBudgetLine(MonthlyIncome, 2000))),
+          maybeSpending             = Some(Spending(Expenses(HousingExp, 1000))),
+          maybePlanSelection        = Some(PlanSelection(SelectedPlan(490))),
+          maybePaymentDayOfMonth    = Some(PaymentDayOfMonth(28)),
+          maybeEligibilityStatus    = Some(EligibilityStatus(Seq.empty))
+        )
         val sessionId = UUID.randomUUID().toString
         val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
+        val journeyService = app.injector.instanceOf[JourneyService]
+        journeyService.saveJourney(journey)(fakeRequest).futureValue shouldBe (())
 
         val controller: AffordabilityController = app.injector.instanceOf[AffordabilityController]
 
-        eventually(RichMatchers.timeout(Span(requestTimeOut, Seconds))) {
-          val res = controller.getSetUpPlanWithAdviser(fakeRequest)
+        val res = controller.getSetUpPlanWithAdviser(fakeRequest)
 
-          status(res) shouldBe Status.OK
+        status(res) shouldBe Status.OK
 
-          AuditStub.verifyEventAudited(
-            "ManualAffordabilityCheckFailed",
-            Json.parse(
-              s"""
+        AuditStub.verifyEventAudited(
+          "ManualAffordabilityCheckFailed",
+          Json.parse(
+            s"""
                  |{
                  |  "totalDebt" : "4900.00",
-                 |  "halfDisposableIncome" : "400.00",
+                 |  "halfDisposableIncome" : "500.00",
                  |  "income" : {
-                 |   "monthlyIncomeAfterTax" : "1000.00",
+                 |   "monthlyIncomeAfterTax" : "2000.00",
                  |   "benefits" : "0.00",
                  |   "otherMonthlyIncome" : "0.00",
-                 |   "totalIncome" : "1000.00"
+                 |   "totalIncome" : "2000.00"
                  |  },
                  |  "outgoings" : {
-                 |   "housing" : "200.00",
+                 |   "housing" : "1000.00",
                  |   "pensionContributions" : "0.00",
                  |   "councilTax" : "0.00",
                  |   "utilities" : "0.00",
@@ -81,15 +104,14 @@ class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
                  |   "insurance" : "0.00",
                  |   "groceries" : "0.00",
                  |   "health" : "0.00",
-                 |   "totalOutgoings" : "200.00"
+                 |   "totalOutgoings" : "1000.00"
                  |  },
                  |  "status" : "Interest greater than or equal to regular payment",
                  |  "utr" : "6573196998"
                  |}""".stripMargin
-            ).as[JsObject]
+          ).as[JsObject]
 
-          )
-        }
+        )
       }
     }
   }

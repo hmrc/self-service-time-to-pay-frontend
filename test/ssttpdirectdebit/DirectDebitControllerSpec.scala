@@ -160,18 +160,19 @@ class DirectDebitControllerSpec extends ItSpec {
 
   private def createJourney(journeyId: JourneyId): Journey = {
     Journey(
-      _id                       = journeyId,
-      status                    = InProgress,
-      createdOn                 = LocalDateTime.now(),
-      maybeTypeOfAccountDetails = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true)),
-      maybeBankDetails          = None,
-      maybeTaxpayer             = Some(TdAll.taxpayer),
-      maybePaymentToday         = Some(PaymentToday(false)),
-      maybeIncome               = Some(Income(IncomeBudgetLine(MonthlyIncome, 2000))),
-      maybeSpending             = Some(Spending(Expenses(HousingExp, 1000))),
-      maybePlanSelection        = Some(PlanSelection(SelectedPlan(490))),
-      maybePaymentDayOfMonth    = Some(PaymentDayOfMonth(28)),
-      maybeEligibilityStatus    = Some(EligibilityStatus(Seq.empty))
+      _id                             = journeyId,
+      status                          = InProgress,
+      createdOn                       = LocalDateTime.now(),
+      maybeTypeOfAccountDetails       = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true)),
+      maybeBankDetails                = None,
+      maybeTaxpayer                   = Some(TdAll.taxpayer),
+      maybePaymentToday               = Some(PaymentToday(false)),
+      maybeIncome                     = Some(Income(IncomeBudgetLine(MonthlyIncome, 2000))),
+      maybeSpending                   = Some(Spending(Expenses(HousingExp, 1000))),
+      maybePlanSelection              = Some(PlanSelection(SelectedPlan(490))),
+      maybePaymentDayOfMonth          = Some(PaymentDayOfMonth(28)),
+      maybeEligibilityStatus          = Some(EligibilityStatus(Seq.empty)),
+      maybeDateFirstPaymentCanBeTaken = Some(TdAll.dateFirstPaymentCanBeTaken)
     )
   }
 

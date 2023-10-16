@@ -158,7 +158,12 @@ object DataEventFactory {
     appConfig.calculatorType match {
 
       case CalculatorType.Legacy =>
-        val availablePaymentSchedules = calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth)
+        val availablePaymentSchedules = calculatorService.allAvailableSchedules(
+          sa,
+          journey.safeUpfrontPayment,
+          journey.maybePaymentDayOfMonth,
+          journey.dateFirstPaymentCanBeTaken
+        )
         val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
         val defaultPlanOptions = calculatorService.defaultSchedules(closestSchedule, availablePaymentSchedules)
 

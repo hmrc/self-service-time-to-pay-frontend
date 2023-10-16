@@ -23,7 +23,10 @@ import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
+import testsupport.testdata.TdAll
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
+
+import java.time.LocalDate
 
 class CheckYourPaymentPlanPageSpec extends CheckYourPaymentPlanPageBaseSpec {
 
@@ -45,6 +48,8 @@ trait CheckYourPaymentPlanPageBaseSpec extends ItSpec {
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
+    DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))
+
     getBanksIsSuccessful()
 
     startPage.open()

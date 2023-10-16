@@ -262,7 +262,7 @@ class ArrangementController @Inject() (
         journey.requireScheduleIsDefined()
         journey.requireDdIsDefined()
         val paymentSchedule = selectedSchedule(journey)
-        arrangementSetUp(journey, paymentSchedule)
+        setUpArrangement(journey, paymentSchedule)
       }
     }.map {
       case Some(res) =>
@@ -314,7 +314,7 @@ class ArrangementController @Inject() (
    * As the arrangement details are persisted in a database, the user is directed to the application
    * complete page if we get an error response from DES passed back by the arrangement service.
    */
-  private def arrangementSetUp(journey: Journey, paymentSchedule: PaymentSchedule)(implicit request: Request[_]): Future[Result] = {
+  private def setUpArrangement(journey: Journey, paymentSchedule: PaymentSchedule)(implicit request: Request[_]): Future[Result] = {
     journeyLogger.info("Arrangement set up: (create a DD and make an Arrangement)")(request, journey)
     val paymentPlanRequest: PaymentPlanRequest = makePaymentPlanRequest(journey)
     val utr = journey.taxpayer.selfAssessment.utr
@@ -371,8 +371,7 @@ class ArrangementController @Inject() (
    * Checks if the TTPSubmission data contains an existing direct debit reference number and either
    * passes this information to a payment plan constructor function or builds a new Direct Debit Instruction
    */
-  def makePaymentPlanRequest(journey: Journey)(implicit request: Request[_]): PaymentPlanRequest = {
-
+  def makePaymentPlanRequest(journey: Journey)(implicit request: Request[_]): PaymentPlanRequest =
     paymentPlan(
       journey,
       DirectDebitInstruction(
@@ -380,7 +379,6 @@ class ArrangementController @Inject() (
         accountNumber = Some(journey.bankDetails.accountNumber.reverse.padTo(8, '0').reverse),
         accountName   = Some(journey.bankDetails.accountName),
         ddiRefNumber  = journey.bankDetails.maybeDDIRefNumber))
-  }
 
   /**
    * Builds and returns a payment plan
@@ -391,7 +389,7 @@ class ArrangementController @Inject() (
     val schedule = selectedSchedule(journey)
 
     val initialPayment = if (schedule.initialPayment > exact(0)) Some(schedule.initialPayment.toString()) else None
-    val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(schedule.startDate.plusDays(appConfig.daysToProcessFirstPayment)))
+    val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(journey.dateFirstPaymentCanBeTaken.result))
 
     val lastInstalment: Instalment = schedule.lastInstallment
     val firstInstalment: Instalment = schedule.firstInstalment

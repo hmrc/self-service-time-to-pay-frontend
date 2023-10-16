@@ -58,7 +58,9 @@ trait DateSupport {
   val _21st = 21
   val _22nd = 22
   val _23rd = 23
+  val _24th = 24
   val _25th = 25
+  val _26th = 26
   val _27th = 27
   val _28th = 28
   val _29th = 29

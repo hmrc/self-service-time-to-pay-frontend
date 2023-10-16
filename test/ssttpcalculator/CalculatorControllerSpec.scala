@@ -19,7 +19,6 @@ package ssttpcalculator
 import akka.util.Timeout
 import journey.Statuses.InProgress
 import journey.{Journey, JourneyId, JourneyService}
-import org.scalatest.time.{Seconds, Span}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.http.Status
@@ -28,19 +27,20 @@ import play.api.test.Helpers.{redirectLocation, status}
 import ssttpaffordability.model.Expense.HousingExp
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import ssttpaffordability.model.IncomeCategory.MonthlyIncome
-import testsupport.stubs.{ArrangementStub, AuthStub, DirectDebitStub, TaxpayerStub}
+import testsupport.stubs.{AuthStub, DateCalculatorStub}
 import testsupport.testdata.{TdAll, TdRequest}
-import testsupport.{ItSpec, RichMatchers, WireMockSupport}
+import testsupport.{ItSpec, WireMockSupport}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, EligibilityStatus, PaymentDayOfMonth, TypeOfAccountDetails}
 import _root_.model.enumsforforms.TypesOfBankAccount.Personal
 import _root_.model.enumsforforms.TypesOfBankAccount
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
-import play.api.mvc.Result
+import play.api.libs.json.{JsString, Json}
+import play.api.mvc.AnyContentAsEmpty
+import ssttpcalculator.model.AddWorkingDaysResult
 
-import java.time.LocalDateTime
-import java.util.UUID
-import scala.concurrent.Future
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalDateTime}
 
 class CalculatorControllerMaxLengthPlan12 extends CalculatorControllerSpec {
   override def configuredMaxLengthOfPaymentPlan: Int = 12
@@ -75,42 +75,101 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
     .configure(configMap)
     .build()
 
-  val requestTimeOut = 5
+  lazy val controller = app.injector.instanceOf[CalculatorController]
+  lazy val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
+
+  val today = LocalDate.now()
+  val expectedNumberOfWorkingDaysToAdd = 5
+  val addWorkingDaysResponse: LocalDate = LocalDate.now().plusDays(10)
+  val dateCalculatorResponse = Json.parse(
+    s"""{ "result": "${addWorkingDaysResponse.format(DateTimeFormatter.ISO_DATE)}" }"""
+  )
+  val addWorkingDaysResult = AddWorkingDaysResult(today, expectedNumberOfWorkingDaysToAdd, addWorkingDaysResponse)
 
   "CalculatorController.getCalculatorInstalments" - {
     "displays 'how much can you pay each month' page if at least one plan no longer than configurable maximum length" in {
-      eventually(RichMatchers.timeout(Span(requestTimeOut, Seconds))) {
-        val res = testGetCalculateInstalments(createJourneyWithMaxLengthPlan)
-        status(res) shouldBe Status.OK
-      }
+      AuthStub.authorise()
+      DateCalculatorStub.stubAddWorkingDays(Right(dateCalculatorResponse))
+
+      val (journey, fakeRequest) = saveJourney(createJourneyWithMaxLengthPlan)
+
+      val res = controller.getCalculateInstalments()(fakeRequest)
+      status(res) shouldBe Status.OK
+
+      DateCalculatorStub.verifyAddWorkingDaysCalled(today, expectedNumberOfWorkingDaysToAdd)
+
+      // journey should be updated
+      journey.maybeDateFirstPaymentCanBeTaken shouldBe None
+      journeyService.getJourney()(fakeRequest).futureValue.maybeDateFirstPaymentCanBeTaken shouldBe Some(addWorkingDaysResult)
     }
+
     "display 'we cannot agree your payment plan' page if no plan is within the configurable maximum length" in {
-      eventually(RichMatchers.timeout(Span(requestTimeOut, Seconds))) {
-        val res = testGetCalculateInstalments(createJourneyNoAffordablePlan)
-        status(res) shouldBe Status.SEE_OTHER
-        redirectLocation(res) shouldBe Some("/pay-what-you-owe-in-instalments/we-cannot-agree-your-payment-plan")
-      }
+      AuthStub.authorise()
+      DateCalculatorStub.stubAddWorkingDays(Right(dateCalculatorResponse))
+
+      val (journey, fakeRequest) = saveJourney(createJourneyNoAffordablePlan)
+
+      val res = controller.getCalculateInstalments()(fakeRequest)
+      redirectLocation(res) shouldBe Some("/pay-what-you-owe-in-instalments/we-cannot-agree-your-payment-plan")
+
+      DateCalculatorStub.verifyAddWorkingDaysCalled(today, expectedNumberOfWorkingDaysToAdd)
+
+      // journey should be updated
+      journey.maybeDateFirstPaymentCanBeTaken shouldBe None
+      journeyService.getJourney()(fakeRequest).futureValue.maybeDateFirstPaymentCanBeTaken shouldBe Some(addWorkingDaysResult)
     }
+
+    "return an error if the request to add working days is not successful" in {
+      AuthStub.authorise()
+      DateCalculatorStub.stubAddWorkingDays(Left(422))
+
+      val (journey, fakeRequest) = saveJourney(createJourneyNoAffordablePlan)
+
+      val error = intercept[Exception](controller.getCalculateInstalments()(fakeRequest).futureValue)
+      error.getCause.getMessage shouldBe "Call to date-calculator came back with unexpected http status 422"
+
+      DateCalculatorStub.verifyAddWorkingDaysCalled(today, expectedNumberOfWorkingDaysToAdd)
+      // journey should not be updated
+      journey.maybeDateFirstPaymentCanBeTaken shouldBe None
+      journeyService.getJourney()(fakeRequest).futureValue.maybeDateFirstPaymentCanBeTaken shouldBe None
+    }
+
+    "return an error if the response to add working days cannot be parsed" in {
+      AuthStub.authorise()
+      DateCalculatorStub.stubAddWorkingDays(Right(JsString("Hi!")))
+
+      val (journey, fakeRequest) = saveJourney(createJourneyNoAffordablePlan)
+
+      val error = intercept[Exception](controller.getCalculateInstalments()(fakeRequest).futureValue)
+      error.getCause.getMessage shouldBe "Could not parse date calculator response"
+
+      DateCalculatorStub.verifyAddWorkingDaysCalled(today, expectedNumberOfWorkingDaysToAdd)
+      // journey should not be updated
+      journey.maybeDateFirstPaymentCanBeTaken shouldBe None
+      journeyService.getJourney()(fakeRequest).futureValue.maybeDateFirstPaymentCanBeTaken shouldBe None
+    }
+
+    "should not call the date calculator service if a calculation has already been stored in the journey" in {
+      AuthStub.authorise()
+
+      val (_, fakeRequest) = saveJourney(createJourneyWithMaxLengthPlan(_).copy(maybeDateFirstPaymentCanBeTaken = Some(addWorkingDaysResult)))
+      val res = controller.getCalculateInstalments()(fakeRequest)
+      status(res) shouldBe Status.OK
+
+      DateCalculatorStub.verifyAddWorkingDaysNotCalled()
+    }
+
   }
 
-  private def testGetCalculateInstalments(createJourney: JourneyId => Journey): Future[Result] = {
-    AuthStub.authorise()
-
-    DirectDebitStub.postPaymentPlan
-    ArrangementStub.postTtpArrangement
-    TaxpayerStub.getTaxpayer()
-
+  private def saveJourney(createJourney: JourneyId => Journey): (Journey, FakeRequest[AnyContentAsEmpty.type]) = {
     val journeyId = JourneyId("62ce7631b7602426d74f83b0")
-    val sessionId = UUID.randomUUID().toString
     val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
 
     val journey = createJourney(journeyId)
-    val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
-    journeyService.saveJourney(journey)(fakeRequest)
+    val saveJourneyResult = journeyService.saveJourney(journey)(fakeRequest)
 
-    val controller: CalculatorController = app.injector.instanceOf[CalculatorController]
-
-    controller.getCalculateInstalments()(fakeRequest)
+    saveJourneyResult.futureValue shouldBe (())
+    journey -> fakeRequest
   }
 
   protected def createJourneyWithMaxLengthPlan(journeyId: JourneyId): Journey = {
