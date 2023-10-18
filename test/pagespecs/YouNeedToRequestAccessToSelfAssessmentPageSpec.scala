@@ -17,21 +17,21 @@
 package pagespecs
 
 import langswitch.Languages
-import testsupport.ItSpec
+import testsupport.{FakeAuthConnector, ItSpec}
 import testsupport.stubs._
 import testsupport.testdata.TdAll
 import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.auth.core.Enrolment
 
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReadsInstances}
+import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
+import uk.gov.hmrc.http.HeaderCarrier
 
 class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
 
-  override val fakeAuthConnector = new AuthConnector {
+  override val fakeAuthConnector = new FakeAuthConnector {
     override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
 
       val retrievalResult = Future.successful(
@@ -47,8 +47,6 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
   ): Unit = {
     startPage.open()
     startPage.assertInitialPageIsDisplayed()
-    AuthStub.authorise(utr, allEnrolments)
-
     ()
   }
 
@@ -104,7 +102,6 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
 
     startPage.open()
     startPage.assertInitialPageIsDisplayed()
-    AuthStub.authorise(allEnrolments = None, credentials = None)
     startPage.clickOnStartNowButton()
     youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed()
     youNeedToRequestAccessToSelfAssessment.clickTheButton()

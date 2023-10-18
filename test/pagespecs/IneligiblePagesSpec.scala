@@ -16,15 +16,19 @@
 
 package pagespecs
 
-import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor4}
+import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor5}
 import pagespecs.pages.BasePage
+import play.api.libs.json.{JsObject, Json}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.TdAll.{aYearAgo, almostAYearAgo, unactivatedSaEnrolment}
+import testsupport.testdata.TdAll.{aYearAgo, almostAYearAgo}
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
+
+  override val overrideConfig: Map[String, Any] = Map("auditing.enabled" -> true)
+
   /**
    * spec to test all of the ineligible pages
    *
@@ -38,36 +42,48 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
    * - Old debt < £32
    * - debt less than £32
    */
-  val listOfIneligibleReasons: TableFor4[String, Reason, String, BasePage] = Table(
-    ("reason", "reasonObject", "pageAsString", "page"),
-    ("no debts", NoDebt, "general call us page", generalCallUsPage),
-    //    ("not on IA", IsNotOnIa, "not on ia page", notOnIaPage),
-    ("current year return not submitted", ReturnNeedsSubmitting, "you need to file", needToFilePage),
-    ("debt more than £10k", TotalDebtIsTooHigh, "debt too large", debtTooLargePage),
-    ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage),
-    ("old debt is more than £32", OldDebtIsTooHigh, "old debt too large", callUsDebtTooOld),
-    ("debt older than 60 days", DebtTooOld, "debt too old", callUsDebtTooOld),
-    ("direct debit(s) created within the last 12 months", DirectDebitCreatedWithinTheLastYear, "already have a plan", alreadyHaveAPlanPage)
+  val listOfIneligibleReasons: TableFor5[String, Reason, String, BasePage, String] = Table(
+    ("reason", "reasonObject", "pageAsString", "page", "expectedTotalDebtAuditString"),
+    ("no debts", NoDebt, "general call us page", generalCallUsPage, "0.00"),
+    ("current year return not submitted", ReturnNeedsSubmitting, "you need to file", needToFilePage, "33.00"),
+    ("debt more than £10k", TotalDebtIsTooHigh, "debt too large", debtTooLargePage, "30000.01"),
+    ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage, "31.00"),
+    ("debt older than 60 days", OldDebtIsTooHigh, "debt too old", callUsDebtTooOld, "33.00"),
+    ("direct debit(s) created within the last 12 months", DirectDebitCreatedWithinTheLastYear, "already have a plan", alreadyHaveAPlanPage, "4900.00")
   )
 
   def beginJourney(ineligibleReason: Reason): Unit = {
-    AuthStub.authorise()
+    AuditStub.audit()
     TaxpayerStub.getTaxpayer(ineligibleReason)
-    if (ineligibleReason == IsNotOnIa) IaStub.failedIaCheck
-    else IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful(if (ineligibleReason == DirectDebitCreatedWithinTheLastYear) almostAYearAgo else aYearAgo)
+
     startPage.open()
     startPage.clickOnStartNowButton()
-    ()
   }
 
   "Ineligible pages displayed correctly - ssttp eligibility" - {
-    TableDrivenPropertyChecks.forAll(listOfIneligibleReasons) { (reason, reasonObject, pageAsString, page) =>
+    TableDrivenPropertyChecks.forAll(listOfIneligibleReasons) { (reason, reasonObject, pageAsString, page, expectedTotalDebtAuditString) =>
       s"$pageAsString should be displayed when user has ineligible reason: [$reason]" in {
         beginJourney(reasonObject)
         page.assertInitialPageIsDisplayed
         page.backButtonHref shouldBe None
+
+        AuditStub.verifyEventAudited(
+          "EligibilityCheck",
+          Json.parse(
+            s"""
+              |{
+              |  "eligibilityResult" : "ineligible",
+              |  "eligibilityReasons": [ "${reasonObject.name}" ],
+              |  "authProviderId": "fakeAuthConnectorProviderId",
+              |  "utr": "6573196998",
+              |  "totalDebt": "$expectedTotalDebtAuditString",
+              |  "taxType" : "SA"
+              |}
+              |""".stripMargin
+          ).as[JsObject]
+        )
       }
 
       s"OPS-5822: User can go back from the /call-us page (via browser back button) and try again but still end up on the /call-us page [$reason]" in {

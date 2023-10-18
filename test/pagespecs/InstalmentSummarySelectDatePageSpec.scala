@@ -24,9 +24,7 @@ import testsupport.stubs._
 class InstalmentSummarySelectDatePageSpec extends ItSpec {
 
   def beginJourney(): Unit = {
-    AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
 

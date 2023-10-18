@@ -18,7 +18,8 @@ package pagespecs
 
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor4}
 import pagespecs.pages.BasePage
-import testsupport.ItSpec
+import play.api.libs.json.{JsObject, Json}
+import testsupport.{FakeAuthConnector, ItSpec}
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.{aYearAgo, almostAYearAgo}
@@ -33,62 +34,44 @@ import testsupport.testdata.TdAll.unactivatedSaEnrolment
 
 class IneligiblePagesInactiveEnrollSpec extends ItSpec with TableDrivenPropertyChecks {
 
-  override val fakeAuthConnector: AuthConnector = new AuthConnector {
+  override val overrideConfig: Map[String, Any] = Map("auditing.enabled" -> true)
+
+  override val fakeAuthConnector: FakeAuthConnector = new FakeAuthConnector {
     override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
 
       val retrievalResult = Future.successful(
-        new ~(new ~(Enrolments(Set(Enrolment("IR-SA", Seq(), "Inactive", None))), Some("6573196998")), Some(Credentials("IR-SA", "")))
+        new ~(new ~(Enrolments(Set(Enrolment("IR-SA", Seq(), "Inactive", None))), Some("6573196998")), Some(Credentials("123", "GovernmentGateway")))
       )
       retrievalResult.map(_.asInstanceOf[A])
     }
   }
 
-  /**
-   * spec to test all of the ineligible pages
-   *
-   * Ineligible reasons:
-   * - No debits
-   * - Not on IA
-   * - No sa enrolment (not enrolled)
-   * - Not submitted return (Current year)
-   * - Previous Tax Returns Not Submitted
-   * - Total amount > £10k
-   * - Old debt < £32
-   * - debt less than £32
-   */
-  val listOfIneligibleReasons: TableFor4[String, Reason, String, BasePage] = Table(
-    ("reason", "reasonObject", "pageAsString", "page"),
-    ("no debts", NoDebt, "general call us page", generalCallUsPage),
-    //    ("not on IA", IsNotOnIa, "not on ia page", notOnIaPage),
-    ("current year return not submitted", ReturnNeedsSubmitting, "you need to file", needToFilePage),
-    ("debt more than £10k", TotalDebtIsTooHigh, "debt too large", debtTooLargePage),
-    ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage),
-    ("old debt is more than £32", OldDebtIsTooHigh, "old debt too large", generalCallUsPage),
-    ("direct debit(s) created within the last 12 months", DirectDebitCreatedWithinTheLastYear, "general call us page", generalCallUsPage)
-  )
-
-  def beginJourney(ineligibleReason: Reason): Unit = {
-    AuthStub.authorise()
-    TaxpayerStub.getTaxpayer(ineligibleReason)
-    if (ineligibleReason == IsNotOnIa) IaStub.failedIaCheck
-    else IaStub.successfulIaCheck
-    GgStub.signInPage(port)
-    getBanksIsSuccessful(if (ineligibleReason == DirectDebitCreatedWithinTheLastYear) almostAYearAgo else aYearAgo)
-    startPage.open()
-    startPage.clickOnStartNowButton()
-    ()
-  }
-
   "authorisation based eligibility" - {
 
     "show you_need_to_request_access_to_self_assessment page when the user has no activated sa enrolments" in {
-      AuthStub.authorise(allEnrolments = Some(Set(unactivatedSaEnrolment)))
       TaxpayerStub.getTaxpayer()
       DirectDebitStub.getBanksIsSuccessful()
       GgStub.signInPage(port)
+      AuditStub.audit()
+
       startPage.open()
       startPage.clickOnStartNowButton()
       youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed
+
+      AuditStub.verifyEventAudited(
+        "EligibilityCheck",
+        Json.parse(
+          """
+            |{
+            |  "eligibilityResult" : "ineligible",
+            |  "enrollmentReasons": "inactiveEnrolment",
+            |  "utr": "6573196998",
+            |  "authProviderId": "123",
+            |  "taxType" : "SA"
+            |}
+            |""".stripMargin
+        ).as[JsObject]
+      )
     }
 
   }

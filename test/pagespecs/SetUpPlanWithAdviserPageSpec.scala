@@ -21,7 +21,7 @@ import pagespecs.pages.{HowMuchCanYouPayEachMonthPage, SetUpPlanWithAdviserPage}
 import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs.{AuthStub, DateCalculatorStub, GgStub, IaStub, TaxpayerStub}
+import testsupport.stubs.{AuthStub, DateCalculatorStub, GgStub, TaxpayerStub}
 
 import java.time.LocalDate
 
@@ -32,9 +32,7 @@ class SetUpPlanWithAdviserPageSpec extends ItSpec {
   override val frozenTimeString: String = "2023-06-09T00:00:00.880"
 
   def beginJourney(): Unit = {
-    AuthStub.authorise()
     TaxpayerStub.getTaxpayerNddsRejects()
-    IaStub.successfulIaCheck
     GgStub.signInPage(port)
     DateCalculatorStub.stubAddWorkingDays(LocalDate.now().plusDays(10))
     getBanksIsSuccessful()

@@ -46,9 +46,7 @@ trait ViewPaymentPlanPageBaseSpec extends ItSpec {
   val inUseCheckYourPaymentPlanPage: CheckYourPaymentPlanPage
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
-    AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))

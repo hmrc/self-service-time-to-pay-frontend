@@ -26,8 +26,6 @@ import testsupport.stubs._
 import testsupport.testdata.TdAll
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
-import java.time.LocalDate
-
 class CheckYourPaymentPlanPageSpec extends CheckYourPaymentPlanPageBaseSpec {
 
   override val overrideConfig: Map[String, Any] = Map(
@@ -44,9 +42,7 @@ trait CheckYourPaymentPlanPageBaseSpec extends ItSpec {
   val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
-    AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
     GgStub.signInPage(port)
     DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))
 

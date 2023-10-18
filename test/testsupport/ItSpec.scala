@@ -16,7 +16,6 @@
 
 package testsupport
 
-import com.gargoylesoftware.htmlunit.WebClient
 import com.google.inject.{AbstractModule, Provides}
 import com.softwaremill.macwire._
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -30,10 +29,8 @@ import play.api.{Application, Mode}
 import play.core.server.ServerConfig
 import testsupport.testdata.TdAll.frozenDateString
 import times.ClockProvider
-import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, Enrolments}
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReadsInstances}
+import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.http.HttpReadsInstances
 
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDateTime, ZoneId}
@@ -76,26 +73,18 @@ class ItSpec
     "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled",
     "auditing.consumer.baseUri.port" -> WireMockSupport.port,
     "auditing.enabled" -> false,
+    "auditing.traceRequests" -> false,
     "logger.root" -> "WARN",
     "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes"
   ) ++ overrideConfig
 
-  val fakeAuthConnector = new AuthConnector {
-    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
+  val fakeAuthConnector = new FakeAuthConnector
 
-      val retrievalResult = Future.successful(
-        new ~(new ~(Enrolments(Set(Enrolment("IR-SA"))), Some("6573196998")), Some(Credentials("IR-SA", "")))
-      )
-      (retrievalResult.map(_.asInstanceOf[A]))
-
-    }
-  }
   //in tests use `app`
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(bind[AuthConnector].toInstance(fakeAuthConnector))
     .overrides(GuiceableModule.fromGuiceModules(Seq(module)))
     .configure(configMap)
-
     .build()
 
   val frozenTimeString: String = s"${frozenDateString}T16:33:51.880"

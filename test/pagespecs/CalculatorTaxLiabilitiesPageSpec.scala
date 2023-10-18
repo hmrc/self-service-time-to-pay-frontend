@@ -18,20 +18,22 @@ package pagespecs
 
 import langswitch.Language
 import langswitch.Languages.{English, Welsh}
+import play.api.libs.json.{JsObject, Json}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
-import testsupport.testdata.TdAll
+import testsupport.stubs.{AuditStub, AuthStub, GgStub, TaxpayerStub}
 import testsupport.testdata.TdAll.{address, communicationPreferences, saUtr, toLocalDate, toOptionLocalDate}
 import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails, Taxpayer}
 
 class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
 
+  override val overrideConfig: Map[String, Any] = Map("auditing.enabled" -> true)
+
   def beginJourney(): Unit = {
-    AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
     GgStub.signInPage(port)
+    AuditStub.audit()
+
     getBanksIsSuccessful()
     startPage.open()
     startPage.clickOnStartNowButton()
@@ -46,6 +48,21 @@ class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
 
     taxLiabilitiesPage.clickOnEnglishLink()
     taxLiabilitiesPage.assertInitialPageIsDisplayed(English)
+
+    AuditStub.verifyEventAudited(
+      "EligibilityCheck",
+      Json.parse(
+        """
+          |{
+          |  "eligibilityResult" : "eligible",
+          |  "authProviderId" : "fakeAuthConnectorProviderId",
+          |  "totalDebt" : "4900.00",
+          |  "utr" : "6573196998",
+          |  "taxType" : "SA"
+          |}
+          |""".stripMargin
+      ).as[JsObject]
+    )
   }
 
   "continue to payment-today" in {
@@ -125,16 +142,31 @@ class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
   }
 
   "render late debit" in {
-    AuthStub.authorise()
     TaxpayerStub.getTaxpayer(LateDebitCase.taxpayerWithLateDebit)
-    IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+    AuditStub.audit()
+
     startPage.open()
     startPage.clickOnStartNowButton()
 
     import taxLiabilitiesPage._
     val expectedLines = LateDebitCase.Expected.MainText()(English).splitIntoLines()
     taxLiabilitiesPage.assertContentMatchesExpectedLines(expectedLines)
+
+    AuditStub.verifyEventAudited(
+      "EligibilityCheck",
+      Json.parse(
+        """
+          |{
+          |  "eligibilityResult" : "eligible",
+          |  "authProviderId" : "fakeAuthConnectorProviderId",
+          |  "totalDebt" : "4900.00",
+          |  "utr" : "6573196998",
+          |  "taxType" : "SA"
+          |}
+          |""".stripMargin
+      ).as[JsObject]
+    )
   }
 }

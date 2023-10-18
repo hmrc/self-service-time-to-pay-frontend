@@ -19,7 +19,7 @@ package pagespecs
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
+import testsupport.stubs.{AuthStub, GgStub, TaxpayerStub}
 import uk.gov.hmrc.selfservicetimetopay.models.TotalDebtIsTooHigh
 
 class StartPageSpec extends ItSpec {
@@ -40,9 +40,7 @@ class StartPageSpec extends ItSpec {
   }
 
   "eligible" in {
-    AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
 
@@ -52,9 +50,7 @@ class StartPageSpec extends ItSpec {
   }
 
   "not eligible (debt too large)" in {
-    AuthStub.authorise()
     TaxpayerStub.getTaxpayer(TotalDebtIsTooHigh)
-    IaStub.successfulIaCheck
     getBanksIsSuccessful()
 
     startPage.open()

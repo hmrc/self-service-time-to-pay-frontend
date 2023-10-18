@@ -25,13 +25,15 @@ import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.Application
 import play.api.http.Status
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, status}
-import testsupport.WireMockSupport
+import testsupport.{FakeAuthConnector, WireMockSupport}
 import testsupport.stubs.{ArrangementStub, AuditStub, AuthStub, DirectDebitStub, TaxpayerStub}
 import testsupport.testdata.{TdRequest, TestJourney}
+import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitInstruction}
 
@@ -67,12 +69,12 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
   )
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
+    .overrides(bind[AuthConnector].toInstance(new FakeAuthConnector))
     .configure(configMap)
     .build()
 
   class Context(journeyOverride: Option[JourneyId => Journey] = None) {
     AuditStub.audit()
-    AuthStub.authorise()
 
     val journeyId = JourneyId("62ce7631b7602426d74f83b0")
     val sessionId = UUID.randomUUID().toString

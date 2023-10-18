@@ -20,7 +20,7 @@ import audit.model.{AuditIncome, AuditPaymentSchedule, AuditSpending}
 import bars.model.ValidateBankDetailsResponse
 import config.AppConfig
 import journey.Journey
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, Json, Writes}
 import play.api.mvc.Request
 import req.RequestSupport._
 import ssttparrangement.SubmissionError
@@ -29,9 +29,10 @@ import ssttpcalculator.legacy.CalculatorService
 import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
 import ssttpcalculator.model.PaymentSchedule
 import timetopaytaxpayer.cor.model.SaUtr
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-import uk.gov.hmrc.selfservicetimetopay.models.TypeOfAccountDetails
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, TypeOfAccountDetails}
 import util.CurrencyUtil.{formatToCurrencyString, formatToCurrencyStringWithTrailingZeros}
 
 import java.time.temporal.ChronoUnit
@@ -149,6 +150,58 @@ object DataEventFactory {
     )
   }
 
+  def eligibilityNotEnrolledEvent(credentials: Option[Credentials])(implicit request: Request[_]): ExtendedDataEvent =
+    eligibilityEventDetail(Left("notEnrolled"), None, None, credentials)
+
+  def eligibilityInactiveEnrolmentEvent(
+      saUtr:       Option[SaUtr],
+      credentials: Option[Credentials]
+  )(implicit request: Request[_]): ExtendedDataEvent =
+    eligibilityEventDetail(Left("inactiveEnrolment"), None, saUtr, credentials)
+
+  def eligibilityResultEvent(eligibilityStatus: EligibilityStatus,
+                             totalDebt:         BigDecimal,
+                             saUtr:             SaUtr,
+                             credentials:       Option[Credentials]
+  )(implicit request: Request[_]): ExtendedDataEvent =
+    eligibilityEventDetail(Right(eligibilityStatus), Some(totalDebt), Some(saUtr), credentials)
+
+  private def eligibilityEventDetail(
+      eligibilityResult: Either[String, EligibilityStatus],
+      totalDebt:         Option[BigDecimal],
+      saUtr:             Option[SaUtr],
+      credentials:       Option[Credentials]
+  )(implicit request: Request[_]): ExtendedDataEvent = {
+    val eligibilityDetail = eligibilityResult.fold(
+      enrolmentReason => Json.obj(
+        "eligibilityResult" -> "ineligible",
+        "enrollmentReasons" -> enrolmentReason),
+      {
+        eligibilityStatus =>
+          val reasonsJson =
+            if (eligibilityStatus.reasons.isEmpty) Json.obj()
+            else Json.obj("eligibilityReasons" -> eligibilityStatus.reasons.map(_.name))
+
+          reasonsJson ++ Json.obj(
+            "eligibilityResult" -> (if (eligibilityStatus.eligible) "eligible" else "ineligible")
+          )
+      }
+    )
+
+    val detail = eligibilityDetail ++
+      asJsObject(credentials.map(_.providerId), "authProviderId") ++
+      asJsObject(totalDebt.map(formatToCurrencyStringWithTrailingZeros), "totalDebt") ++
+      asJsObject(saUtr.map(_.value), "utr") ++
+      Json.obj("taxType" -> "SA")
+
+    ExtendedDataEvent(
+      auditSource = "pay-what-you-owe",
+      auditType   = "EligibilityCheck",
+      tags        = hcTags("EligibilityCheck"),
+      detail      = detail
+    )
+  }
+
   private def typeOfPlan(journey:           Journey,
                          calculatorService: CalculatorService
   )(implicit request: Request[_], appConfig: AppConfig): String = {
@@ -223,8 +276,11 @@ object DataEventFactory {
     )
   )
 
-  private def hcTags(transactionName: String)(implicit request: Request[_]): Map[String, String] = {
+  private def hcTags(transactionName: String)(implicit request: Request[_]): Map[String, String] =
     hc.toAuditTags(transactionName, request.path) ++
       Map(hc.names.deviceID -> hc.deviceID.getOrElse("-"))
-  }
+
+  private def asJsObject[A: Writes](maybeA: Option[A], fieldName: String): JsObject =
+    maybeA.fold(Json.obj())(a => Json.obj(fieldName -> a))
+
 }

@@ -33,9 +33,7 @@ class ArrangementSummaryPageSpec extends ItSpec {
   )
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
-    AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     DirectDebitStub.postPaymentPlan

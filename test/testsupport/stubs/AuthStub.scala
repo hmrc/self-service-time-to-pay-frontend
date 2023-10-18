@@ -78,7 +78,6 @@ object AuthStub extends Matchers {
 
     stubFor(
       post(urlPathEqualTo("/auth/authorise"))
-        //        .withRequestBody() //TODO make constraint on body
         .willReturn(
           aResponse()
             .withStatus(200)

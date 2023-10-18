@@ -108,7 +108,7 @@ class ArrangementController @Inject() (
    * Lastly, a check is performed to see if the user input debits match the Taxpayer
    * debits. If not, display misalignment page otherwise perform an eligibility check.
    */
-  def determineEligibility: Action[AnyContent] = as.authorisedSaUser.async { implicit request: AuthorisedSaUserRequest[AnyContent] =>
+  def determineEligibility: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     for {
       tp: model.Taxpayer <- taxPayerConnector.getTaxPayer(request.utr)
       maybeJourney <- journeyService.getMaybeJourney()
@@ -201,7 +201,7 @@ class ArrangementController @Inject() (
    * Call the eligibility service using the Taxpayer data
    * and display the appropriate page based on the result
    */
-  private def eligibilityCheck(journey: Journey)(implicit request: Request[_]): Future[Result] = {
+  private def eligibilityCheck(journey: Journey)(implicit request: AuthorisedSaUserRequest[_]): Future[Result] = {
     journeyLogger.info("Eligibility check")(request, journey)
 
     val taxpayer = journey.taxpayer
@@ -211,6 +211,7 @@ class ArrangementController @Inject() (
       onIa <- iaService.checkIaUtr(utr.value)
       directDebits <- directDebitConnector.getBanks(utr)
       eligibilityStatus = eligibilityService.checkEligibility(clockProvider.nowDate(), taxpayer, directDebits, onIa)
+      _ = auditService.sendEligibilityResultEvent(eligibilityStatus, journey.debits.map(_.amount).sum, utr, request.request.credentials)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
     } yield {

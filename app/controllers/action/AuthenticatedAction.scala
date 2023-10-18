@@ -37,6 +37,7 @@ final class AuthenticatedRequest[A](val request:     Request[A],
 ) extends WrappedRequest[A](request) {
 
   lazy val hasActiveSaEnrolment: Boolean = enrolments.enrolments.exists(e => e.key == "IR-SA" && e.isActivated)
+
 }
 
 class AuthenticatedAction @Inject() (

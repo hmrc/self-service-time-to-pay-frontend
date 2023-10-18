@@ -16,6 +16,7 @@
 
 package controllers.action
 
+import audit.AuditService
 import com.google.inject.Inject
 import play.api.libs.json.Json
 import play.api.mvc.Results.Redirect
@@ -29,7 +30,8 @@ final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A], val
   extends WrappedRequest[A](request)
 
 class AuthorisedSaUserAction @Inject() (
-    cc: MessagesControllerComponents)
+    auditService: AuditService,
+    cc:           MessagesControllerComponents)
   extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] with Logging {
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
@@ -61,11 +63,13 @@ class AuthorisedSaUserAction @Inject() (
 
     val result: Either[Result, AuthorisedSaUserRequest[A]] =
       (hasActiveSaEnrolment, maybeUtr) match {
-        case (false, _) =>
-          logFail("no active IR-SA enrolment")(request)
-          Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
         case (_, None) =>
           logFail("no present UTR")(request)
+          auditService.sendEligibilityNotEnrolledEvent(request.credentials)(request.request)
+          Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
+        case (false, _) =>
+          logFail("no active IR-SA enrolment")(request)
+          auditService.sendEligibilityInactiveEnrolmentEvent(maybeUtr, request.credentials)(request.request)
           Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
         case (true, Some(utr)) =>
           Right(new AuthorisedSaUserRequest[A](request, utr))

@@ -21,14 +21,12 @@ import org.scalatestplus.selenium.Chrome.goBack
 import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
+import testsupport.stubs.{AuthStub, GgStub, TaxpayerStub}
 
 class YourMonthlyIncomePageSpec extends ItSpec {
 
   def beginJourney(): Unit = {
-    AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     startPage.open()

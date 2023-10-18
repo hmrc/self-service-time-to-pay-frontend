@@ -16,8 +16,7 @@
 
 package pagespecs
 
-import langswitch.Languages
-import testsupport.ItSpec
+import testsupport.{FakeAuthConnector, ItSpec}
 import testsupport.stubs._
 import testsupport.testdata.TdAll
 import timetopaytaxpayer.cor.model.SaUtr
@@ -30,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class YouNeedToRequestAccessToSelfAssessmentEnrolPageSpec extends ItSpec {
 
-  override val fakeAuthConnector: AuthConnector = new AuthConnector {
+  override val fakeAuthConnector: FakeAuthConnector = new FakeAuthConnector {
     override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
 
       val retrievalResult = Future.successful(
@@ -46,8 +45,6 @@ class YouNeedToRequestAccessToSelfAssessmentEnrolPageSpec extends ItSpec {
   ): Unit = {
     startPage.open()
     startPage.assertInitialPageIsDisplayed()
-    AuthStub.authorise(utr, allEnrolments)
-
     ()
   }
 
