@@ -52,7 +52,6 @@ class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
     ".getSetUpPlanWithAdviser" - {
       "audits and returns 200 OK" in {
         AuditStub.audit()
-        AuthStub.authorise()
 
         val journeyId = JourneyId("62ce7631b7602426d74f83b0")
         val journey = Journey(

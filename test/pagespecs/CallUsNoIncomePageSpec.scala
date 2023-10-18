@@ -18,14 +18,12 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
-import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
+import testsupport.stubs.{AuthStub, GgStub, TaxpayerStub}
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 
 class CallUsNoIncomePageSpec extends ItSpec {
   def beginJourney(): Unit = {
-    AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     startPage.open()

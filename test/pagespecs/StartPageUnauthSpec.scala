@@ -16,20 +16,17 @@
 
 package pagespecs
 
-import langswitch.Languages.{English, Welsh}
-import testsupport.ItSpec
-import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
-import uk.gov.hmrc.selfservicetimetopay.models.TotalDebtIsTooHigh
+import testsupport.{FakeAuthConnector, ItSpec}
+import testsupport.stubs.GgStub
 
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReadsInstances}
+import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
+import uk.gov.hmrc.http.HeaderCarrier
 
 class StartPageUnauthSpec extends ItSpec {
-  override val fakeAuthConnector = new AuthConnector {
+  override val fakeAuthConnector = new FakeAuthConnector {
     override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
 
       val retrievalResult = Future.successful(
@@ -42,7 +39,7 @@ class StartPageUnauthSpec extends ItSpec {
   }
 
   "unauthorised - missing bearer token (user not logged in)" ignore {
-    AuthStub.unathorisedMissingSession()
+
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()

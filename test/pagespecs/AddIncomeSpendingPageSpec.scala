@@ -28,9 +28,7 @@ import testsupport.stubs._
 class AddIncomeSpendingPageSpec extends ItSpec {
 
   def beginJourney(): Unit = {
-    AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     startPage.open()

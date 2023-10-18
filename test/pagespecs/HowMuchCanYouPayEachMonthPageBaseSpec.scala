@@ -17,7 +17,6 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
-import org.scalatestplus.selenium.Chrome.goBack
 import pagespecs.pages.HowMuchCanYouPayEachMonthPage
 import ssttpcalculator.CalculatorType.PaymentOptimised
 import ssttpcalculator.model.PaymentPlanOption
@@ -26,8 +25,6 @@ import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.{DisplayDefaultPlanOptionsTd, TdAll}
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeLargeEnoughForTwoDefaultPlans, netIncomeTooSmallForPlan}
-
-import java.time.LocalDate
 
 class HowMuchCanYouPayEachMonthPageSpec extends HowMuchCanYouPayEachMonthPageBaseSpec {
 
@@ -71,9 +68,7 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
   val displayThreePlans: DisplayDefaultPlanOptionsTd
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
-    AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
     GgStub.signInPage(port)
     DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))
 

@@ -35,9 +35,11 @@ import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, EligibilityStatus, 
 import _root_.model.enumsforforms.TypesOfBankAccount.Personal
 import _root_.model.enumsforforms.TypesOfBankAccount
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
+import play.api.inject.bind
 import play.api.libs.json.{JsString, Json}
 import play.api.mvc.AnyContentAsEmpty
 import ssttpcalculator.model.AddWorkingDaysResult
+import uk.gov.hmrc.auth.core.AuthConnector
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime}
@@ -72,6 +74,7 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
   )
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
+    .overrides(bind[AuthConnector].toInstance(fakeAuthConnector))
     .configure(configMap)
     .build()
 
@@ -88,7 +91,6 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
 
   "CalculatorController.getCalculatorInstalments" - {
     "displays 'how much can you pay each month' page if at least one plan no longer than configurable maximum length" in {
-      AuthStub.authorise()
       DateCalculatorStub.stubAddWorkingDays(Right(dateCalculatorResponse))
 
       val (journey, fakeRequest) = saveJourney(createJourneyWithMaxLengthPlan)
@@ -104,7 +106,6 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
     }
 
     "display 'we cannot agree your payment plan' page if no plan is within the configurable maximum length" in {
-      AuthStub.authorise()
       DateCalculatorStub.stubAddWorkingDays(Right(dateCalculatorResponse))
 
       val (journey, fakeRequest) = saveJourney(createJourneyNoAffordablePlan)
@@ -120,7 +121,6 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
     }
 
     "return an error if the request to add working days is not successful" in {
-      AuthStub.authorise()
       DateCalculatorStub.stubAddWorkingDays(Left(422))
 
       val (journey, fakeRequest) = saveJourney(createJourneyNoAffordablePlan)
@@ -135,7 +135,6 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
     }
 
     "return an error if the response to add working days cannot be parsed" in {
-      AuthStub.authorise()
       DateCalculatorStub.stubAddWorkingDays(Right(JsString("Hi!")))
 
       val (journey, fakeRequest) = saveJourney(createJourneyNoAffordablePlan)
@@ -150,8 +149,6 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
     }
 
     "should not call the date calculator service if a calculation has already been stored in the journey" in {
-      AuthStub.authorise()
-
       val (_, fakeRequest) = saveJourney(createJourneyWithMaxLengthPlan(_).copy(maybeDateFirstPaymentCanBeTaken = Some(addWorkingDaysResult)))
       val res = controller.getCalculateInstalments()(fakeRequest)
       status(res) shouldBe Status.OK

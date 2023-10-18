@@ -35,6 +35,8 @@ import testsupport.testdata.{TdAll, TdRequest}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, EligibilityStatus, PaymentDayOfMonth, TypeOfAccountDetails}
 import _root_.model.enumsforforms.TypesOfBankAccount
+import play.api.inject.bind
+import uk.gov.hmrc.auth.core.AuthConnector
 
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.duration._
@@ -54,6 +56,7 @@ class CalculatorControllerDateCalculatorDisabledSpec extends ItSpec with WireMoc
   )
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
+    .overrides(bind[AuthConnector].toInstance(fakeAuthConnector))
     .configure(configMap)
     .build()
 
@@ -63,7 +66,6 @@ class CalculatorControllerDateCalculatorDisabledSpec extends ItSpec with WireMoc
   "The date calculator service should not be called if not enabled" in {
     val today = LocalDate.now()
     val addWorkingDaysResult = AddWorkingDaysResult(today, 5, today.plusDays(10))
-    AuthStub.authorise()
 
     val (journey, fakeRequest) = saveJourney(createJourneyWithMaxLengthPlan)
 

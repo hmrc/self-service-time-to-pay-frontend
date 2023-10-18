@@ -32,7 +32,8 @@ import scala.util.control.NonFatal
 import req.RequestSupport._
 import ssttpcalculator.legacy.CalculatorService
 import timetopaytaxpayer.cor.model.SaUtr
-import uk.gov.hmrc.selfservicetimetopay.models.TypeOfAccountDetails
+import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, TypeOfAccountDetails}
 import util.Logging
 
 import scala.util.{Failure, Success}
@@ -90,6 +91,21 @@ class AuditService @Inject() (
     )
     sendEvent(event)
   }
+
+  def sendEligibilityNotEnrolledEvent(credentials: Option[Credentials])(implicit request: Request[_]): Unit =
+    sendEvent(DataEventFactory.eligibilityNotEnrolledEvent(credentials))
+
+  def sendEligibilityInactiveEnrolmentEvent(saUtr:       Option[SaUtr],
+                                            credentials: Option[Credentials]
+  )(implicit request: Request[_]): Unit =
+    sendEvent(DataEventFactory.eligibilityInactiveEnrolmentEvent(saUtr, credentials))
+
+  def sendEligibilityResultEvent(eligibilityStatus: EligibilityStatus,
+                                 totalDebt:         BigDecimal,
+                                 saUtr:             SaUtr,
+                                 credentials:       Option[Credentials]
+  )(implicit request: Request[_]): Unit =
+    sendEvent(DataEventFactory.eligibilityResultEvent(eligibilityStatus, totalDebt, saUtr, credentials))
 
   private def sendEvent(event: ExtendedDataEvent)(implicit request: Request[_]): Unit = {
     val checkEventResult = auditConnector.sendExtendedEvent(event)
