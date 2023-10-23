@@ -21,7 +21,7 @@ import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
 import ssttpcalculator.model.PaymentPlanOption
 import testsupport.stubs._
-import testsupport.testdata.DirectDebitTd
+import testsupport.testdata.{DirectDebitTd, TdAll}
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, saUtr}
 import testsupport.{AccountName, ItSpec, _}
 
@@ -31,6 +31,7 @@ class DirectDebitPageSpec extends ItSpec {
     TaxpayerStub.getTaxpayer()
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+    DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))
     DirectDebitStub.postPaymentPlan
     ArrangementStub.postTtpArrangement
 

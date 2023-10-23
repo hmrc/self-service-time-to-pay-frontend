@@ -16,14 +16,98 @@
 
 package pagespecs.legacycalculator
 
-import pagespecs.ViewPaymentPlanPageBaseSpec
+import langswitch.Languages.{English, Welsh}
+import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
 import pagespecs.pages.{CheckYourPaymentPlanPage, HowMuchCanYouPayEachMonthPage, ViewPaymentPlanPage}
+import ssttpcalculator.model.PaymentPlanOption
 import testsupport.legacycalculator.LegacyCalculatorPages
+import testsupport.stubs.{ArrangementStub, BarsStub, DateCalculatorStub, DirectDebitStub, GgStub, TaxpayerStub}
+import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
+import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
+import testsupport.testdata.{DirectDebitTd, TdAll}
 
-class ViewPaymentPlanPageLegacyCalculatorSpec extends ViewPaymentPlanPageBaseSpec with LegacyCalculatorPages {
+class ViewPaymentPlanPageLegacyCalculatorSpec extends LegacyCalculatorPages {
 
   val pageUnderTest: ViewPaymentPlanPage = viewPaymentPlanPageLegacyCalculator
   val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPageLegacyCalculator
   val inUseCheckYourPaymentPlanPage: CheckYourPaymentPlanPage = checkYourPaymentPlanPageLegacyCalculator
 
+  def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
+    TaxpayerStub.getTaxpayer()
+    GgStub.signInPage(port)
+    getBanksIsSuccessful()
+    DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))
+    DirectDebitStub.postPaymentPlan
+    ArrangementStub.postTtpArrangement
+
+    startPage.open()
+    startPage.assertInitialPageIsDisplayed()
+    startPage.clickOnStartNowButton()
+
+    taxLiabilitiesPage.assertInitialPageIsDisplayed()
+    taxLiabilitiesPage.clickOnStartNowButton()
+
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
+    paymentTodayQuestionPage.selectRadioButton(false)
+    paymentTodayQuestionPage.clickContinue()
+
+    selectDatePage.assertInitialPageIsDisplayed()
+    selectDatePage.selectFirstOption28thDay()
+    selectDatePage.clickContinue()
+
+    startAffordabilityPage.assertInitialPageIsDisplayed()
+    startAffordabilityPage.clickContinue()
+
+    addIncomeSpendingPage.assertInitialPageIsDisplayed()
+    addIncomeSpendingPage.clickOnAddChangeIncome()
+
+    yourMonthlyIncomePage.assertInitialPageIsDisplayed
+    yourMonthlyIncomePage.enterMonthlyIncome(remainingIncomeAfterSpending.toString)
+    yourMonthlyIncomePage.clickContinue()
+
+    addIncomeSpendingPage.assertPathHeaderTitleCorrect(English)
+    addIncomeSpendingPage.clickOnAddChangeSpending()
+
+    yourMonthlySpendingPage.assertInitialPageIsDisplayed
+    yourMonthlySpendingPage.clickContinue()
+
+    howMuchYouCouldAffordPage.clickContinue()
+    inUseHowMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
+    inUseHowMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Basic)
+    inUseHowMuchCanYouPayEachMonthPage.clickContinue()
+
+    inUseCheckYourPaymentPlanPage.assertInitialPageIsDisplayed()
+    inUseCheckYourPaymentPlanPage.clickContinue()
+
+    aboutBankAccountPage.assertInitialPageIsDisplayed()
+    aboutBankAccountPage.selectTypeOfAccountRadioButton(TypesOfBankAccount.Personal)
+    aboutBankAccountPage.selectIsAccountHolderRadioButton(IsSoleSignatory.Yes)
+    aboutBankAccountPage.clickContinue()
+
+    directDebitPage.assertInitialPageIsDisplayed()
+    directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBanksIsSuccessful()
+    directDebitPage.clickContinue()
+
+    directDebitConfirmationPage.assertInitialPageIsDisplayed()
+    directDebitConfirmationPage.clickContinue()
+  }
+
+  "language English" in {
+    beginJourney()
+    termsAndConditionsPage.clickContinue()
+    arrangementSummaryPage.clickLink()
+    pageUnderTest.assertInitialPageIsDisplayed(English)
+  }
+
+  "language Welsh" in {
+    beginJourney()
+    termsAndConditionsPage.clickOnWelshLink()
+    termsAndConditionsPage.clickContinue()
+    arrangementSummaryPage.clickLink()
+    pageUnderTest.assertInitialPageIsDisplayed(Welsh)
+  }
+
 }
+

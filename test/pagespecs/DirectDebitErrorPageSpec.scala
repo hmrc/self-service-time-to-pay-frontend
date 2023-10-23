@@ -22,7 +22,7 @@ import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.DirectDebitTd
+import testsupport.testdata.{DirectDebitTd, TdAll}
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
 class DirectDebitErrorPageSpec extends ItSpec {
@@ -31,6 +31,7 @@ class DirectDebitErrorPageSpec extends ItSpec {
     TaxpayerStub.getTaxpayer()
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+    DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))
 
     startPage.open()
     startPage.assertInitialPageIsDisplayed()

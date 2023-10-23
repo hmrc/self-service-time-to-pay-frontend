@@ -23,7 +23,7 @@ import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
-import testsupport.testdata.DirectDebitTd
+import testsupport.testdata.{DirectDebitTd, TdAll}
 
 class DirectDebitConfirmationPageSpec extends ItSpec {
 
@@ -31,6 +31,7 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
     TaxpayerStub.getTaxpayer()
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+    DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))
 
     startPage.open()
     startPage.assertInitialPageIsDisplayed()
