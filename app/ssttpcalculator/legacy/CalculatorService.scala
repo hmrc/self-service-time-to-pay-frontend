@@ -105,7 +105,7 @@ class CalculatorService @Inject() (
                             maybePaymentDayOfMonth:     Option[PaymentDayOfMonth],
                             dateFirstPaymentCanBeTaken: AddWorkingDaysResult
   )(implicit request: Request[_]): List[PaymentSchedule] = {
-    val rangeOfAvailableScheduleDurationsInMonths = minimumMonthsAllowedTTP to (appConfig.legacyMaxLengthOfPaymentPlan + 1)
+    val rangeOfAvailableScheduleDurationsInMonths = minimumMonthsAllowedTTP to (appConfig.maxLengthOfPaymentPlan + 1)
 
     val today: LocalDate = clockProvider.nowDate()
 
@@ -128,7 +128,7 @@ class CalculatorService @Inject() (
       )
       buildSchedule(calculatorInput)
     }
-      .filter(_.instalments.length <= appConfig.legacyMaxLengthOfPaymentPlan)
+      .filter(_.instalments.length <= appConfig.maxLengthOfPaymentPlan)
       .toList
   }
 

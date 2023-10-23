@@ -16,10 +16,6 @@
 
 package config
 
-import play.api.libs.json.{Json, OFormat}
-import ssttpcalculator.CalculatorType
-import ssttpcalculator.model.TaxLiability
-
 import javax.inject.Inject
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -63,23 +59,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
     (s"$baseUrl$completePath", s"$baseUrl$failurePath")
   }
 
-  // Config for payment dates - PaymentOptimised calculator ONLY
-  lazy val minimumLengthOfPaymentPlan: Int = servicesConfig.getInt("paymentDatesConfig.minimumLengthOfPaymentPlan")
-  lazy val maximumLengthOfPaymentPlan: Int = servicesConfig.getInt("paymentDatesConfig.maximumLengthOfPaymentPlan")
-  lazy val daysToProcessFirstPayment: Int = servicesConfig.getInt("paymentDatesConfig.daysToProcessPayment")
-  lazy val minGapBetweenPayments: Int = servicesConfig.getInt("paymentDatesConfig.minGapBetweenPayments")
-  lazy val firstPaymentDayOfMonth: Int = servicesConfig.getInt("paymentDatesConfig.firstPaymentDayOfMonth")
-  lazy val lastPaymentDayOfMonth: Int = servicesConfig.getInt("paymentDatesConfig.lastPaymentDayOfMonth")
-  lazy val lastPaymentDelayDays: Int = servicesConfig.getInt("paymentDatesConfig.lastPaymentDelayDays")
-
-  lazy val calculatorType: CalculatorType = servicesConfig.getString("calculatorType") match {
-    case CalculatorType.Legacy.value           => CalculatorType.Legacy
-    case CalculatorType.PaymentOptimised.value => CalculatorType.PaymentOptimised
-    case otherValue                            => throw new Exception(s"calculator type '$otherValue' in config not recognised")
-  }
-
-  //Config for Legacy calculator
-  lazy val legacyMaxLengthOfPaymentPlan: Int = servicesConfig.getInt("legacyCalculatorConfig.maximumLengthOfPaymentPlan")
+  lazy val maxLengthOfPaymentPlan: Int = servicesConfig.getInt("calculatorConfig.maximumLengthOfPaymentPlan")
 
   lazy val useDateCalculatorService = servicesConfig.getBoolean("features.call-date-calculator-service")
 }

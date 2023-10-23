@@ -18,16 +18,11 @@ package pagespecs.legacycalculator
 
 import pagespecs.HowMuchCanYouPayEachMonthPageBaseSpec
 import pagespecs.pages.HowMuchCanYouPayEachMonthPage
-import ssttpcalculator.CalculatorType.Legacy
 import testsupport.legacycalculator.LegacyCalculatorPages
 import testsupport.testdata.DisplayDefaultPlanOptionsTd
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
 class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends HowMuchCanYouPayEachMonthPageBaseSpec with LegacyCalculatorPages {
-
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> Legacy.value
-  )
 
   lazy val pageUnderTest: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPageLegacyCalculator
 
@@ -51,7 +46,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends HowMuchCanYouPay
   val customAmountPlanMonthsOutput = 7
   val customAmountPlanInterestOutput = 54.35
 
-  s"${overrideConfig("calculatorType")} - custom amount entry" - {
+  "custom amount entry" - {
     "displays page with custom option at top when custom amount entered and continue pressed" - {
       "custom plan closest to custom amount input if exact plan not available" - {
         "plan instalment amount below custom amount input" in {

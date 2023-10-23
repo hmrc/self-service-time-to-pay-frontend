@@ -16,9 +16,9 @@
 
 package audit.legacycalculator
 
-import audit.{AuditService, DataEventFactory}
+import audit.DataEventFactory
 import bars.model.BarsAssessmentType.{No, Yes}
-import bars.model.{BarsResponseOk, ValidateBankDetailsResponse}
+import bars.model.ValidateBankDetailsResponse
 import config.AppConfig
 import journey.Journey
 import journey.Statuses.ApplicationComplete
@@ -30,11 +30,8 @@ import ssttpaffordability.model.IncomeCategory.MonthlyIncome
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import ssttparrangement.ArrangementSubmissionStatus
 import ssttparrangement.ArrangementSubmissionStatus.{PermanentFailure, QueuedForRetry}
-import ssttpcalculator.CalculatorType.Legacy
 import ssttpcalculator.legacy.CalculatorService
-import ssttpcalculator.model.AddWorkingDaysResult
 import testsupport.ItSpec
-import testsupport.stubs.BarsStub
 import testsupport.testdata.{DirectDebitTd, TdAll, TdRequest}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, PaymentDayOfMonth, PlanSelection, SelectedPlan}
@@ -44,10 +41,6 @@ import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDateTime}
 
 class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
-
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> Legacy.value
-  )
 
   private val td = TdAll
   private val tdRequest = TdRequest

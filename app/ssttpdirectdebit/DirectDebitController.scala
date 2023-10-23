@@ -31,8 +31,7 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.legacy.CalculatorService
-import ssttpcalculator.legacy.util.CalculatorSwitchSelectedScheduleHelper
-import ssttpcalculator.PaymentPlansService
+import ssttpcalculator.legacy.util.SelectedScheduleHelper
 import ssttpcalculator.model.PaymentSchedule
 import ssttpdirectdebit.DirectDebitForm._
 import times.ClockProvider
@@ -44,21 +43,20 @@ import javax.inject._
 import scala.concurrent.{ExecutionContext, Future}
 
 class DirectDebitController @Inject() (
-    mcc:                     MessagesControllerComponents,
-    barsService:             BarsService,
-    viewConfig:              ViewConfig,
-    actions:                 Actions,
-    submissionService:       JourneyService,
-    requestSupport:          RequestSupport,
-    val paymentPlansService: PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
-    val calculatorService:   CalculatorService, // calculator type feature flag: used by Legacy calculator feature
-    views:                   Views,
-    clockProvider:           ClockProvider
+    mcc:                   MessagesControllerComponents,
+    barsService:           BarsService,
+    viewConfig:            ViewConfig,
+    actions:               Actions,
+    submissionService:     JourneyService,
+    requestSupport:        RequestSupport,
+    val calculatorService: CalculatorService,
+    views:                 Views,
+    clockProvider:         ClockProvider
 )(
     implicit
     val appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendBaseController(mcc)
-  with CalculatorSwitchSelectedScheduleHelper
+  with SelectedScheduleHelper
   with Logging {
 
   import clockProvider._

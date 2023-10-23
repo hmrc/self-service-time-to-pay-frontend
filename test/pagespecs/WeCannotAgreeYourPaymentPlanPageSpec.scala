@@ -17,16 +17,11 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
-import ssttpcalculator.CalculatorType.PaymentOptimised
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 
 class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
-
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
-  )
 
   def beginJourney(): Unit = {
     TaxpayerStub.getTaxpayer()

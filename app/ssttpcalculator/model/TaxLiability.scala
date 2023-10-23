@@ -16,38 +16,13 @@
 
 package ssttpcalculator.model
 
-import journey.Journey
-
 import java.time.LocalDate
 import play.api.libs.json.{Json, OFormat}
-import timetopaytaxpayer.cor.model.SelfAssessmentDetails
-
-sealed trait Payable {
-  def amount: BigDecimal
-
-  def updateDueDate(newDate: LocalDate): Payable
-
-  def hasInterestCharge(paymentDate: LocalDate): Boolean
-}
-
-object Payable {
-
-  def taxLiabilities(sa: SelfAssessmentDetails): Seq[TaxLiability] = for {
-    debit <- sa.debits
-  } yield TaxLiability(debit.amount, debit.dueDate)
-
-  def taxLiabilities(journey: Journey): Seq[TaxLiability] = {
-    val sa = journey.taxpayer.selfAssessment
-    taxLiabilities(sa)
-  }
-}
 
 final case class TaxLiability(
     amount:  BigDecimal,
     dueDate: LocalDate
-) extends Payable {
-
-  def updateDueDate(newDate: LocalDate): Payable = this.copy(dueDate = newDate)
+) {
 
   def hasInterestCharge(payment: Payment): Boolean = hasInterestCharge(payment.date)
 
@@ -78,12 +53,4 @@ object TaxLiability {
     case ((p, l), lt) if lt.amount >= p.amount => (p.copy(amount = 0), LatePayment(lt.dueDate, p) :: l)
     case ((p, l), lt) => (p.copy(amount = p.amount - lt.amount), LatePayment(lt.dueDate, p.copy(amount = lt.amount)) :: l)
   }._2
-}
-
-final case class LatePaymentInterest(amount: BigDecimal) extends Payable {
-
-  def updateDueDate(newDate: LocalDate): Payable = this
-
-  def hasInterestCharge(paymentDate: LocalDate): Boolean = false
-
 }

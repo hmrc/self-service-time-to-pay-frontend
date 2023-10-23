@@ -18,14 +18,9 @@ package pagespecs.legacycalculator
 
 import pagespecs.CheckYourPaymentPlanPageBaseSpec
 import pagespecs.pages.{CheckYourPaymentPlanPage, HowMuchCanYouPayEachMonthPage}
-import ssttpcalculator.CalculatorType.Legacy
 import testsupport.legacycalculator.LegacyCalculatorPages
 
 class CheckYourPaymentPlanPageLegacyCalculatorSpec extends CheckYourPaymentPlanPageBaseSpec with LegacyCalculatorPages {
-
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> Legacy.value
-  )
 
   val pageUnderTest: CheckYourPaymentPlanPage = checkYourPaymentPlanPageLegacyCalculator
   val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPageLegacyCalculator

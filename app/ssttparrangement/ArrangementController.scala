@@ -29,9 +29,8 @@ import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementSubmissionStatus.{PermanentFailure, QueuedForRetry, Success}
-import ssttpcalculator.{CalculatorType, PaymentPlansService}
 import ssttpcalculator.legacy.CalculatorService
-import ssttpcalculator.legacy.util.CalculatorSwitchSelectedScheduleHelper
+import ssttpcalculator.legacy.util.SelectedScheduleHelper
 import ssttpcalculator.model.{Instalment, PaymentSchedule}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.{EligibilityService, IaService}
@@ -53,29 +52,28 @@ import scala.math.BigDecimal.RoundingMode.HALF_UP
 import scala.math.BigDecimal.exact
 
 class ArrangementController @Inject() (
-    mcc:                     MessagesControllerComponents,
-    ddConnector:             DirectDebitConnector,
-    arrangementConnector:    ArrangementConnector,
-    val paymentPlansService: PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
-    val calculatorService:   CalculatorService, // calculator type feature flag: used by Legacy calculator feature
-    eligibilityService:      EligibilityService,
-    taxPayerConnector:       TaxpayerConnector,
-    auditService:            AuditService,
-    journeyService:          JourneyService,
-    as:                      Actions,
-    requestSupport:          RequestSupport,
-    views:                   Views,
-    clockProvider:           ClockProvider,
-    iaService:               IaService,
-    mongoLockRepository:     MongoLockRepository,
-    directDebitConnector:    DirectDebitConnector
+    mcc:                   MessagesControllerComponents,
+    ddConnector:           DirectDebitConnector,
+    arrangementConnector:  ArrangementConnector,
+    val calculatorService: CalculatorService,
+    eligibilityService:    EligibilityService,
+    taxPayerConnector:     TaxpayerConnector,
+    auditService:          AuditService,
+    journeyService:        JourneyService,
+    as:                    Actions,
+    requestSupport:        RequestSupport,
+    views:                 Views,
+    clockProvider:         ClockProvider,
+    iaService:             IaService,
+    mongoLockRepository:   MongoLockRepository,
+    directDebitConnector:  DirectDebitConnector
 )(
     implicit
     val appConfig: AppConfig,
     ec:            ExecutionContext
 )
   extends FrontendBaseController(mcc)
-  with CalculatorSwitchSelectedScheduleHelper
+  with SelectedScheduleHelper
   with Logging {
 
   import clockProvider._

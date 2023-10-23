@@ -50,7 +50,6 @@ class CalculatorControllerDateCalculatorDisabledSpec extends ItSpec with WireMoc
   implicit val timeout: Timeout = Timeout(5.seconds)
 
   override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> CalculatorType.Legacy.value,
     "legacyCalculatorConfig.maximumLengthOfPaymentPlan" -> configuredMaxLengthOfPaymentPlan,
     "features.call-date-calculator-service" -> false
   )

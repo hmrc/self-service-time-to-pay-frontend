@@ -16,31 +16,22 @@
 
 package ssttpcalculator.legacy.util
 
-import config.AppConfig
 import journey.Journey
 import play.api.mvc.Request
-import ssttpcalculator.CalculatorType.{PaymentOptimised, Legacy}
 import ssttpcalculator.legacy.CalculatorService
 import ssttpcalculator.model.PaymentSchedule
-import ssttpcalculator.PaymentPlansService
 
-trait CalculatorSwitchSelectedScheduleHelper {
+trait SelectedScheduleHelper {
   val calculatorService: CalculatorService
-  val paymentPlansService: PaymentPlansService
-  implicit val appConfig: AppConfig
 
   protected def selectedSchedule(journey: Journey)(implicit request: Request[_]): PaymentSchedule = {
-    maybeSelectedSchedule(journey).getOrElse(
+    Some(calculatorService.selectedSchedule(journey)).getOrElse(
       throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
     )
   }
 
   protected def maybeSelectedSchedule(journey: Journey)(implicit request: Request[_]): Option[PaymentSchedule] = {
-    appConfig.calculatorType match {
-      case Legacy => Some(calculatorService.selectedSchedule(journey))
-      case PaymentOptimised =>
-        paymentPlansService.selectedSchedule(journey)
-    }
+    Some(calculatorService.selectedSchedule(journey))
   }
 
 }

@@ -43,7 +43,7 @@ class LegacyMaximumPlanLengthConfigSpec extends ConfigSpec {
   }
 
   private def testDefaultSchedulesCanGenerateMaximumLength(configuredMaxLength: Int): Assertion = {
-    val app = appWithConfigKeyValue("legacyCalculatorConfig.maximumLengthOfPaymentPlan", configuredMaxLength)
+    val app = appWithConfigKeyValue("calculatorConfig.maximumLengthOfPaymentPlan", configuredMaxLength)
     val calculatorService: CalculatorService = app.injector.instanceOf[CalculatorService]
     val request = FakeRequest()
     val nowDate = (new ClockProvider).nowDate()(request)
@@ -76,7 +76,7 @@ class LegacyMaximumPlanLengthConfigSpec extends ConfigSpec {
   }
 
   private def testDefaultSchedulesWillNotExceedMaximumLength(configuredMaxLength: Int): Assertion = {
-    val app = appWithConfigKeyValue("legacyCalculatorConfig.maximumLengthOfPaymentPlan", configuredMaxLength)
+    val app = appWithConfigKeyValue("calculatorConfig.maximumLengthOfPaymentPlan", configuredMaxLength)
     val calculatorService: CalculatorService = app.injector.instanceOf[CalculatorService]
     val request = FakeRequest()
     val nowDate = (new ClockProvider).nowDate()(request)

@@ -25,9 +25,8 @@ import journey.JourneyService
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.legacy.CalculatorService
-import ssttpcalculator.legacy.util.CalculatorSwitchSelectedScheduleHelper
+import ssttpcalculator.legacy.util.SelectedScheduleHelper
 import timetopaytaxpayer.cor.TaxpayerConnector
 import views.Views
 
@@ -35,17 +34,16 @@ import scala.concurrent.ExecutionContext
 import scala.util.Try
 
 class InspectorController @Inject() (
-    ddConnector:             BarsConnector,
-    val paymentPlansService: PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
-    val calculatorService:   CalculatorService, // calculator type feature flag: used by Legacy calculator feature
-    taxPayerConnector:       TaxpayerConnector,
-    cc:                      MessagesControllerComponents,
-    journeyService:          JourneyService,
-    views:                   Views,
-    requestSupport:          RequestSupport
+    ddConnector:           BarsConnector,
+    val calculatorService: CalculatorService,
+    taxPayerConnector:     TaxpayerConnector,
+    cc:                    MessagesControllerComponents,
+    journeyService:        JourneyService,
+    views:                 Views,
+    requestSupport:        RequestSupport
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendBaseController(cc)
-  with CalculatorSwitchSelectedScheduleHelper {
+  with SelectedScheduleHelper {
 
   import requestSupport._
 

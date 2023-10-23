@@ -16,24 +16,11 @@
 
 package pagespecs.legacycalculator
 
-import langswitch.Languages.{English, Welsh}
-import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
 import pagespecs.ViewPaymentPlanPageBaseSpec
 import pagespecs.pages.{CheckYourPaymentPlanPage, HowMuchCanYouPayEachMonthPage, ViewPaymentPlanPage}
-import ssttpcalculator.CalculatorType.Legacy
-import ssttpcalculator.model.PaymentPlanOption
-import testsupport.ItSpec
 import testsupport.legacycalculator.LegacyCalculatorPages
-import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs._
-import testsupport.testdata.DirectDebitTd
-import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
 class ViewPaymentPlanPageLegacyCalculatorSpec extends ViewPaymentPlanPageBaseSpec with LegacyCalculatorPages {
-
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> Legacy.value
-  )
 
   val pageUnderTest: ViewPaymentPlanPage = viewPaymentPlanPageLegacyCalculator
   val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPageLegacyCalculator

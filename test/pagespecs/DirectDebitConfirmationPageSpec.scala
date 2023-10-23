@@ -18,7 +18,6 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
-import ssttpcalculator.CalculatorType.PaymentOptimised
 import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
@@ -27,10 +26,6 @@ import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 import testsupport.testdata.DirectDebitTd
 
 class DirectDebitConfirmationPageSpec extends ItSpec {
-
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
-  )
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     TaxpayerStub.getTaxpayer()
