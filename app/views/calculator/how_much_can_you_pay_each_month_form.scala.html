@@ -124,11 +124,9 @@
 
 
 @viewsHelpers.form(redirectCall, Symbol("id") -> "paymentTodayForm") {
-    <fieldset class="govuk-fieldset">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+
             <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.results.title")</h1>
         </legend>
-
         <p class="govuk-body">
             @{previousFormSubmission.fold(Html(messages(s"ssttp.calculator.results.p1.${calculatorType.messagesKeySuffix}")))(_.selection match {
                 case Right(CustomPlanRequest(amount)) => Html(messages(s"ssttp.calculator.results.p1.custom-amount.${calculatorType.messagesKeySuffix}", currency(amount)))
@@ -147,8 +145,12 @@
         </details>
 
         <p class="govuk-body">@messages("ssttp.calculator.results.p3")</p>
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 class="govuk-heading-m">@Messages("ssttp.calculator.results.question")</h2>
+            </legend>
 
-        @radios(Radios(
+            @radios(Radios(
             name = "plan-selection",
             attributes = Map("id" -> "selected-plan-amount"),
             errorMessage = selectPlanForm.error("plan-selection").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages("ssttp.calculator.results.option.error.no-selection")))),
