@@ -16,8 +16,8 @@
 
 package pagespecs.pages.legacycalculator
 
-import langswitch.Languages.{English, Welsh}
 import langswitch.Language
+import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
 import pagespecs.pages.{BaseUrl, CheckYourPaymentPlanPage}

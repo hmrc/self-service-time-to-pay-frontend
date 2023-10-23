@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
+import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
@@ -196,18 +196,15 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val mainTextEnglish =
           s"""How much can you pay each month?
-             |Based on your left over income, this is how much we think you could pay each month. Your final monthly payment may be more or less if the interest rate changes.
-             |How we calculate interest
-             |We charge interest on all overdue amounts.
+             |Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
              |We charge the Bank of England base rate plus 2.5% per year.
-             |If the interest rate changes during your payment plan, you may need to settle any difference at the end. We will contact you if this is the case.
              |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
-             |£500 per month over 10 months
-             |Includes total interest estimated at £73.08
-             |£600 per month over 9 months
-             |Includes total interest estimated at £62.20
-             |£800 per month over 7 months
-             |Includes total interest estimated at £48.65
+             |£490 per month over 10 months
+             |Includes total interest estimated at £74.30
+             |£544.44 per month over 9 months
+             |Includes total interest estimated at £67.63
+             |£612.50 per month over 8 months
+             |Includes total interest estimated at £60.97
              |I cannot afford to make these payments
              |You may still be able to set up a payment plan over the phone. Call us on 0300 123 1813 to discuss your debt.
              |Continue
@@ -215,18 +212,15 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val mainTextWelsh =
           s"""Faint y gallwch ei dalu bob mis?
-             |Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
-             |Sut rydym yn cyfrifo llog
-             |Rydym yn codi llog ar bob swm sy’n hwyr.
+             |Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn fwy oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
              |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5% y flwyddyn.
-             |Os bydd y gyfradd llog yn newid yn ystod eich cynllun talu, efallai bydd yn rhaid i chi setlo unrhyw wahaniaeth ar y diwedd. Byddwn yn cysylltu â chi os yw hyn yn wir.
              |Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
-             |£500 y mis, am 10 mis
-             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £73.08
-             |£600 y mis, am 9 mis
-             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £62.20
-             |£800 y mis, am 7 mis
-             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £48.65
+             |£490 y mis, am 10 mis
+             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £74.30
+             |£544.44 y mis, am 9 mis
+             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £67.63
+             |£612.50 y mis, am 8 mis
+             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £60.97
              |Nid wyf yn gallu fforddio’r taliadau hyn
              |Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch ni ar 0300 200 1900 i drafod eich dyled.
              |Yn eich blaen
@@ -240,13 +234,13 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
         }
 
         private val customtOptionTextEnglish =
-          s"""A different monthly amount
-             |Enter an amount that is at least £500 but no more than £4,914.40
+          s"""Pay more per month
+             |Enter an amount between £612.50 and £2,450 to pay over fewer months. We will suggest a plan that is closest to the amount you enter.
           """.stripMargin
 
         private val customOptionTextWelsh =
-          s"""Swm misol gwahanol
-             |Rhowch swm sydd o leiaf £500 ond heb fod yn fwy na £4,914.40
+          s"""Talu mwy bob mis
+             |Nodwch swm sydd rhwng £612.50 a £2,450 i’w dalu dros lai o fisoedd. Byddwn yn awgrymu cynllun sydd agosaf at y swm y byddwch yn ei nodi.
           """.stripMargin
       }
 
@@ -292,12 +286,14 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
         }
 
         private def customAmountTextEnglish(amount: String) =
-          s"""You have chosen to pay £$amount per month. Your final monthly payment may be more or less if the interest rate changes.
-      """.stripMargin
+          s"""Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
+             |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
+          """.stripMargin
 
         private def customAmountTextWelsh(amount: String) =
-          s"""Rydych wedi dewis talu £$amount y mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
-      """.stripMargin
+          s"""Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn fwy oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
+             |Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
+          """.stripMargin
       }
     }
 

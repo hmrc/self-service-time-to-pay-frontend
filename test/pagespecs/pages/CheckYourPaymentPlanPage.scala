@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
+import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
@@ -99,36 +99,37 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |Taken within 10 working days
            |£0
            |Change
+           |Monthly payments
            |Payments collected on
            |$paymentDayOfMonthEnglish or next working day
            |Change
            |Change the day of the month that payments will be collected on
            |Payment plan
            |December 2019
-           |£500
+           |£490
            |January 2020
-           |£500
+           |£490
            |February 2020
-           |£500
+           |£490
            |March 2020
-           |£500
+           |£490
            |April 2020
-           |£500
+           |£490
            |May 2020
-           |£500
+           |£490
            |June 2020
-           |£500
+           |£490
            |July 2020
-           |£500
+           |£490
            |August 2020
-           |£500
+           |£490
            |September 2020
-           |£473.08
+           |£564.30
            |Estimated total interest
            |Included in your plan
-           |£73.08
+           |£74.30
            |Total to pay
-           |£4,973.08
+           |£4,974.30
            |Agree and continue
         """.stripMargin
       }
@@ -148,30 +149,30 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |Newid
            |Cynllun talu
            |Rhagfyr 2019
-           |£500
+           |£490
            |Ionawr 2020
-           |£500
+           |£490
            |Chwefror 2020
-           |£500
+           |£490
            |Mawrth 2020
-           |£500
+           |£490
            |Ebrill 2020
-           |£500
+           |£490
            |Mai 2020
-           |£500
+           |£490
            |Mehefin 2020
-           |£500
+           |£490
            |Gorffennaf 2020
-           |£500
+           |£490
            |Awst 2020
-           |£500
+           |£490
            |Medi 2020
-           |£473.08
+           |£564.30
            |Amcangyfrif o gyfanswm y llog
            |Yn gynwysedig yn eich cynllun
-           |£73.08
+           |£74.30
            |Y cyfanswm i’w dalu
-           |£4,973.08
+           |£4,974.30
            |Cytuno ac yn eich blaen
         """.stripMargin
       }
