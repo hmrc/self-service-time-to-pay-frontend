@@ -39,7 +39,7 @@ object TdAll {
   val localDateTime: LocalDateTime = LocalDateTime.parse(frozenDateStringLong)
   val instant: Instant = localDateTime.toInstant(ZoneOffset.UTC)
 
-  val dateFirstPaymentCanBeTaken = AddWorkingDaysResult(localDateTime.toLocalDate, 5, localDateTime.toLocalDate.plusDays(10))
+  val dateFirstPaymentCanBeTaken = AddWorkingDaysResult(localDateTime.toLocalDate, 6, localDateTime.toLocalDate.plusDays(10))
 
   private val debit1Amount = 2500
   private val debit2Amount = 2400

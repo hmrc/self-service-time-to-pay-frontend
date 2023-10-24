@@ -81,7 +81,7 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
   lazy val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
 
   val today = LocalDate.now()
-  val expectedNumberOfWorkingDaysToAdd = 5
+  val expectedNumberOfWorkingDaysToAdd = 6
   val addWorkingDaysResponse: LocalDate = LocalDate.now().plusDays(10)
   val dateCalculatorResponse = Json.parse(
     s"""{ "result": "${addWorkingDaysResponse.format(DateTimeFormatter.ISO_DATE)}" }"""
