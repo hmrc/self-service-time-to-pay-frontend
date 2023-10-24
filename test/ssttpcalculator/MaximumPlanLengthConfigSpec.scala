@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ssttpcalculator.legacy
+package ssttpcalculator
 
 import org.scalatest.Assertion
 import play.api.test.FakeRequest
@@ -23,7 +23,7 @@ import testsupport.ConfigSpec
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, SaUtr, SelfAssessmentDetails, Debit => corDebit}
 
-class LegacyMaximumPlanLengthConfigSpec extends ConfigSpec {
+class MaximumPlanLengthConfigSpec extends ConfigSpec {
 
   val testConfigMaxLengths: Seq[Int] = Seq(6, 12, 24)
 

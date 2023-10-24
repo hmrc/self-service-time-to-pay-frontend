@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ssttpcalculator
+package util
 
 object BigDecimalUtil {
 

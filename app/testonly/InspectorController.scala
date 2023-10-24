@@ -25,9 +25,9 @@ import journey.JourneyService
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpcalculator.legacy.CalculatorService
-import ssttpcalculator.legacy.util.SelectedScheduleHelper
+import ssttpcalculator.CalculatorService
 import timetopaytaxpayer.cor.TaxpayerConnector
+import util.SelectedScheduleHelper
 import views.Views
 
 import scala.concurrent.ExecutionContext

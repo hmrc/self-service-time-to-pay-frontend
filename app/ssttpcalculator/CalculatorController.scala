@@ -26,7 +26,6 @@ import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, payTodayForm, selectPlanForm}
 import model.{AddWorkingDaysResult, PaymentPlanOption, PaymentSchedule}
-import ssttpcalculator.legacy.CalculatorService
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 import bankholidays.DateCalculatorService

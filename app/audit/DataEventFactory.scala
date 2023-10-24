@@ -24,7 +24,7 @@ import play.api.libs.json.{JsObject, Json, Writes}
 import play.api.mvc.Request
 import req.RequestSupport._
 import ssttparrangement.SubmissionError
-import ssttpcalculator.legacy.CalculatorService
+import ssttpcalculator.CalculatorService
 import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
 import ssttpcalculator.model.PaymentSchedule
 import timetopaytaxpayer.cor.model.SaUtr

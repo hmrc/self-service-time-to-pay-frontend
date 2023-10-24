@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package audit.legacycalculator
+package audit
 
-import audit.DataEventFactory
 import bars.model.BarsAssessmentType.{No, Yes}
 import bars.model.ValidateBankDetailsResponse
 import config.AppConfig
@@ -30,7 +29,7 @@ import ssttpaffordability.model.IncomeCategory.MonthlyIncome
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import ssttparrangement.ArrangementSubmissionStatus
 import ssttparrangement.ArrangementSubmissionStatus.{PermanentFailure, QueuedForRetry}
-import ssttpcalculator.legacy.CalculatorService
+import ssttpcalculator.CalculatorService
 import testsupport.ItSpec
 import testsupport.testdata.{DirectDebitTd, TdAll, TdRequest}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
@@ -40,7 +39,7 @@ import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDateTime}
 
-class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
+class DataEventFactorySpec extends ItSpec {
 
   private val td = TdAll
   private val tdRequest = TdRequest

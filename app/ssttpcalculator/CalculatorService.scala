@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package ssttpcalculator.legacy
+package ssttpcalculator
 
-import journey.Journey
-import play.api.mvc.Request
-import ssttpcalculator.{DurationService, InterestRateService}
-import ssttpcalculator.legacy.CalculatorService.asTaxLiability
-import ssttpcalculator.legacy.model.TaxPaymentPlan
-import ssttpcalculator.model.TaxLiability.{amortizedLiabilities, latePayments}
-import ssttpcalculator.model.{AddWorkingDaysResult, Debit, Instalment, LatePayment, Payment, PaymentPlanOption, PaymentSchedule, TaxLiability}
-import times.ClockProvider
-import timetopaytaxpayer.cor.model.SelfAssessmentDetails
-import timetopaytaxpayer.cor.model.{Debit => CorDebit}
-import uk.gov.hmrc.selfservicetimetopay.models.PaymentDayOfMonth
 import _root_.model.PaymentScheduleExt
 import config.AppConfig
+import journey.Journey
+import play.api.mvc.Request
+import ssttpcalculator.CalculatorService.asTaxLiability
 import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
+import ssttpcalculator.model.TaxLiability.{amortizedLiabilities, latePayments}
+import ssttpcalculator.model._
+import times.ClockProvider
+import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Debit => CorDebit}
+import uk.gov.hmrc.selfservicetimetopay.models.PaymentDayOfMonth
 
 import java.time.LocalDate.now
 import java.time.temporal.ChronoUnit.DAYS

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package ssttpcalculator.legacy.util
+package util
 
 import journey.Journey
 import play.api.mvc.Request
-import ssttpcalculator.legacy.CalculatorService
+import ssttpcalculator.CalculatorService
 import ssttpcalculator.model.PaymentSchedule
 
 trait SelectedScheduleHelper {

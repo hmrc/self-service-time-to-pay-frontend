@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package ssttpcalculator.legacy
+package ssttpcalculator
 
 import org.scalatest.matchers.should.Matchers
-import ssttpcalculator.legacy.CalculatorService._
-import ssttpcalculator.model.{AddWorkingDaysResult, PaymentSchedule, TaxLiability}
-import ssttpcalculator.legacy.model.TaxPaymentPlan
+import ssttpcalculator.CalculatorService._
+import ssttpcalculator.model.{AddWorkingDaysResult, PaymentSchedule, TaxLiability, TaxPaymentPlan}
 import testsupport.{DateSupport, ItSpec}
 
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDate, LocalDateTime}
 
-class LegacyCalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
+class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
   private def date(month: Int, day: Int): LocalDate = LocalDate.of(_2020, month, day)
   private def may(day: Int): LocalDate = date(may, day)
   private def june(day: Int): LocalDate = date(june, day)

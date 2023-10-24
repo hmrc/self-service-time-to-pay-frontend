@@ -30,13 +30,12 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc._
 import req.RequestSupport
-import ssttpcalculator.legacy.CalculatorService
-import ssttpcalculator.legacy.util.SelectedScheduleHelper
+import ssttpcalculator.CalculatorService
 import ssttpcalculator.model.PaymentSchedule
 import ssttpdirectdebit.DirectDebitForm._
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, BankDetails, TypeOfAccountDetails}
-import util.Logging
+import util.{Logging, SelectedScheduleHelper}
 import views.Views
 
 import javax.inject._

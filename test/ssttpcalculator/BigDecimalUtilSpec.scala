@@ -17,6 +17,7 @@
 package ssttpcalculator
 
 import testsupport.UnitSpec
+import util.BigDecimalUtil
 
 class BigDecimalUtilSpec extends UnitSpec {
 

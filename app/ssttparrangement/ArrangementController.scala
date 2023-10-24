@@ -29,8 +29,7 @@ import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementSubmissionStatus.{PermanentFailure, QueuedForRetry, Success}
-import ssttpcalculator.legacy.CalculatorService
-import ssttpcalculator.legacy.util.SelectedScheduleHelper
+import ssttpcalculator.CalculatorService
 import ssttpcalculator.model.{Instalment, PaymentSchedule}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.{EligibilityService, IaService}
@@ -39,7 +38,7 @@ import timetopaytaxpayer.cor.{TaxpayerConnector, model}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 import uk.gov.hmrc.selfservicetimetopay.models._
-import util.Logging
+import util.{Logging, SelectedScheduleHelper}
 import views.Views
 
 import java.time.format.DateTimeFormatter.ISO_INSTANT
