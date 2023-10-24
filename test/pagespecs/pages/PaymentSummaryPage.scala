@@ -68,7 +68,7 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
         """Payment summary
           |Can you make an upfront payment?
           |Upfront payment
-          |Taken within 10 working days
+          |Taken within 6 working days
           |£123
           |
           |Remaining amount to pay
@@ -80,7 +80,7 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
         """Crynodeb o’r taliadau
           |A allwch wneud taliad ymlaen llaw?
           |Taliad ymlaen llaw
-          |I’w gymryd cyn pen 10 diwrnod gwaith
+          |I’w gymryd cyn pen 6 diwrnod gwaith
           |£123
           |
           |Swm sy’n weddill i’w dalu

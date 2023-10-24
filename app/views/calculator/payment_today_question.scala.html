@@ -56,7 +56,7 @@
     }
 
    <h1 class="govuk-heading-xl">@messages("ssttp.calculator.form.payment_today_question.title")</h1>
-    <p class="govuk-body">@messages("ssttp.calculatorform.payment_today_question.why_pay_today.p1")</p>
+    <p class="govuk-body">@messages("ssttp.calculatorform.payment_today_question.why_pay_today.p1", appConfig.numberOfWorkingDaysToAdd)</p>
     <p class="govuk-body">@messages("ssttp.calculatorform.payment_today_question.why_pay_today.p2")</p>
     @formWithCsrf(
         action = ssttpcalculator.routes.CalculatorController.submitPayTodayQuestion(),

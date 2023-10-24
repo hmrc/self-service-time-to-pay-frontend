@@ -60,7 +60,7 @@
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">
             @messages("ssttp.calculator.form.payment_summary.up-front-payment")<br>
-            <span class="small govuk-!-font-weight-regular govuk-!-margin-top-1">@messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</span>
+            <span class="small govuk-!-font-weight-regular govuk-!-margin-top-1">@messages("ssttp.calculator.form.payment_summary.up-front-payment.hint", appConfig.numberOfWorkingDaysToAdd)</span>
           </dt>
           <dd class="govuk-summary-list__value">
             @currency(initialPayment)
