@@ -23,7 +23,6 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import pagespecs.pages._
-import pagespecs.pages.legacycalculator.{CheckYourPaymentPlanPageForPaymentDay11thOfMonthLegacyCalculator, CheckYourPaymentPlanPageForPaymentDay28thOfMonthLegacyCalculator, HowMuchCanYouPayEachMonthPageLegCalc, ViewsPaymentPlanPageLegacyCalculator}
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
@@ -36,7 +35,7 @@ import uk.gov.hmrc.http.HttpReadsInstances
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDateTime, ZoneId}
 import javax.inject.Singleton
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import play.api.inject.bind
 import uk.gov.hmrc.mongo.MongoComponent
 
@@ -150,18 +149,18 @@ class ItSpec
   lazy val yourMonthlySpendingPage: YourMonthlySpendingPage = wire[YourMonthlySpendingPage]
   lazy val howMuchYouCouldAffordPage: HowMuchYouCouldAffordPage = wire[HowMuchYouCouldAffordPage]
   lazy val weCannotAgreeYourPaymentPlanPage: WeCannotAgreeYourPaymentPlanPage = wire[WeCannotAgreeYourPaymentPlanPage]
-  lazy val howMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPageLegCalc = wire[HowMuchCanYouPayEachMonthPageLegCalc]
+  lazy val howMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage = wire[HowMuchCanYouPayEachMonthPage]
   lazy val selectDatePage: InstalmentSummarySelectDatePage = wire[InstalmentSummarySelectDatePage]
-  lazy val checkYourPaymentPlanPage: CheckYourPaymentPlanPageForPaymentDay28thOfMonthLegacyCalculator =
-    wire[CheckYourPaymentPlanPageForPaymentDay28thOfMonthLegacyCalculator]
-  lazy val checkYourPaymentPlanPageForPayment11thOfMonth: CheckYourPaymentPlanPageForPaymentDay11thOfMonthLegacyCalculator =
-    wire[CheckYourPaymentPlanPageForPaymentDay11thOfMonthLegacyCalculator]
+  lazy val checkYourPaymentPlanPage: CheckYourPaymentPlanPageForPaymentDay28thOfMonth =
+    wire[CheckYourPaymentPlanPageForPaymentDay28thOfMonth]
+  lazy val checkYourPaymentPlanPageForPayment11thOfMonth: CheckYourPaymentPlanPageForPaymentDay11thOfMonth =
+    wire[CheckYourPaymentPlanPageForPaymentDay11thOfMonth]
   lazy val aboutBankAccountPage: AboutBankAccountPage = wire[AboutBankAccountPage]
   lazy val termsAndConditionsPage: TermsAndConditionsPage = wire[TermsAndConditionsPage]
   lazy val directDebitPage: DirectDebitPage = wire[DirectDebitPage]
   lazy val directDebitConfirmationPage: DirectDebitConfirmationPage = wire[DirectDebitConfirmationPage]
   lazy val arrangementSummaryPage: ArrangementSummaryPage = wire[ArrangementSummaryPage]
-  lazy val viewPaymentPlanPage: ViewsPaymentPlanPageLegacyCalculator = wire[ViewsPaymentPlanPageLegacyCalculator]
+  lazy val viewPaymentPlanPage: ViewPaymentPlanPage = wire[ViewPaymentPlanPage]
   lazy val yourMonthlyIncomePage: YourMonthlyIncomePage = wire[YourMonthlyIncomePage]
   lazy val directDebitErrorPage: DirectDebitErrorPage = wire[DirectDebitErrorPage]
 

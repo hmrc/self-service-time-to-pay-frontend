@@ -14,28 +14,31 @@
  * limitations under the License.
  */
 
-package pagespecs.legacycalculator
+package pagespecs
 
 import langswitch.Languages.{English, Welsh}
-import pagespecs.pages.{CheckYourPaymentPlanPage, HowMuchCanYouPayEachMonthPage}
+import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
+import pagespecs.pages.{CheckYourPaymentPlanPage, HowMuchCanYouPayEachMonthPage, ViewPaymentPlanPage}
 import ssttpcalculator.model.PaymentPlanOption
-import testsupport.legacycalculator.LegacyCalculatorPages
+import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs.{DateCalculatorStub, GgStub, TaxpayerStub}
-import testsupport.testdata.TdAll
+import testsupport.stubs._
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
+import testsupport.testdata.{DirectDebitTd, TdAll}
 
-class CheckYourPaymentPlanPageLegacyCalculatorSpec extends LegacyCalculatorPages {
+class ViewPaymentPlanPageSpec extends ItSpec {
 
-  val pageUnderTest: CheckYourPaymentPlanPage = checkYourPaymentPlanPageLegacyCalculator
-  val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPageLegacyCalculator
+  val pageUnderTest: ViewPaymentPlanPage = viewPaymentPlanPage
+  val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPage
+  val inUseCheckYourPaymentPlanPage: CheckYourPaymentPlanPage = checkYourPaymentPlanPage
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     TaxpayerStub.getTaxpayer()
     GgStub.signInPage(port)
-    DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))
-
     getBanksIsSuccessful()
+    DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))
+    DirectDebitStub.postPaymentPlan
+    ArrangementStub.postTtpArrangement
 
     startPage.open()
     startPage.assertInitialPageIsDisplayed()
@@ -72,57 +75,39 @@ class CheckYourPaymentPlanPageLegacyCalculatorSpec extends LegacyCalculatorPages
     inUseHowMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
     inUseHowMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Basic)
     inUseHowMuchCanYouPayEachMonthPage.clickContinue()
+
+    inUseCheckYourPaymentPlanPage.assertInitialPageIsDisplayed()
+    inUseCheckYourPaymentPlanPage.clickContinue()
+
+    aboutBankAccountPage.assertInitialPageIsDisplayed()
+    aboutBankAccountPage.selectTypeOfAccountRadioButton(TypesOfBankAccount.Personal)
+    aboutBankAccountPage.selectIsAccountHolderRadioButton(IsSoleSignatory.Yes)
+    aboutBankAccountPage.clickContinue()
+
+    directDebitPage.assertInitialPageIsDisplayed()
+    directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBanksIsSuccessful()
+    directDebitPage.clickContinue()
+
+    directDebitConfirmationPage.assertInitialPageIsDisplayed()
+    directDebitConfirmationPage.clickContinue()
   }
 
-  "language" in {
+  "language English" in {
     beginJourney()
-
-    pageUnderTest.clickOnWelshLink()
-    pageUnderTest.assertInitialPageIsDisplayed(Welsh)
-
-    pageUnderTest.clickOnEnglishLink()
-
+    termsAndConditionsPage.clickContinue()
+    arrangementSummaryPage.clickLink()
     pageUnderTest.assertInitialPageIsDisplayed(English)
   }
 
-  "change monthly instalments" in {
+  "language Welsh" in {
     beginJourney()
-    pageUnderTest.clickChangeMonthlyAmountLink()
-    inUseHowMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed()
+    termsAndConditionsPage.clickOnWelshLink()
+    termsAndConditionsPage.clickContinue()
+    arrangementSummaryPage.clickLink()
+    pageUnderTest.assertInitialPageIsDisplayed(Welsh)
   }
 
-  "change collection day" in {
-    beginJourney()
-    pageUnderTest.clickChangeCollectionDayLink()
-    selectDatePage.assertInitialPageIsDisplayed
-  }
-
-  "change upfront payment amount" in {
-    beginJourney()
-    pageUnderTest.clickChangeUpfrontPaymentAnswerLink()
-    paymentTodayQuestionPage.assertInitialPageIsDisplayed
-  }
-
-  "change upfront answer" in {
-    beginJourney()
-    pageUnderTest.clickChangeUpfrontPaymentAmountLink()
-    paymentTodayQuestionPage.assertInitialPageIsDisplayed
-  }
-
-  "continue to the next page" in {
-    beginJourney()
-    pageUnderTest.clickContinue()
-    aboutBankAccountPage.assertInitialPageIsDisplayed
-  }
-
-  "shows warning" in {
-    beginJourney()
-    pageUnderTest.assertInitialPageIsDisplayed
-    pageUnderTest.clickChangeMonthlyAmountLink()
-    inUseHowMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Higher)
-    inUseHowMuchCanYouPayEachMonthPage.clickContinue()
-    pageUnderTest.assertWarningIsDisplayed(English)
-    pageUnderTest.clickOnWelshLink()
-    pageUnderTest.assertWarningIsDisplayed(Welsh)
-  }
 }
+

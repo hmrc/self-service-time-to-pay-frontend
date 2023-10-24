@@ -324,12 +324,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val belowMinimumTextEnglish =
           s"""There is a problem
-             |Enter an amount that is at least £500 but no more than £4,914.40
+             |Enter an amount that is at least £612.50 but no more than £2,450
       """.stripMargin
 
         private val belowMinimumTextWelsh =
           s"""Mae problem wedi codi
-             |Nodwch swm sydd o leiaf £500 ond sydd ddim mwy na £4,914.40
+             |Nodwch swm sydd o leiaf £612.50 ond sydd ddim mwy na £2,450
       """.stripMargin
       }
 
@@ -341,12 +341,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val aboveMaximumTextEnglish =
           s"""There is a problem
-             |Enter an amount that is at least £500 but no more than £4,914.40
+             |Enter an amount that is at least £612.50 but no more than £2,450
       """.stripMargin
 
         private val aboveMaximumTextWelsh =
           s"""Mae problem wedi codi
-             |Nodwch swm sydd o leiaf £500 ond sydd ddim mwy na £4,914.40
+             |Nodwch swm sydd o leiaf £612.50 ond sydd ddim mwy na £2,450
       """.stripMargin
       }
 
@@ -375,12 +375,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val nonNumericTextEnglish =
           s"""There is a problem
-             |Enter an amount that is at least £500 but no more than £4,914.40
+             |Enter an amount that is at least £612.50 but no more than £2,450
       """.stripMargin
 
         private val nonNumericTextWelsh =
           s"""Mae problem wedi codi
-             |Nodwch swm sydd o leiaf £500 ond sydd ddim mwy na £4,914.40
+             |Nodwch swm sydd o leiaf £612.50 ond sydd ddim mwy na £2,450
       """.stripMargin
       }
 

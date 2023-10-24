@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package pagespecs.legacycalculator
+package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import pagespecs.pages.HowMuchCanYouPayEachMonthPage
 import ssttpcalculator.model.PaymentPlanOption
-import testsupport.legacycalculator.LegacyCalculatorPages
+import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs.{DateCalculatorStub, GgStub, TaxpayerStub}
-import testsupport.testdata.{DisplayDefaultPlanOptionsTd, TdAll}
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeTooSmallForPlan}
+import testsupport.testdata.{DisplayDefaultPlanOptionsTd, TdAll}
 
-class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends LegacyCalculatorPages {
+class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
 
-  lazy val pageUnderTest: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPageLegacyCalculator
+  lazy val pageUnderTest: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPage
 
   val displayOnePlan: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
     remainingIncomeAfterSpending = 4900,
