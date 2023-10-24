@@ -16,14 +16,10 @@
 
 package ssttpcalculator
 
-import config.AppConfig
 import org.scalatest.Assertion
-import org.scalatest.time.{Seconds, Span}
-import play.api.mvc.Results.Status
 import play.api.test.FakeRequest
-import play.api.test.Helpers.status
-import ssttpcalculator.model.PaymentsCalendar
-import testsupport.{ConfigSpec, RichMatchers}
+import ssttpcalculator.model.AddWorkingDaysResult
+import testsupport.ConfigSpec
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, SaUtr, SelfAssessmentDetails, Debit => corDebit}
 
@@ -31,17 +27,7 @@ class MaximumPlanLengthConfigSpec extends ConfigSpec {
 
   val testConfigMaxLengths: Seq[Int] = Seq(6, 12, 24)
 
-  "PaymentsCalendar" - {
-    "generates regular payment dates whose number is equal to the configurable maximum length of payment plan" - {
-      testConfigMaxLengths.foreach { configuredMaxLength =>
-        s"when maximum length of payment plan is set to $configuredMaxLength months" in {
-          testPaymentsCalendarMaximumLength(configuredMaxLength)
-        }
-      }
-    }
-  }
-
-  "PaymentPlansService.defaultSchedules" - {
+  "CalculatorService.defaultSchedules" - {
     "generates plans up to the configurable maximum length but no more" - {
       testConfigMaxLengths.foreach { configuredMaxLength =>
         s"when maximum length of payment plan is set to $configuredMaxLength months" - {
@@ -56,18 +42,9 @@ class MaximumPlanLengthConfigSpec extends ConfigSpec {
     }
   }
 
-  private def testPaymentsCalendarMaximumLength(configuredMaxLength: Int): Assertion = {
-    val app = appWithConfigKeyValue("paymentDatesConfig.maximumLengthOfPaymentPlan", configuredMaxLength)
-    val config: AppConfig = app.injector.instanceOf[AppConfig]
-
-    val result = PaymentsCalendar.generate(0, date("2000-02-05"))(config)
-
-    result.regularPaymentDates.length shouldEqual configuredMaxLength
-  }
-
   private def testDefaultSchedulesCanGenerateMaximumLength(configuredMaxLength: Int): Assertion = {
-    val app = appWithConfigKeyValue("paymentDatesConfig.maximumLengthOfPaymentPlan", configuredMaxLength)
-    val paymentPlansService: PaymentPlansService = app.injector.instanceOf[PaymentPlansService]
+    val app = appWithConfigKeyValue("calculatorConfig.maximumLengthOfPaymentPlan", configuredMaxLength)
+    val calculatorService: CalculatorService = app.injector.instanceOf[CalculatorService]
     val request = FakeRequest()
     val nowDate = (new ClockProvider).nowDate()(request)
 
@@ -81,7 +58,8 @@ class MaximumPlanLengthConfigSpec extends ConfigSpec {
         welshLanguageIndicator = false,
         audioIndicator         = false,
         largePrintIndicator    = false,
-        brailleIndicator       = false),
+        brailleIndicator       = false
+      ),
       Seq(corDebit("originCode",
         remainingIncomeAfterSpending * configuredMaxLength / 2,
         nowDate.plusMonths(configuredMaxLength + 3), None, nowDate
@@ -89,18 +67,17 @@ class MaximumPlanLengthConfigSpec extends ConfigSpec {
       Seq()
     )
 
-    val result = paymentPlansService.defaultSchedules(
-      sa,
-      initialPayment,
-      preferredPaymentDay,
-      remainingIncomeAfterSpending
-    )(request)
+    val dateFirstPaymentCanBeTaken = AddWorkingDaysResult(nowDate, 5, nowDate.plusDays(10))
+    val allSchedules = calculatorService.allAvailableSchedules(sa, initialPayment, preferredPaymentDay, dateFirstPaymentCanBeTaken)(request)
+    val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(remainingIncomeAfterSpending / 2, allSchedules)
+
+    val result = calculatorService.defaultSchedules(closestSchedule, allSchedules)
     result.toSeq.length shouldBe 3
   }
 
   private def testDefaultSchedulesWillNotExceedMaximumLength(configuredMaxLength: Int): Assertion = {
-    val app = appWithConfigKeyValue("paymentDatesConfig.maximumLengthOfPaymentPlan", configuredMaxLength)
-    val paymentPlansService: PaymentPlansService = app.injector.instanceOf[PaymentPlansService]
+    val app = appWithConfigKeyValue("calculatorConfig.maximumLengthOfPaymentPlan", configuredMaxLength)
+    val calculatorService: CalculatorService = app.injector.instanceOf[CalculatorService]
     val request = FakeRequest()
     val nowDate = (new ClockProvider).nowDate()(request)
 
@@ -125,12 +102,13 @@ class MaximumPlanLengthConfigSpec extends ConfigSpec {
       Seq()
     )
 
-    val result = paymentPlansService.defaultSchedules(
-      sa,
-      initialPayment,
-      preferredPaymentDay,
-      remainingIncomeAfterSpending
-    )(request)
+    val dateFirstPaymentCanBeTaken = AddWorkingDaysResult(nowDate, 5, nowDate.plusDays(10))
+    val allSchedules = calculatorService.allAvailableSchedules(sa, initialPayment, preferredPaymentDay, dateFirstPaymentCanBeTaken)(request)
+
+    val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(remainingIncomeAfterSpending / 2, allSchedules)
+
+    val result = calculatorService.defaultSchedules(closestSchedule, allSchedules)
     result.toSeq.length shouldBe 0
   }
+
 }

@@ -16,7 +16,6 @@
 
 @import model._
 @import partials.currency
-@import ssttpcalculator.CalculatorType
 @import ssttpcalculator.model._
 @import uk.gov.hmrc.govukfrontend.views.Aliases.{ErrorSummary, RadioItem, Radios, Text}
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
@@ -34,7 +33,6 @@
 )
 
 @(
-        calculatorType: CalculatorType,
         redirectCall: Call,
         selectPlanForm: Form[PlanSelection],
         schedules: Map[PaymentPlanOption, PaymentSchedule],
@@ -87,7 +85,7 @@
 
 @enterCustomAmountPanel = {
 <div id="custom-amount-field" class="govuk-form-group @if(customAmountHasErrors){govuk-form-group--error}">
-    <div class="govuk-hint govuk-radios__hint" id="custom-amount-hint">@Html(messages(s"ssttp.calculator.results.option.other.enter.amount.${calculatorType.messagesKeySuffix}", currency(minCustomAmount), currency(maxCustomAmount)))</div>
+    <div class="govuk-hint govuk-radios__hint" id="custom-amount-hint">@Html(messages(s"ssttp.calculator.results.option.other.enter.amount", currency(minCustomAmount), currency(maxCustomAmount)))</div>
     @if(customAmountHasErrors) {
         <span id="custom-amount-error" class="govuk-error-message">
             <span class="govuk-visually-hidden">@messages("ssttp.common.title-prefix")</span>
@@ -130,10 +128,10 @@
         </legend>
 
         <p class="govuk-body">
-            @{previousFormSubmission.fold(Html(messages(s"ssttp.calculator.results.p1.${calculatorType.messagesKeySuffix}")))(_.selection match {
-                case Right(CustomPlanRequest(amount)) => Html(messages(s"ssttp.calculator.results.p1.custom-amount.${calculatorType.messagesKeySuffix}", currency(amount)))
-                case Left(SelectedPlan(amount)) if schedules.headOption.fold(false)(_._1 == PaymentPlanOption.Custom) => Html(messages(s"ssttp.calculator.results.p1.custom-amount.${calculatorType.messagesKeySuffix}", currency(amount)))
-                case _ => Html(messages(s"ssttp.calculator.results.p1.${calculatorType.messagesKeySuffix}"))
+            @{previousFormSubmission.fold(Html(messages(s"ssttp.calculator.results.p1")))(_.selection match {
+                case Right(CustomPlanRequest(amount)) => Html(messages(s"ssttp.calculator.results.p1.custom-amount", currency(amount)))
+                case Left(SelectedPlan(amount)) if schedules.headOption.fold(false)(_._1 == PaymentPlanOption.Custom) => Html(messages(s"ssttp.calculator.results.p1.custom-amount", currency(amount)))
+                case _ => Html(messages(s"ssttp.calculator.results.p1"))
             })}
         </p>
 
@@ -159,7 +157,7 @@
                 id = Some("customAmountOption"),
                 value = Some("customAmountOption"),
                 checked = selectPlanForm("plan-selection").value.contains("customAmountOption"),
-                content = HtmlContent(Messages(s"ssttp.calculator.results.option.other.label.${calculatorType.messagesKeySuffix}")),
+                content = HtmlContent(Messages(s"ssttp.calculator.results.option.other.label")),
                 conditionalHtml = Some(enterCustomAmountPanel)
             )
         ))

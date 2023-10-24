@@ -19,31 +19,18 @@ package pagespecs
 import langswitch.Languages.{English, Welsh}
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
 import pagespecs.pages.{CheckYourPaymentPlanPage, HowMuchCanYouPayEachMonthPage, ViewPaymentPlanPage}
-import ssttpcalculator.CalculatorType.PaymentOptimised
 import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.{DirectDebitTd, TdAll}
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
+import testsupport.testdata.{DirectDebitTd, TdAll}
 
-import java.time.LocalDate
-
-class ViewPaymentPlanPageSpec extends ViewPaymentPlanPageBaseSpec {
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
-  )
+class ViewPaymentPlanPageSpec extends ItSpec {
 
   val pageUnderTest: ViewPaymentPlanPage = viewPaymentPlanPage
   val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPage
   val inUseCheckYourPaymentPlanPage: CheckYourPaymentPlanPage = checkYourPaymentPlanPage
-
-}
-
-trait ViewPaymentPlanPageBaseSpec extends ItSpec {
-  val pageUnderTest: ViewPaymentPlanPage
-  val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage
-  val inUseCheckYourPaymentPlanPage: CheckYourPaymentPlanPage
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     TaxpayerStub.getTaxpayer()
@@ -123,3 +110,4 @@ trait ViewPaymentPlanPageBaseSpec extends ItSpec {
   }
 
 }
+

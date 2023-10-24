@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package ssttpcalculator.model
+package util
 
-import java.time.{LocalDate, Year}
+object BigDecimalUtil {
 
-import play.api.libs.json.{Json, OFormat}
+  def roundDownToNearestTen(value: BigDecimal): BigDecimal = {
+    BigDecimal((value.longValue / 10) * 10)
+  }
 
-case class FixedInterestPeriod(
-    amountAccruingInterest: BigDecimal,
-    dueDate:                LocalDate,
-    endDate:                LocalDate,
-    rate:                   InterestRate
-) {
-
-  def historicDailyRate: BigDecimal = rate.rate / BigDecimal(Year.of(dueDate.getYear).length()) / BigDecimal(100)
+  def roundUpToNearestTen(value: BigDecimal): BigDecimal = {
+    val roundedLong = (value.longValue / 10) * 10
+    if (roundedLong == value) value //when no rounding is needed (value is exact multiplication of 10)
+    else BigDecimal(roundedLong + 10)
+  }
 
 }

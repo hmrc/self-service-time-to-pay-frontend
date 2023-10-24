@@ -69,30 +69,32 @@ class ViewPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exten
           |Payments collected on
           |
           |December 2019
-          |£500
+          |£490
           |January 2020
-          |£500
+          |£490
           |February 2020
-          |£500
+          |£490
           |March 2020
-          |£500
+          |£490
           |April 2020
-          |£500
+          |£490
           |May 2020
-          |£500
+          |£490
           |June 2020
-          |£500
+          |£490
           |July 2020
-          |£500
+          |£490
           |August 2020
-          |£500
+          |£490
           |September 2020
-          |£473.08
+          |£564.30
+          |
           |Estimated total interest
           |Included in your plan
-          |£73.08
+          |£74.30
+          |
           |Total to pay
-          |£4,973.08
+          |£4,974.30
           |
           |Print a copy of your payment plan
         """.stripMargin
@@ -101,29 +103,30 @@ class ViewPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exten
           |Cyfeirnod y taliad	123ABC123
           |Taliadau misol
           |Rhagfyr 2019
-          |£500
+          |£490
           |Ionawr 2020
-          |£500
+          |£490
           |Chwefror 2020
-          |£500
+          |£490
           |Mawrth 2020
-          |£500
+          |£490
           |Ebrill 2020
-          |£500
+          |£490
           |Mai 2020
-          |£500
+          |£490
           |Mehefin 2020
-          |£500
+          |£490
           |Gorffennaf 2020
-          |£500
+          |£490
           |Awst 2020
-          |£500
+          |£490
           |Medi 2020
-          |£473.08
+          |£564.30
           |Amcangyfrif o gyfanswm y llog
-          |£73.08
           |Yn gynwysedig yn eich cynllun
-          |£4,973.08
+          |£74.30
+          |Y cyfanswm i’w dalu
+          |£4,974.30
           |Argraffwch gopi o’ch cynllun talu
         """.stripMargin
     }

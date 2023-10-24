@@ -27,7 +27,7 @@ import play.api.test.Helpers.{redirectLocation, status}
 import ssttpaffordability.model.Expense.HousingExp
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import ssttpaffordability.model.IncomeCategory.MonthlyIncome
-import testsupport.stubs.{AuthStub, DateCalculatorStub}
+import testsupport.stubs.DateCalculatorStub
 import testsupport.testdata.{TdAll, TdRequest}
 import testsupport.{ItSpec, WireMockSupport}
 import uk.gov.hmrc.http.SessionKeys
@@ -69,8 +69,7 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
   implicit val timeout: Timeout = Timeout(5.seconds)
 
   override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> CalculatorType.Legacy.value,
-    "legacyCalculatorConfig.maximumLengthOfPaymentPlan" -> configuredMaxLengthOfPaymentPlan
+    "calculatorConfig.maximumLengthOfPaymentPlan" -> configuredMaxLengthOfPaymentPlan
   )
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()

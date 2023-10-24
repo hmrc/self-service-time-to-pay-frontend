@@ -18,24 +18,20 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
-import ssttpcalculator.CalculatorType.PaymentOptimised
 import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.DirectDebitTd
+import testsupport.testdata.{DirectDebitTd, TdAll}
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
 class DirectDebitErrorPageSpec extends ItSpec {
-
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
-  )
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     TaxpayerStub.getTaxpayer()
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+    DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))
 
     startPage.open()
     startPage.assertInitialPageIsDisplayed()

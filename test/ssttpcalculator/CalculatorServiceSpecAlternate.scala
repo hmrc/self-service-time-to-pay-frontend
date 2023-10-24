@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package ssttpcalculator.legacy
+package ssttpcalculator
 
-import org.scalatest.prop.TableDrivenPropertyChecks._
-import play.api.Logger
-import ssttpcalculator.model.{PaymentSchedule, TaxLiability}
-import ssttpcalculator.legacy.model.TaxPaymentPlan
-import ssttpcalculator.{DurationService, InterestRateService}
-import testsupport.ItSpec
 import _root_.util.Logging
+import org.scalatest.prop.TableDrivenPropertyChecks._
+import ssttpcalculator.model.{PaymentSchedule, TaxLiability, TaxPaymentPlan}
+import testsupport.ItSpec
 
 import java.time.LocalDate
 
-class LegacyCalculatorServiceSpecAlternate extends ItSpec with Logging {
+class CalculatorServiceSpecAlternate extends ItSpec with Logging {
 
   val interestRateService = fakeApplication().injector.instanceOf[InterestRateService]
   val durationService = fakeApplication().injector.instanceOf[DurationService]

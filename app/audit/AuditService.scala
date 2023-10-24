@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import scala.concurrent.ExecutionContext
 import scala.util.control.NonFatal
 import req.RequestSupport._
-import ssttpcalculator.legacy.CalculatorService
+import ssttpcalculator.CalculatorService
 import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, TypeOfAccountDetails}

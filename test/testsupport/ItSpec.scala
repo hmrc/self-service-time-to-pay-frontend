@@ -35,7 +35,7 @@ import uk.gov.hmrc.http.HttpReadsInstances
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDateTime, ZoneId}
 import javax.inject.Singleton
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import play.api.inject.bind
 import uk.gov.hmrc.mongo.MongoComponent
 

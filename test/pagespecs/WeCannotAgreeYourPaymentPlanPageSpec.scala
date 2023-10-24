@@ -17,21 +17,18 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
-import ssttpcalculator.CalculatorType.PaymentOptimised
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
+import testsupport.testdata.TdAll
 
 class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
-
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
-  )
 
   def beginJourney(): Unit = {
     TaxpayerStub.getTaxpayer()
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+    DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))
     startPage.open()
     startPage.assertInitialPageIsDisplayed()
     startPage.clickOnStartNowButton()

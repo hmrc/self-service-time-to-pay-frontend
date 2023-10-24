@@ -18,28 +18,17 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import pagespecs.pages.{CheckYourPaymentPlanPage, HowMuchCanYouPayEachMonthPage}
-import ssttpcalculator.CalculatorType.PaymentOptimised
 import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs._
+import testsupport.stubs.{DateCalculatorStub, GgStub, TaxpayerStub}
 import testsupport.testdata.TdAll
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
-class CheckYourPaymentPlanPageSpec extends CheckYourPaymentPlanPageBaseSpec {
-
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
-  )
+class CheckYourPaymentPlanPageSpec extends ItSpec {
 
   val pageUnderTest: CheckYourPaymentPlanPage = checkYourPaymentPlanPage
   val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPage
-}
-
-trait CheckYourPaymentPlanPageBaseSpec extends ItSpec {
-
-  val pageUnderTest: CheckYourPaymentPlanPage
-  val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     TaxpayerStub.getTaxpayer()
