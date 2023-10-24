@@ -64,7 +64,7 @@ class CalculatorControllerDateCalculatorDisabledSpec extends ItSpec with WireMoc
 
   "The date calculator service should not be called if not enabled" in {
     val today = LocalDate.now()
-    val addWorkingDaysResult = AddWorkingDaysResult(today, 5, today.plusDays(10))
+    val addWorkingDaysResult = AddWorkingDaysResult(today, 6, today.plusDays(10))
 
     val (journey, fakeRequest) = saveJourney(createJourneyWithMaxLengthPlan)
 
