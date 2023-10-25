@@ -80,7 +80,7 @@ class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
         status(res) shouldBe Status.OK
 
         AuditStub.verifyEventAudited(
-          "ManualAffordabilityCheckFailed",
+          "ManualAffordabilityCheck",
           Json.parse(
             s"""
                  |{

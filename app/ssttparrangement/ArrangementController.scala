@@ -130,6 +130,7 @@ class ArrangementController @Inject() (
       )
 
       if (isAccruedInterestValid(schedule, monthlyPaymentAmountChosen)) {
+        auditService.sendManualAffordabilityCheckPassEvent(journey)
         Future.successful(Ok(views.check_payment_plan(schedule, leftOverIncome, monthlyPaymentAmountChosen)))
       } else Future.successful(Redirect(ssttpaffordability.routes.AffordabilityController.getSetUpPlanWithAdviser()))
 

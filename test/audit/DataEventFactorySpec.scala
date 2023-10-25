@@ -70,7 +70,7 @@ class DataEventFactorySpec extends ItSpec {
     "transactionName" -> transName
   )
 
-  private val auditTypePlanNotAvailable = "ManualAffordabilityCheckFailed"
+  private val auditTypePlanNotAvailable = "ManualAffordabilityCheck"
 
   "Splunk audit events" - {
 
@@ -186,7 +186,7 @@ class DataEventFactorySpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _600Amount)))
         )
 
-        val computedDataEvent = DataEventFactory.planNotAvailableEvent(journeyNegativeRemainingIncome)
+        val computedDataEvent = DataEventFactory.manualAffordabilityCheckEvent(journeyNegativeRemainingIncome, failsLeftOverIncomeValidation = true)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -232,7 +232,7 @@ class DataEventFactorySpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount)))
         )
 
-        val computedDataEvent = DataEventFactory.planNotAvailableEvent(journeyZeroRemainingIncome)
+        val computedDataEvent = DataEventFactory.manualAffordabilityCheckEvent(journeyZeroRemainingIncome, failsLeftOverIncomeValidation = true)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -278,7 +278,7 @@ class DataEventFactorySpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount)))
         )
 
-        val computedDataEvent = DataEventFactory.planNotAvailableEvent(journeyNoPlanWithin24Months)
+        val computedDataEvent = DataEventFactory.manualAffordabilityCheckEvent(journeyNoPlanWithin24Months, failsLeftOverIncomeValidation = true)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -324,7 +324,7 @@ class DataEventFactorySpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _50Amount)))
         )
 
-        val computedDataEvent = DataEventFactory.planNotAvailableEvent(testJourney, failsNDDSValidation = true)
+        val computedDataEvent = DataEventFactory.manualAffordabilityCheckEvent(testJourney, failsNDDSValidation = true)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",

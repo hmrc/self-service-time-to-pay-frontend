@@ -18,24 +18,22 @@ package audit
 
 import bars.model.ValidateBankDetailsResponse
 import config.AppConfig
-
-import javax.inject.{Inject, Singleton}
 import journey.Journey
 import play.api.mvc.Request
-import ssttparrangement.SubmissionError
-import ssttpcalculator.model.PaymentSchedule
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-
-import scala.concurrent.ExecutionContext
-import scala.util.control.NonFatal
 import req.RequestSupport._
+import ssttparrangement.SubmissionError
 import ssttpcalculator.CalculatorService
+import ssttpcalculator.model.PaymentSchedule
 import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.play.audit.http.connector.AuditConnector
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, TypeOfAccountDetails}
 import util.Logging
 
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
+import scala.util.control.NonFatal
 import scala.util.{Failure, Success}
 
 @Singleton()
@@ -54,12 +52,17 @@ class AuditService @Inject() (
   }
 
   def sendPlanNotAffordableEvent(journey: Journey)(implicit request: Request[_]): Unit = {
-    val event = DataEventFactory.planNotAvailableEvent(journey)
+    val event = DataEventFactory.manualAffordabilityCheckEvent(journey, failsLeftOverIncomeValidation = true)
     sendEvent(event)
   }
 
   def sendPlanFailsNDDSValidationEvent(journey: Journey)(implicit request: Request[_]): Unit = {
-    val event = DataEventFactory.planNotAvailableEvent(journey, failsNDDSValidation = true)
+    val event = DataEventFactory.manualAffordabilityCheckEvent(journey, failsNDDSValidation = true)
+    sendEvent(event)
+  }
+
+  def sendManualAffordabilityCheckPassEvent(journey: Journey)(implicit request: Request[_]): Unit = {
+    val event = DataEventFactory.manualAffordabilityCheckEvent(journey)
     sendEvent(event)
   }
 
