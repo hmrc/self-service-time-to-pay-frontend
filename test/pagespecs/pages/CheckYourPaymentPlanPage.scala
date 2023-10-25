@@ -96,7 +96,7 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |No
            |Change
            |Upfront payment
-           |Taken within 10 working days
+           |Taken within 6 working days
            |£0
            |Change
            |Monthly payments
@@ -140,7 +140,7 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |Na
            |£0
            |Taliad ymlaen llaw
-           |I’w gymryd cyn pen 10 diwrnod gwaith
+           |I’w gymryd cyn pen 6 diwrnod gwaith
            |£0
            |Newid
            |Taliadau misol

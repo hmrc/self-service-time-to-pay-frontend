@@ -31,7 +31,7 @@ class TermsAndConditionsPageSpec extends ItSpec {
     TaxpayerStub.getTaxpayer()
     GgStub.signInPage(port)
     getBanksIsSuccessful()
-    DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(10))
+    DateCalculatorStub.stubAddWorkingDays(TdAll.localDateTime.toLocalDate.plusDays(6))
 
     startPage.open()
     startPage.assertInitialPageIsDisplayed()

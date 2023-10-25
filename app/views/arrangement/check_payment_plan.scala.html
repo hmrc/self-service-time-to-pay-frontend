@@ -64,7 +64,7 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-width-one-third">
                 @messages("ssttp.arrangement.check-payment-plan.upfront-payment.amount")
-                <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.arrangement.check-payment-plan.upfront-payment.hint")</p>
+                <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.arrangement.check-payment-plan.upfront-payment.hint", appConfig.numberOfWorkingDaysToAdd)</p>
             </dt>
             <dd class="govuk-summary-list__value">
                 @partials.currency(paymentSchedule.initialPayment)

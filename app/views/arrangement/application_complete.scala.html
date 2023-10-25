@@ -57,7 +57,7 @@
             <section class="govuk-body divider--bottom">
                 <p class="govuk-body">@messages("ssttp.arrangement.complete.summary")</p>
                 <p class="govuk-body">
-                @{ if (hasUpfrontPayment) messages("ssttp.arrangement.complete.upfront-payment")
+                @{ if (hasUpfrontPayment) messages("ssttp.arrangement.complete.upfront-payment", appConfig.numberOfWorkingDaysToAdd)
                     else ""
                 }
                     <span>@messages("ssttp.arrangement.complete.next-payment", language.Dates.wholeDate(schedule.initialPaymentScheduleDate))</span>
