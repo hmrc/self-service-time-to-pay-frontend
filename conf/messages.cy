@@ -297,7 +297,7 @@ ssttp.calculator.form.payment_today.update = Diweddaru
 
 ssttp.calculator.form.continue = Yn eich blaen
 
-ssttp.calculator.results.title = ** Select a payment plan CY **
+ssttp.calculator.results.title = Dewiswch gynllun talu
 ssttp.calculator.results.question = Faint y gallwch ei dalu bob mis?
 ssttp.calculator.results.p1.paymentoptimised = Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
 ssttp.calculator.results.p1.legacy = Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn <strong>fwy</strong> oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
@@ -305,11 +305,11 @@ ssttp.calculator.results.p3 = Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg 
 ssttp.calculator.results.amount.option =  <strong>{0} y mis</strong>, am {1} mis
 ssttp.calculator.results.amount.option.interest-hint = Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef  {0}
 ssttp.calculator.results.option.other.label.paymentoptimised = Swm misol gwahanol
-ssttp.calculator.results.option.other.label.legacy = Talu mwy bob mis
+ssttp.calculator.results.option.other.label.legacy = <strong>Talu mwy bob mis</strong>
 ssttp.calculator.results.option.other.enter.amount.paymentoptimised = Rhowch swm sydd o leiaf {0} ond heb fod yn fwy na {1}
 ssttp.calculator.results.option.other.enter.amount.legacy = Nodwch swm sydd rhwng {0} a {1} i’w dalu dros lai o fisoedd. Byddwn yn awgrymu cynllun sydd agosaf at y swm y byddwch yn ei nodi.
 ssttp.calculator.results.or = neu
-ssttp.calculator.results.section.cannot-afford.title = Nid wyf yn gallu fforddio’r taliadau hyn
+ssttp.calculator.results.section.cannot-afford.title = <strong>Nid wyf yn gallu fforddio’r taliadau hyn</strong>
 ssttp.calculator.results.section.cannot-afford.p.1 = Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch ni ar
 ssttp.calculator.results.section.cannot-afford.p.2 = 0300 200 1900
 ssttp.calculator.results.section.cannot-afford.p.3 =  i drafod eich dyled.

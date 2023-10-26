@@ -157,22 +157,24 @@
             items =  Seq(scheduleOptionsSequence.headOption.getOrElse(throw new IllegalArgumentException("Could not find any valid schedule options")),
             RadioItem(
                 divider = Some(Messages("ssttp.calculator.results.or"))
-            ))   ++ scheduleOptionsSequence.drop(1) :+ RadioItem(
+            )
+            )   ++ scheduleOptionsSequence.drop(1) :+ RadioItem(
                 id = Some("customAmountOption"),
                 value = Some("customAmountOption"),
                 checked = selectPlanForm("plan-selection").value.contains("customAmountOption"),
                 content = HtmlContent(Messages(s"ssttp.calculator.results.option.other.label.${calculatorType.messagesKeySuffix}")),
                 conditionalHtml = Some(enterCustomAmountPanel)
+            )  :+ RadioItem(
+                id = Some("cannotAfford"),
+                value = Some("cannotAfford"),
+                checked = selectPlanForm("plan-selection").value.contains("customAmountOption"),
+                content = HtmlContent(Messages(s"ssttp.calculator.results.section.cannot-afford.title"))
             )
+
         ))
     </fieldset>
 
-    <details class="govuk-details">
-      <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.calculator.results.section.cannot-afford.title")</span></summary>
-      <div class="govuk-details__text">
-        <p>@Messages("ssttp.calculator.results.section.cannot-afford.p.1") <strong class="bold">@Messages("ssttp.calculator.results.section.cannot-afford.p.2")</strong> @Messages("ssttp.calculator.results.section.cannot-afford.p.3")</p>
-      </div>
-    </details>
+
 
     @continue(messages("ssttp.calculator.form.continue"))
 }
