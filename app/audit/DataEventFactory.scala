@@ -70,13 +70,17 @@ object DataEventFactory {
 
   }
 
-  def planNotAvailableEvent(
-      journey:             Journey,
-      failsNDDSValidation: Boolean = false
+  def manualAffordabilityCheckEvent(
+      journey:                       Journey,
+      failsNDDSValidation:           Boolean = false,
+      failsLeftOverIncomeValidation: Boolean = false
   )(implicit request: Request[_]): ExtendedDataEvent = {
-    val status = if (failsNDDSValidation) nDDSValidationCheckFailMessage else {
-      notAffordableStatus(journey.remainingIncomeAfterSpending)
-    }
+    val status =
+      if (failsNDDSValidation) {
+        nDDSValidationCheckFailMessage
+      } else if (failsLeftOverIncomeValidation) {
+        notAffordableStatus(journey.remainingIncomeAfterSpending)
+      } else "Pass"
 
     val detail = Json.obj(
       "totalDebt" -> formatToCurrencyStringWithTrailingZeros(journey.debits.map(_.amount).sum),
@@ -89,7 +93,7 @@ object DataEventFactory {
 
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
-      auditType   = "ManualAffordabilityCheckFailed",
+      auditType   = "ManualAffordabilityCheck",
       tags        = hcTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
       detail      = detail
     )
