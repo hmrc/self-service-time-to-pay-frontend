@@ -70,7 +70,7 @@ class DataEventFactorySpec extends ItSpec {
     "transactionName" -> transName
   )
 
-  private val auditTypePlanNotAvailable = "ManualAffordabilityCheck"
+  private val auditTypeManualAffordability = "ManualAffordabilityCheck"
 
   "Splunk audit events" - {
 
@@ -180,6 +180,50 @@ class DataEventFactorySpec extends ItSpec {
       val _600Amount = 600
       val _50Amount = 50
 
+      "successful manual affordability check" in {
+        val journeySufficientRemainingIncome = journey.copy(
+          maybeIncome   = Some(Income(IncomeBudgetLine(MonthlyIncome, _600Amount))),
+          maybeSpending = Some(Spending(Expenses(HousingExp, _50Amount)))
+        )
+
+        val computedDataEvent = DataEventFactory.manualAffordabilityCheckEvent(journeySufficientRemainingIncome)
+
+        val expectedDataEvent = ExtendedDataEvent(
+          auditSource = "pay-what-you-owe",
+          auditType   = auditTypeManualAffordability,
+          eventId     = "event-id",
+          tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
+          detail      = Json.parse(
+            s"""
+            {
+              "totalDebt":"4900.00",
+              "halfDisposableIncome":"275.00",
+                "income":{"monthlyIncomeAfterTax":"600.00",
+                  "benefits":"0.00",
+                  "otherMonthlyIncome":"0.00",
+                  "totalIncome":"600.00"},
+              "outgoings":{
+                "housing":"50.00",
+                "pensionContributions":"0.00",
+                "councilTax":"0.00","utilities":"0.00",
+                "debtRepayments":"0.00",
+                "travel":"0.00",
+                "childcareCosts":"0.00",
+                "insurance":"0.00",
+                "groceries":"0.00",
+                "health":"0.00",
+                "totalOutgoings":"50.00"
+              },
+              "status":"Pass",
+              "utr":"6573196998"
+            }
+            """)
+        )
+
+        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
+          expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
+      }
+
       "negative disposable income case" in {
         val journeyNegativeRemainingIncome = journey.copy(
           maybeIncome   = Some(Income(IncomeBudgetLine(MonthlyIncome, _500Amount))),
@@ -190,7 +234,7 @@ class DataEventFactorySpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = auditTypePlanNotAvailable,
+          auditType   = auditTypeManualAffordability,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
@@ -236,7 +280,7 @@ class DataEventFactorySpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = auditTypePlanNotAvailable,
+          auditType   = auditTypeManualAffordability,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
@@ -282,7 +326,7 @@ class DataEventFactorySpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = auditTypePlanNotAvailable,
+          auditType   = auditTypeManualAffordability,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
@@ -328,7 +372,7 @@ class DataEventFactorySpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = auditTypePlanNotAvailable,
+          auditType   = auditTypeManualAffordability,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(

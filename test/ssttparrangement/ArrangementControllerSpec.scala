@@ -30,9 +30,9 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, status}
-import testsupport.{FakeAuthConnector, WireMockSupport}
-import testsupport.stubs.{ArrangementStub, AuditStub, AuthStub, DirectDebitStub, TaxpayerStub}
+import testsupport.stubs.{ArrangementStub, AuditStub, DirectDebitStub, TaxpayerStub}
 import testsupport.testdata.{TdRequest, TestJourney}
+import testsupport.{FakeAuthConnector, WireMockSupport}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitInstruction}
@@ -73,7 +73,7 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
     .configure(configMap)
     .build()
 
-  class Context(journeyOverride: Option[JourneyId => Journey] = None) {
+  class Context(journeyOverride: Option[JourneyId => Journey] = None, frozenDateTime: String = "2023-09-27T09:00:00.000") {
     AuditStub.audit()
 
     val journeyId = JourneyId("62ce7631b7602426d74f83b0")
@@ -84,7 +84,7 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
         .withSession(
           SessionKeys.sessionId -> sessionId,
           "ssttp.journeyId" -> journeyId.toHexString,
-          "ssttp.frozenDateTime" -> "2023-09-27T09:00:00.000"
+          "ssttp.frozenDateTime" -> frozenDateTime
         )
 
     val journey = journeyOverride.map(_(journeyId)).getOrElse(TestJourney.createJourney(journeyId))
@@ -188,6 +188,43 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
               |  }
               |}
               |""".stripMargin
+        ).as[JsObject]
+      )
+    }
+
+    ".getCheckPaymentPlan returns a 200 and audits a successful Manual Affordability event, when leftover income passes check" in new Context(
+      frozenDateTime = "2020-05-02T09:00:00.000"
+    ) {
+      val res = controller.getCheckPaymentPlan()(fakeRequest)
+      status(res) mustBe Status.OK
+      AuditStub.verifyEventAudited(
+        "ManualAffordabilityCheck",
+        Json.parse(
+          """
+            |{
+            | "income" : {
+            |   "monthlyIncomeAfterTax" : "2000.00",
+            |   "benefits" : "0.00",
+            |   "otherMonthlyIncome" : "0.00",
+            |   "totalIncome" : "2000.00"
+            |   },
+            | "outgoings" : {
+            |   "housing" : "500.00",
+            |   "pensionContributions" : "0.00",
+            |   "councilTax" : "0.00",
+            |   "utilities" : "0.00",
+            |   "debtRepayments" : "0.00",
+            |   "travel" : "0.00",
+            |   "childcareCosts" : "0.00",
+            |   "insurance" : "0.00",
+            |   "groceries" : "0.00",
+            |   "health" : "0.00",
+            |   "totalOutgoings" : "500.00"
+            |   },
+            | "status" : "Pass",
+            | "utr" : "6573196998"
+            |}
+            |""".stripMargin
         ).as[JsObject]
       )
     }
