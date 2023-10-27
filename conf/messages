@@ -305,7 +305,7 @@ ssttp.calculator.results.section.cannot-afford.p.1 = You may still be able to se
 ssttp.calculator.results.section.cannot-afford.p.2 = 0300 123 1813
 ssttp.calculator.results.section.cannot-afford.p.3 =  to discuss your debt.
 ssttp.calculator.results.p1.custom-amount = Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
-ssttp.calculator.results.option.other.error.invalid.amount = Enter an amount that is at least £{0} but no more than £{1}
+ssttp.calculator.results.option.other.error.invalid.amount = Enter a monthly payment amount
 ssttp.calculator.results.option.other.error.decimal-places = Amount must not contain more than 2 decimal places
 ssttp.calculator.results.option.error.no-selection = Select how much you can pay each month
 
