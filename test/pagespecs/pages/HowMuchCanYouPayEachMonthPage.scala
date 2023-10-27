@@ -358,12 +358,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val noInputTextEnglish =
           s"""There is a problem
-             |Enter an amount
+             |Enter a monthly payment amount
       """.stripMargin
 
         private val noInputTextWelsh =
           s"""Mae problem wedi codi
-             |Nodwch swm
+             |Nodwch swm i’w dalu bob mis
       """.stripMargin
       }
 
