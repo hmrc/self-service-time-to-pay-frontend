@@ -312,7 +312,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val noOptionSelectedTextWelsh =
           s"""Mae problem wedi codi
-             |Dewiswch opsiwn
+             |Dewiswch faint y gallwch ei dalu bob mis
       """.stripMargin
       }
 
@@ -324,12 +324,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val belowMinimumTextEnglish =
           s"""There is a problem
-             |Enter an amount that is at least £612.50 but no more than £2,450
+             |Enter a monthly payment amount
       """.stripMargin
 
         private val belowMinimumTextWelsh =
           s"""Mae problem wedi codi
-             |Nodwch swm sydd o leiaf £612.50 ond sydd ddim mwy na £2,450
+             |Nodwch swm i’w dalu bob mis
       """.stripMargin
       }
 
@@ -341,12 +341,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val aboveMaximumTextEnglish =
           s"""There is a problem
-             |Enter an amount that is at least £612.50 but no more than £2,450
+             |Enter a monthly payment amount
       """.stripMargin
 
         private val aboveMaximumTextWelsh =
           s"""Mae problem wedi codi
-             |Nodwch swm sydd o leiaf £612.50 ond sydd ddim mwy na £2,450
+             |Nodwch swm i’w dalu bob mis
       """.stripMargin
       }
 
@@ -358,12 +358,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val noInputTextEnglish =
           s"""There is a problem
-             |Enter an amount
+             |Enter a monthly payment amount
       """.stripMargin
 
         private val noInputTextWelsh =
           s"""Mae problem wedi codi
-             |Nodwch swm
+             |Nodwch swm i’w dalu bob mis
       """.stripMargin
       }
 
@@ -375,12 +375,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val nonNumericTextEnglish =
           s"""There is a problem
-             |Enter an amount that is at least £612.50 but no more than £2,450
+             |Enter a monthly payment amount
       """.stripMargin
 
         private val nonNumericTextWelsh =
           s"""Mae problem wedi codi
-             |Nodwch swm sydd o leiaf £612.50 ond sydd ddim mwy na £2,450
+             |Nodwch swm i’w dalu bob mis
       """.stripMargin
       }
 

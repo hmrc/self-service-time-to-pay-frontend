@@ -125,9 +125,7 @@ object CalculatorForm {
         i.nonEmpty && i.matches(CurrencyUtil.regex) && isWithinRange(i, minCustomAmount, maxCustomAmount)
       }) Valid else {
         Invalid(Seq(ValidationError(
-          "ssttp.calculator.results.option.other.error.invalid.amount",
-          "%,1.2f".format(minCustomAmount).stripSuffix(".00"),
-          "%,1.2f".format(maxCustomAmount).stripSuffix(".00")
+          "ssttp.calculator.results.option.other.error.invalid.amount"
         )))
       }))
       .verifying("ssttp.calculator.results.option.other.error.decimal-places", { i =>
