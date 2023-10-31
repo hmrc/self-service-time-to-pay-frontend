@@ -16,6 +16,8 @@
 
 package tasks
 
+import org.mongodb.scala.MongoNamespace
+import org.mongodb.scala.model.RenameCollectionOptions
 import play.api.Logging
 import play.api.inject._
 import uk.gov.hmrc.mongo.MongoComponent
@@ -30,9 +32,9 @@ class CleanupTask @Inject() (mongoComponent: MongoComponent)(implicit ec: Execut
   logger.info("**************** Start cleanup tasks...")
 
   mongoComponent.client
-    .getDatabase("self-service-time-to-pay-frontend") // update
-    .getCollection("journey") // update
-    .drop()
+    .getDatabase("self-service-time-to-pay-frontend")
+    .getCollection("journey-new-mongo")
+    .renameCollection(new MongoNamespace("self-service-time-to-pay-frontend.journey"), new RenameCollectionOptions().dropTarget(true))
     .toFuture()
     .map { _ => logger.info("**************** cleanup done.") }
 }
