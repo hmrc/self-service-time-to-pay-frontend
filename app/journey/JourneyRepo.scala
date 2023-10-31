@@ -40,7 +40,7 @@ final class JourneyRepo @Inject() (
     mongoComponent: MongoComponent,
     config:         ServicesConfig)(implicit ec: ExecutionContext, cryptoFormat: OperationalCryptoFormat)
   extends Repo[JourneyId, EncryptedJourney](
-    collectionName = "journey-new-mongo",
+    collectionName = "journey",
     mongoComponent = mongoComponent,
     indexes        = JourneyRepo.indexes(config.getDuration("journey.ttl").toSeconds),
     replaceIndexes = true

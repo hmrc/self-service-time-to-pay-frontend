@@ -20,6 +20,7 @@ import crypto.CryptoFormat
 import crypto.model.{Encryptable, Encrypted}
 import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
+import journey.Journey.{localDateTimeReads, localDateTimeWrites}
 import journey.Statuses.{ApplicationComplete, InProgress}
 import journey.encryptedtaxpayermodel.{EncryptedAddress, EncryptedTaxpayer}
 import play.api.libs.json.{Format, Json, OFormat, Reads, Writes, __}
@@ -278,5 +279,6 @@ final case class EncryptedJourney(
 }
 
 object EncryptedJourney {
+  implicit val localDateTimeFormat: Format[LocalDateTime] = Format(localDateTimeReads, localDateTimeWrites)
   implicit def format(implicit cryptoFormat: CryptoFormat): OFormat[EncryptedJourney] = Json.format[EncryptedJourney]
 }
