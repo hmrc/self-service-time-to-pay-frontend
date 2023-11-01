@@ -35,5 +35,6 @@ class CleanupTask @Inject() (mongoComponent: MongoComponent)(implicit ec: Execut
     .getDatabase("self-service-time-to-pay-frontend")
     .getCollection("journey-new-mongo")
     .renameCollection(new MongoNamespace("self-service-time-to-pay-frontend.journey"), new RenameCollectionOptions().dropTarget(true))
+    .toFuture()
     .map { _ => logger.info("**************** cleanup and rename done.") }
 }
