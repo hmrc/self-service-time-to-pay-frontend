@@ -28,8 +28,7 @@
   main: views.html.main,
   errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
   radios: uk.gov.hmrc.govukfrontend.views.html.components.GovukRadios,
-  viewsHelpers: views.ViewsHelpers,
-  continue: views.html.helpers.forms.ssttpContinue
+  viewsHelpers: views.ViewsHelpers
 )
 
 @(
@@ -127,13 +126,7 @@
             <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.results.title")</h1>
         </legend>
 
-        <p class="govuk-body">
-            @{previousFormSubmission.fold(Html(messages(s"ssttp.calculator.results.p1")))(_.selection match {
-                case Right(CustomPlanRequest(amount)) => Html(messages(s"ssttp.calculator.results.p1.custom-amount", currency(amount)))
-                case Left(SelectedPlan(amount)) if schedules.headOption.fold(false)(_._1 == PaymentPlanOption.Custom) => Html(messages(s"ssttp.calculator.results.p1.custom-amount", currency(amount)))
-                case _ => Html(messages(s"ssttp.calculator.results.p1"))
-            })}
-        </p>
+        <p class="govuk-body">@Html(messages(s"ssttp.calculator.results.p1"))</p>
 
         <details class="govuk-details">
             <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@messages("ssttp.calculator.how-we-calculate-interest.detail.title")</span></summary>
@@ -145,6 +138,8 @@
         </details>
 
         <p class="govuk-body">@messages("ssttp.calculator.results.p3")</p>
+
+        <h2 class="govuk-heading-m">@messages("ssttp.calculator.results.h1")</h2>
 
         @radios(Radios(
             name = "plan-selection",
@@ -159,19 +154,17 @@
                 checked = selectPlanForm("plan-selection").value.contains("customAmountOption"),
                 content = HtmlContent(Messages(s"ssttp.calculator.results.option.other.label")),
                 conditionalHtml = Some(enterCustomAmountPanel)
+            ) :+ RadioItem(
+                id = Some("cannotAfford"),
+                value = Some("cannotAfford"),
+                checked = selectPlanForm("plan-selection").value.contains("cannotAfford"),
+                content = HtmlContent(Messages(s"ssttp.calculator.results.section.cannot-afford.title"))
             )
         ))
+
     </fieldset>
 
-    <details class="govuk-details">
-      <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.calculator.results.section.cannot-afford.title")</span></summary>
-      <div class="govuk-details__text">
-        <p>@Messages("ssttp.calculator.results.section.cannot-afford.p.1") <strong class="bold">@Messages("ssttp.calculator.results.section.cannot-afford.p.2")</strong> @Messages("ssttp.calculator.results.section.cannot-afford.p.3")</p>
-      </div>
-    </details>
-
-    @continue(messages("ssttp.calculator.form.continue"))
-}
-
 </section>
-}
+
+        }
+    }

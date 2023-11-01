@@ -292,7 +292,8 @@ ssttp.calculator.form.payment_today.update = Update
 
 ssttp.calculator.form.continue = Continue
 
-ssttp.calculator.results.title = How much can you pay each month?
+ssttp.calculator.results.title = Select a payment plan
+ssttp.calculator.results.h1 = How much can you pay each month?
 ssttp.calculator.results.p1 = Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be <strong>more</strong> as it will include interest and any remaining tax you owe.
 ssttp.calculator.results.p3 = If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
 ssttp.calculator.results.amount.option =  <strong>{0} per month</strong> over {1} months
@@ -300,11 +301,8 @@ ssttp.calculator.results.amount.option.interest-hint = Includes total interest e
 ssttp.calculator.results.option.other.label = <strong>Pay more per month</strong>
 ssttp.calculator.results.option.other.enter.amount = Enter an amount between {0} and {1} to pay over fewer months. We will suggest a plan that is closest to the amount you enter.
 ssttp.calculator.results.or = or
-ssttp.calculator.results.section.cannot-afford.title = I cannot afford to make these payments
-ssttp.calculator.results.section.cannot-afford.p.1 = You may still be able to set up a payment plan over the phone. Call us on
-ssttp.calculator.results.section.cannot-afford.p.2 = 0300 123 1813
-ssttp.calculator.results.section.cannot-afford.p.3 =  to discuss your debt.
-ssttp.calculator.results.p1.custom-amount = Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
+ssttp.calculator.results.section.cannot-afford.title = <strong>I cannot afford these payments</strong>
+
 ssttp.calculator.results.option.other.error.invalid.amount = Enter a monthly payment amount
 ssttp.calculator.results.option.other.error.decimal-places = Amount must not contain more than 2 decimal places
 ssttp.calculator.results.option.error.no-selection = Select how much you can pay each month

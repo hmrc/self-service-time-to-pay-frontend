@@ -212,4 +212,12 @@ class AffordabilityController @Inject() (
       Ok(views.set_up_a_payment_plan_with_an_adviser(isWelsh))
     }
   }
+
+  def getCannotAffordPlan: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    journeyService.authorizedForSsttp { implicit journey: Journey =>
+      journeyLogger.info("Get 'We cannot agree your payment plan'")
+
+      Ok(views.call_us_about_a_payment_plan(isSignedIn, isWelsh))
+    }
+  }
 }

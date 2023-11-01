@@ -297,7 +297,8 @@ ssttp.calculator.form.payment_today.update = Diweddaru
 
 ssttp.calculator.form.continue = Yn eich blaen
 
-ssttp.calculator.results.title = Faint y gallwch ei dalu bob mis?
+ssttp.calculator.results.title = Dewiswch gynllun talu
+ssttp.calculator.results.h1 = Faint y gallwch ei dalu bob mis?
 ssttp.calculator.results.p1 = Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn <strong>fwy</strong> oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
 ssttp.calculator.results.p3 = Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
 ssttp.calculator.results.amount.option =  <strong>{0} y mis</strong>, am {1} mis
@@ -305,11 +306,8 @@ ssttp.calculator.results.amount.option.interest-hint = Mae hyn yn cynnwys cyfans
 ssttp.calculator.results.option.other.label = <strong>Talu mwy bob mis</strong>
 ssttp.calculator.results.option.other.enter.amount = Nodwch swm sydd rhwng {0} a {1} i’w dalu dros lai o fisoedd. Byddwn yn awgrymu cynllun sydd agosaf at y swm y byddwch yn ei nodi.
 ssttp.calculator.results.or = neu
-ssttp.calculator.results.section.cannot-afford.title = Nid wyf yn gallu fforddio’r taliadau hyn
-ssttp.calculator.results.section.cannot-afford.p.1 = Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch ni ar
-ssttp.calculator.results.section.cannot-afford.p.2 = 0300 200 1900
-ssttp.calculator.results.section.cannot-afford.p.3 =  i drafod eich dyled.
-ssttp.calculator.results.p1.custom-amount = Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn fwy oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
+ssttp.calculator.results.section.cannot-afford.title = <strong>Nid wyf yn gallu fforddio’r taliadau hyn</strong>
+
 ssttp.calculator.results.option.other.error.invalid.amount = Nodwch swm i’w dalu bob mis
 ssttp.calculator.results.option.other.error.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
 ssttp.calculator.results.option.error.no-selection = Dewiswch faint y gallwch ei dalu bob mis
