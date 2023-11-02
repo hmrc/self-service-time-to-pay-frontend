@@ -21,6 +21,8 @@ import play.api.libs.json.{Format, Json, Reads, Writes, __}
 
 import scala.math.BigDecimal.RoundingMode.{CEILING, HALF_UP}
 
+final case class RadioButtonSelection(selection: Either[CannotAfford, PlanSelection])
+
 final case class PlanSelection(selection: Either[SelectedPlan, CustomPlanRequest]) {
   def mongoSafe: PlanSelection = {
     val safeDecimal128Precision = 10
@@ -61,3 +63,5 @@ final case class CustomPlanRequest(customAmount: BigDecimal)
 object CustomPlanRequest {
   implicit val format: Format[CustomPlanRequest] = Json.format[CustomPlanRequest]
 }
+
+final case class CannotAfford()

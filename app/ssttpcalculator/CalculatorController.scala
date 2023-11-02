@@ -234,7 +234,7 @@ class CalculatorController @Inject() (
       allPlanOptions:     Map[PaymentPlanOption, PaymentSchedule],
       maybePlanSelection: Option[PlanSelection]
   )(implicit request: Request[_]): Result = {
-    Ok(views.how_much_can_you_pay_each_month_form(
+    Ok(views.select_a_payment_plan_form(
       routes.CalculatorController.submitCalculateInstalments(),
       selectPlanForm(minCustomAmount, maxCustomAmount),
       allPlanOptions,
@@ -249,12 +249,12 @@ class CalculatorController @Inject() (
       planOptions:     Map[PaymentPlanOption, PaymentSchedule],
       minCustomAmount: BigDecimal,
       maxCustomAmount: BigDecimal
-  )(implicit request: Request[_]): Form[PlanSelection] => Future[Result] = {
+  )(implicit request: Request[_]): Form[RadioButtonSelection] => Future[Result] = {
     formWithErrors =>
       {
         Future.successful(
           BadRequest(
-            views.how_much_can_you_pay_each_month_form(
+            views.select_a_payment_plan_form(
               ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
               formWithErrors,
               planOptions,
@@ -265,13 +265,21 @@ class CalculatorController @Inject() (
       }
   }
 
-  private def validPlanSelectionFormRedirect(journey: Journey)(implicit request: Request[_]): PlanSelection => Future[Result] = {
-    (validFormData: PlanSelection) =>
-      {
-        journeyService.saveJourney(journey.copy(maybePlanSelection = Some(validFormData.mongoSafe))).map { _ =>
-          validFormData.selection match {
-            case Right(CustomPlanRequest(_)) => Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
-            case Left(SelectedPlan(_))       => Redirect(ssttparrangement.routes.ArrangementController.getCheckPaymentPlan())
+  private def validPlanSelectionFormRedirect(journey: Journey)(implicit request: Request[_]): RadioButtonSelection => Future[Result] = {
+    (validFormData: RadioButtonSelection) =>
+      validFormData.selection match {
+        case Left(_) =>
+          Redirect(ssttpaffordability.routes.AffordabilityController.getCannotAffordPlan())
+        case Right(planSelection) => planSelection.selection match {
+          case Right(CustomPlanRequest(_)) => {
+            journeyService.saveJourney(journey.copy(maybePlanSelection = Some(planSelection.mongoSafe))).map { _ =>
+              Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
+            }
+          }
+          case Left(SelectedPlan(_)) => {
+            journeyService.saveJourney(journey.copy(maybePlanSelection = Some(planSelection.mongoSafe))).map { _ =>
+              Redirect(ssttparrangement.routes.ArrangementController.getCheckPaymentPlan())
+            }
           }
         }
       }

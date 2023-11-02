@@ -23,17 +23,20 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
 @import uk.gov.hmrc.selfservicetimetopay.models.{CustomPlanRequest, PlanSelection, SelectedPlan}
+@import uk.gov.hmrc.selfservicetimetopay.models.RadioButtonSelection
+@import uk.gov.hmrc.selfservicetimetopay.models.CannotAfford
 
 @this(
   main: views.html.main,
   errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
   radios: uk.gov.hmrc.govukfrontend.views.html.components.GovukRadios,
-  viewsHelpers: views.ViewsHelpers
+  viewsHelpers: views.ViewsHelpers,
+  continue: views.html.helpers.forms.ssttpContinue
 )
 
 @(
         redirectCall: Call,
-        selectPlanForm: Form[PlanSelection],
+        selectPlanForm: Form[RadioButtonSelection],
         schedules: Map[PaymentPlanOption, PaymentSchedule],
         minCustomAmount: BigDecimal,
         maxCustomAmount: BigDecimal,
@@ -120,7 +123,7 @@
 
 
 
-@viewsHelpers.form(redirectCall, Symbol("id") -> "paymentTodayForm") {
+@viewsHelpers.form(redirectCall) {
     <fieldset class="govuk-fieldset">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
             <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.results.title")</h1>
@@ -163,7 +166,7 @@
         ))
 
     </fieldset>
-
+    @continue(messages("ssttp.calculator.form.continue"))
 </section>
 
         }
