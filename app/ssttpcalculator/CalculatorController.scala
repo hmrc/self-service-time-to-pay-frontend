@@ -249,7 +249,7 @@ class CalculatorController @Inject() (
       planOptions:     Map[PaymentPlanOption, PaymentSchedule],
       minCustomAmount: BigDecimal,
       maxCustomAmount: BigDecimal
-  )(implicit request: Request[_]): Form[PlanSectionRadioButtonChoice] => Future[Result] = {
+  )(implicit request: Request[_]): Form[PlanSelectionRdBttnChoice] => Future[Result] = {
     formWithErrors =>
       {
         Future.successful(
@@ -265,8 +265,8 @@ class CalculatorController @Inject() (
       }
   }
 
-  private def validPlanSelectionFormRedirect(journey: Journey)(implicit request: Request[_]): PlanSectionRadioButtonChoice => Future[Result] = {
-    (validFormData: PlanSectionRadioButtonChoice) =>
+  private def validPlanSelectionFormRedirect(journey: Journey)(implicit request: Request[_]): PlanSelectionRdBttnChoice => Future[Result] = {
+    (validFormData: PlanSelectionRdBttnChoice) =>
       validFormData.selection match {
         case Left(_) =>
           Redirect(ssttpaffordability.routes.AffordabilityController.getCannotAffordPlan())

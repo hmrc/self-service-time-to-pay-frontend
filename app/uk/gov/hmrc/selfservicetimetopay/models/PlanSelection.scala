@@ -17,11 +17,11 @@
 package uk.gov.hmrc.selfservicetimetopay.models
 
 import play.api.libs.functional.syntax.toAlternativeOps
-import play.api.libs.json.{Format, Json, Reads, Writes, __}
+import play.api.libs.json._
 
-import scala.math.BigDecimal.RoundingMode.{CEILING, HALF_UP}
+import scala.math.BigDecimal.RoundingMode.CEILING
 
-final case class PlanSectionRadioButtonChoice(selection: Either[CannotAfford, PlanSelection])
+final case class PlanSelectionRdBttnChoice(selection: Either[CannotAfford, PlanSelection])
 
 final case class PlanSelection(selection: Either[SelectedPlan, CustomPlanRequest]) {
   def mongoSafe: PlanSelection = {

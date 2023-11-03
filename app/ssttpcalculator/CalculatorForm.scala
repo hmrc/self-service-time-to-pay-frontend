@@ -76,14 +76,14 @@ object CalculatorForm {
 
   val customAmountInputMapping: Mapping[String] = text
 
-  def apply(maxCustomAmount: BigDecimal)(radioSelection: String, customAmountInput: Option[String]): PlanSectionRadioButtonChoice = {
+  def apply(maxCustomAmount: BigDecimal)(radioSelection: String, customAmountInput: Option[String]): PlanSelectionRdBttnChoice = {
     if (radioSelection == "cannotAfford") {
-      PlanSectionRadioButtonChoice(Left(CannotAfford()))
+      PlanSelectionRdBttnChoice(Left(CannotAfford()))
     } else {
       if (radioSelection == "customAmountOption") {
-        PlanSectionRadioButtonChoice(Right(PlanSelection(Right(CustomPlanRequest(customAmountWithSafeMax(customAmountInput, maxCustomAmount))))))
+        PlanSelectionRdBttnChoice(Right(PlanSelection(Right(CustomPlanRequest(customAmountWithSafeMax(customAmountInput, maxCustomAmount))))))
       } else {
-        PlanSectionRadioButtonChoice(Right(PlanSelection(Left(SelectedPlan(customSelectionWithSafeMax(radioSelection, maxCustomAmount))))))
+        PlanSelectionRdBttnChoice(Right(PlanSelection(Left(SelectedPlan(customSelectionWithSafeMax(radioSelection, maxCustomAmount))))))
       }
     }
   }
@@ -102,7 +102,7 @@ object CalculatorForm {
     } else BigDecimal(CurrencyUtil.cleanAmount(radioSelection))
   }
 
-  def unapply(data: PlanSectionRadioButtonChoice): Option[(String, Option[String])] = Option {
+  def unapply(data: PlanSelectionRdBttnChoice): Option[(String, Option[String])] = Option {
     data.selection match {
       case Left(_) => ("cannotAfford", None)
       case Right(planSelection) => planSelection.selection match {
@@ -112,7 +112,7 @@ object CalculatorForm {
     }
   }
 
-  def selectPlanForm(minCustomAmount: BigDecimal = 0, maxCustomAmount: BigDecimal = 0): Form[PlanSectionRadioButtonChoice] =
+  def selectPlanForm(minCustomAmount: BigDecimal = 0, maxCustomAmount: BigDecimal = 0): Form[PlanSelectionRdBttnChoice] =
     Form(mapping(
       "plan-selection" -> planSelectionMapping,
       "custom-amount-input" -> mandatoryIf(
