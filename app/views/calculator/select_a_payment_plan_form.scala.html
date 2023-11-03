@@ -23,7 +23,7 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
 @import uk.gov.hmrc.selfservicetimetopay.models.{CustomPlanRequest, PlanSelection, SelectedPlan}
-@import uk.gov.hmrc.selfservicetimetopay.models.RadioButtonSelection
+@import uk.gov.hmrc.selfservicetimetopay.models.PlanSectionRadioButtonChoice
 @import uk.gov.hmrc.selfservicetimetopay.models.CannotAfford
 
 @this(
@@ -36,7 +36,7 @@
 
 @(
         redirectCall: Call,
-        selectPlanForm: Form[RadioButtonSelection],
+        selectPlanForm: Form[PlanSectionRadioButtonChoice],
         schedules: Map[PaymentPlanOption, PaymentSchedule],
         minCustomAmount: BigDecimal,
         maxCustomAmount: BigDecimal,
