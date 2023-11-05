@@ -22,9 +22,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
-@import uk.gov.hmrc.selfservicetimetopay.models.{CustomPlanRequest, PlanSelection, SelectedPlan}
-@import uk.gov.hmrc.selfservicetimetopay.models.PlanSelectionRdBttnChoice
-@import uk.gov.hmrc.selfservicetimetopay.models.CannotAfford
+@import uk.gov.hmrc.selfservicetimetopay.models.{CustomPlanRequest, PlanSelection, PlanSelectionRdBtnChoice, SelectedPlan}
 
 @this(
   main: views.html.main,
@@ -36,7 +34,7 @@
 
 @(
         redirectCall: Call,
-        selectPlanForm: Form[PlanSelectionRdBttnChoice],
+        selectPlanForm: Form[PlanSelectionRdBtnChoice],
         schedules: Map[PaymentPlanOption, PaymentSchedule],
         minCustomAmount: BigDecimal,
         maxCustomAmount: BigDecimal,

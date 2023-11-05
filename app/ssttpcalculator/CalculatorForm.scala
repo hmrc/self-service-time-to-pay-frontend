@@ -76,14 +76,14 @@ object CalculatorForm {
 
   val customAmountInputMapping: Mapping[String] = text
 
-  def apply(maxCustomAmount: BigDecimal)(radioSelection: String, customAmountInput: Option[String]): PlanSelectionRdBttnChoice = {
+  def apply(maxCustomAmount: BigDecimal)(radioSelection: String, customAmountInput: Option[String]): PlanSelectionRdBtnChoice = {
     if (radioSelection == "cannotAfford") {
-      PlanSelectionRdBttnChoice(Left(CannotAfford()))
+      PlanSelectionRdBtnChoice(Left(CannotAfford()))
     } else {
       if (radioSelection == "customAmountOption") {
-        PlanSelectionRdBttnChoice(Right(PlanSelection(Right(CustomPlanRequest(customAmountWithSafeMax(customAmountInput, maxCustomAmount))))))
+        PlanSelectionRdBtnChoice(Right(PlanSelection(Right(CustomPlanRequest(customAmountWithSafeMax(customAmountInput, maxCustomAmount))))))
       } else {
-        PlanSelectionRdBttnChoice(Right(PlanSelection(Left(SelectedPlan(customSelectionWithSafeMax(radioSelection, maxCustomAmount))))))
+        PlanSelectionRdBtnChoice(Right(PlanSelection(Left(SelectedPlan(customSelectionWithSafeMax(radioSelection, maxCustomAmount))))))
       }
     }
   }
@@ -102,7 +102,7 @@ object CalculatorForm {
     } else BigDecimal(CurrencyUtil.cleanAmount(radioSelection))
   }
 
-  def unapply(data: PlanSelectionRdBttnChoice): Option[(String, Option[String])] = Option {
+  def unapply(data: PlanSelectionRdBtnChoice): Option[(String, Option[String])] = Option {
     data.selection match {
       case Left(_) => ("cannotAfford", None)
       case Right(planSelection) => planSelection.selection match {
@@ -112,7 +112,7 @@ object CalculatorForm {
     }
   }
 
-  def selectPlanForm(minCustomAmount: BigDecimal = 0, maxCustomAmount: BigDecimal = 0): Form[PlanSelectionRdBttnChoice] =
+  def selectPlanForm(minCustomAmount: BigDecimal = 0, maxCustomAmount: BigDecimal = 0): Form[PlanSelectionRdBtnChoice] =
     Form(mapping(
       "plan-selection" -> planSelectionMapping,
       "custom-amount-input" -> mandatoryIf(
