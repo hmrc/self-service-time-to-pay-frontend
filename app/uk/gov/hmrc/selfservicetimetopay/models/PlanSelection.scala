@@ -21,7 +21,7 @@ import play.api.libs.json._
 
 import scala.math.BigDecimal.RoundingMode.CEILING
 
-final case class PlanSelectionRdBtnChoice(selection: Either[CannotAfford, PlanSelection])
+final case class PlanSelectionRdBtnChoice(selection: PlanSelectionChoice)
 
 final case class PlanSelection(selection: Either[SelectedPlan, CustomPlanRequest]) {
   def mongoSafe: PlanSelection = {
@@ -64,4 +64,3 @@ object CustomPlanRequest {
   implicit val format: Format[CustomPlanRequest] = Json.format[CustomPlanRequest]
 }
 
-final case class CannotAfford()

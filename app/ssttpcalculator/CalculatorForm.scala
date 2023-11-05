@@ -78,12 +78,12 @@ object CalculatorForm {
 
   def apply(maxCustomAmount: BigDecimal)(radioSelection: String, customAmountInput: Option[String]): PlanSelectionRdBtnChoice = {
     if (radioSelection == "cannotAfford") {
-      PlanSelectionRdBtnChoice(Left(CannotAfford()))
+      PlanSelectionRdBtnChoice(CannotAfford)
     } else {
       if (radioSelection == "customAmountOption") {
-        PlanSelectionRdBtnChoice(Right(PlanSelection(Right(CustomPlanRequest(customAmountWithSafeMax(customAmountInput, maxCustomAmount))))))
+        PlanSelectionRdBtnChoice(PlanChoice(Right(CustomPlanRequest(customAmountWithSafeMax(customAmountInput, maxCustomAmount)))))
       } else {
-        PlanSelectionRdBtnChoice(Right(PlanSelection(Left(SelectedPlan(customSelectionWithSafeMax(radioSelection, maxCustomAmount))))))
+        PlanSelectionRdBtnChoice(PlanChoice(Left(SelectedPlan(customSelectionWithSafeMax(radioSelection, maxCustomAmount)))))
       }
     }
   }
@@ -104,8 +104,8 @@ object CalculatorForm {
 
   def unapply(data: PlanSelectionRdBtnChoice): Option[(String, Option[String])] = Option {
     data.selection match {
-      case Left(_) => ("cannotAfford", None)
-      case Right(planSelection) => planSelection.selection match {
+      case CannotAfford => ("cannotAfford", None)
+      case PlanChoice(selection) => selection match {
         case Left(SelectedPlan(instalmentAmount))   => (instalmentAmount.toString, None)
         case Right(CustomPlanRequest(customAmount)) => ("customAmountOption", Some(customAmount.toString()))
       }

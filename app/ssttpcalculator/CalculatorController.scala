@@ -24,7 +24,7 @@ import javax.inject._
 import journey.{Journey, JourneyService, PaymentToday, PaymentTodayAmount}
 import play.api.mvc._
 import req.RequestSupport
-import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, payTodayForm, selectPlanForm}
+import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, customAmountInputMapping, payTodayForm, selectPlanForm}
 import model.{AddWorkingDaysResult, PaymentPlanOption, PaymentSchedule}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
@@ -268,15 +268,17 @@ class CalculatorController @Inject() (
   private def validPlanSelectionFormRedirect(journey: Journey)(implicit request: Request[_]): PlanSelectionRdBtnChoice => Future[Result] = {
     (validFormData: PlanSelectionRdBtnChoice) =>
       validFormData.selection match {
-        case Left(_) =>
+        case CannotAfford =>
           Redirect(ssttpaffordability.routes.AffordabilityController.getCannotAffordPlan())
-        case Right(planSelection) => planSelection.selection match {
-          case Right(CustomPlanRequest(_)) => {
+        case PlanChoice(planSelection) => planSelection match {
+          case Right(CustomPlanRequest(customAmount)) => {
+            val planSelection = PlanSelection(Right(CustomPlanRequest(customAmount)))
             journeyService.saveJourney(journey.copy(maybePlanSelection = Some(planSelection.mongoSafe))).map { _ =>
               Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
             }
           }
-          case Left(SelectedPlan(_)) => {
+          case Left(SelectedPlan(instalmentAmount)) => {
+            val planSelection = PlanSelection(Left(SelectedPlan(instalmentAmount)))
             journeyService.saveJourney(journey.copy(maybePlanSelection = Some(planSelection.mongoSafe))).map { _ =>
               Redirect(ssttparrangement.routes.ArrangementController.getCheckPaymentPlan())
             }
