@@ -4,7 +4,7 @@ import sbt.*
 
 object AppDependencies {
 
-  val boostrapVersion = "7.22.0"
+  val boostrapVersion = "7.23.0"
   val cryptoVersion = "7.4.0"
 
   val compile = Seq(
