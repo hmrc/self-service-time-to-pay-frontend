@@ -48,7 +48,7 @@ class AffordabilityController @Inject() (
 
   import requestSupport._
 
-  def getCheckYouCanAfford: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val getCheckYouCanAfford: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey =>
       journeyLogger.info("Get 'Check you can afford'")
 
@@ -58,7 +58,7 @@ class AffordabilityController @Inject() (
     }
   }
 
-  def getAddIncomeAndSpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val getAddIncomeAndSpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey =>
       journeyLogger.info("Get 'Add income and spending'")
 
@@ -72,7 +72,7 @@ class AffordabilityController @Inject() (
     }
   }
 
-  def getHowMuchYouCouldAfford: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val getHowMuchYouCouldAfford: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey =>
       journeyLogger.info("Get 'How much you could afford'")
 
@@ -83,7 +83,7 @@ class AffordabilityController @Inject() (
     }
   }
 
-  def getYourMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val getYourMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp{ implicit journey: Journey =>
       journeyLogger.info("Get 'your monthly income'")
 
@@ -99,7 +99,7 @@ class AffordabilityController @Inject() (
     }
   }
 
-  def submitMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val submitMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info(s"Submit 'Your monthly income'")
 
@@ -122,7 +122,7 @@ class AffordabilityController @Inject() (
     }
   }
 
-  def getCallUsNoIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val getCallUsNoIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info(s"Get 'Call us no income'")
 
@@ -145,7 +145,7 @@ class AffordabilityController @Inject() (
     journeyService.saveJourney(newJourney)
   }
 
-  def getYourMonthlySpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val getYourMonthlySpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info(s"Get 'Your monthly spending'")
 
@@ -167,7 +167,7 @@ class AffordabilityController @Inject() (
     }
   }
 
-  def submitMonthlySpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val submitMonthlySpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info(s"Submit 'Your monthly spending'")
 
@@ -195,7 +195,7 @@ class AffordabilityController @Inject() (
       )
     }
   }
-  def getWeCannotAgreeYourPP: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val getWeCannotAgreeYourPP: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'We cannot agree your payment plan'")
 
@@ -204,12 +204,20 @@ class AffordabilityController @Inject() (
     }
   }
 
-  def getSetUpPlanWithAdviser: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val getSetUpPlanWithAdviser: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'Set up a payment plan with an adviser'")
 
       journeyService.getJourney().map(auditService.sendPlanFailsNDDSValidationEvent)
       Ok(views.set_up_a_payment_plan_with_an_adviser(isWelsh))
+    }
+  }
+
+  val getCannotAffordPlan: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    journeyService.authorizedForSsttp { implicit journey: Journey =>
+      journeyLogger.info("Get 'We cannot agree your payment plan'")
+
+      Ok(views.call_us_about_a_payment_plan(isSignedIn, isWelsh))
     }
   }
 }

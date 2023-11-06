@@ -29,8 +29,8 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
   override def path: String = "/pay-what-you-owe-in-instalments/calculator/instalments"
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "How much can you pay each month?"
-    case Languages.Welsh   => "Faint y gallwch ei dalu bob mis?"
+    case Languages.English => "Select a payment plan"
+    case Languages.Welsh   => "Dewiswch gynllun talu"
   }
 
   def expectedHeadingContentWithErrorPrefix(language: Language): String = language match {
@@ -195,26 +195,27 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
         }
 
         private val mainTextEnglish =
-          s"""How much can you pay each month?
+          s"""Select a payment plan
              |Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
              |We charge the Bank of England base rate plus 2.5% per year.
              |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
+             |How much can you pay each month?
              |£490 per month over 10 months
              |Includes total interest estimated at £74.30
              |£544.44 per month over 9 months
              |Includes total interest estimated at £67.63
              |£612.50 per month over 8 months
              |Includes total interest estimated at £60.97
-             |I cannot afford to make these payments
-             |You may still be able to set up a payment plan over the phone. Call us on 0300 123 1813 to discuss your debt.
+             |I cannot afford these payments
              |Continue
           """.stripMargin
 
         private val mainTextWelsh =
-          s"""Faint y gallwch ei dalu bob mis?
+          s"""Dewiswch gynllun talu
              |Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn fwy oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
              |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5% y flwyddyn.
              |Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
+             |Faint y gallwch ei dalu bob mis?
              |£490 y mis, am 10 mis
              |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £74.30
              |£544.44 y mis, am 9 mis
@@ -222,7 +223,6 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
              |£612.50 y mis, am 8 mis
              |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £60.97
              |Nid wyf yn gallu fforddio’r taliadau hyn
-             |Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch ni ar 0300 200 1900 i drafod eich dyled.
              |Yn eich blaen
           """.stripMargin
       }

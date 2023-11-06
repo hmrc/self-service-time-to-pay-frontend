@@ -17,7 +17,7 @@
 package ssttpcalculator
 
 import testsupport.UnitSpec
-import uk.gov.hmrc.selfservicetimetopay.models.CustomPlanRequest
+import uk.gov.hmrc.selfservicetimetopay.models.{CustomPlanRequest, PlanChoice, PlanSelection}
 
 class CalculatorFormSpec extends UnitSpec {
 
@@ -37,7 +37,7 @@ class CalculatorFormSpec extends UnitSpec {
 
           val result = CalculatorForm.apply(maxCustomAmount)(radioSelection, customAmountInput)
 
-          result.selection shouldBe Right(CustomPlanRequest(maxCustomAmount))
+          result.selection shouldBe PlanChoice(Right(CustomPlanRequest(1000.004)))
         }
         "where maxCustomAmount rounds down to 2 dp with NUMBER WITH 2 DP (£XX.XX)" in {
 
@@ -48,7 +48,7 @@ class CalculatorFormSpec extends UnitSpec {
 
           val result = CalculatorForm.apply(maxCustomAmount)(radioSelection, customAmountInput)
 
-          result.selection shouldBe Right(CustomPlanRequest(maxCustomAmount))
+          result.selection shouldBe PlanChoice(Right(CustomPlanRequest(1000.504)))
         }
         "where maxCustomAmount rounds UP to 2 dc to WHOLE NUMBER (£XX)" in {
 
@@ -59,7 +59,7 @@ class CalculatorFormSpec extends UnitSpec {
 
           val result = CalculatorForm.apply(maxCustomAmount)(radioSelection, customAmountInput)
 
-          result.selection shouldBe Right(CustomPlanRequest(maxCustomAmount))
+          result.selection shouldBe PlanChoice(Right(CustomPlanRequest(1000.995)))
         }
         "where maxCustomAmount rounds UP to 2 dc to NUMBER WITH 2 DP (£XX.XX)" in {
 
@@ -70,7 +70,7 @@ class CalculatorFormSpec extends UnitSpec {
 
           val result = CalculatorForm.apply(maxCustomAmount)(radioSelection, customAmountInput)
 
-          result.selection shouldBe Right(CustomPlanRequest(maxCustomAmount))
+          result.selection shouldBe PlanChoice(Right(CustomPlanRequest(1000.005)))
         }
 
       }
@@ -85,7 +85,7 @@ class CalculatorFormSpec extends UnitSpec {
 
         val result = CalculatorForm.apply(maxCustomAmount)(radioSelection, customAmountInput)
 
-        result.selection shouldBe Right(CustomPlanRequest(BigDecimal(customAmountInput.get)))
+        result.selection shouldBe PlanChoice(Right(CustomPlanRequest(1001)))
 
       }
   }

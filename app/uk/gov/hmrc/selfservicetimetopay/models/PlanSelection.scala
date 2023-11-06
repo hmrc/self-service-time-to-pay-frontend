@@ -17,9 +17,11 @@
 package uk.gov.hmrc.selfservicetimetopay.models
 
 import play.api.libs.functional.syntax.toAlternativeOps
-import play.api.libs.json.{Format, Json, Reads, Writes, __}
+import play.api.libs.json._
 
-import scala.math.BigDecimal.RoundingMode.{CEILING, HALF_UP}
+import scala.math.BigDecimal.RoundingMode.CEILING
+
+final case class PlanSelectionRdBtnChoice(selection: PlanSelectionChoice)
 
 final case class PlanSelection(selection: Either[SelectedPlan, CustomPlanRequest]) {
   def mongoSafe: PlanSelection = {
@@ -61,3 +63,4 @@ final case class CustomPlanRequest(customAmount: BigDecimal)
 object CustomPlanRequest {
   implicit val format: Format[CustomPlanRequest] = Json.format[CustomPlanRequest]
 }
+
