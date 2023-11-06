@@ -217,7 +217,7 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'We cannot agree your payment plan'")
 
-      Ok(views.call_us_about_a_payment_plan(isSignedIn, isWelsh))
+      Ok(views.call_us_about_a_payment_plan(isSignedIn, isWelsh, cannotAfford = true))
     }
   }
 }
