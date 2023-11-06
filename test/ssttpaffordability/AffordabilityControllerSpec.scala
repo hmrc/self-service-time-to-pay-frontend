@@ -16,25 +16,24 @@
 
 package ssttpaffordability
 
+import _root_.model.enumsforforms.TypesOfBankAccount
 import akka.util.Timeout
 import journey.Statuses.InProgress
 import journey.{Journey, JourneyId, JourneyService, PaymentToday}
-
+import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import play.api.http.Status
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
-import testsupport.stubs.{AuditStub, AuthStub}
-import testsupport.testdata.TdRequest.FakeRequestOps
-import testsupport.{ItSpec, WireMockSupport}
-import uk.gov.hmrc.http.SessionKeys
-import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
-import play.api.libs.json.{JsObject, Json}
 import ssttpaffordability.model.Expense.HousingExp
 import ssttpaffordability.model.IncomeCategory.MonthlyIncome
 import ssttpaffordability.model._
-import testsupport.testdata.TdAll
+import testsupport.stubs.AuditStub
+import testsupport.testdata.TdRequest.FakeRequestOps
+import testsupport.testdata.{TdAll, TestJourney}
+import testsupport.{ItSpec, WireMockSupport}
+import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.selfservicetimetopay.models._
-import _root_.model.enumsforforms.TypesOfBankAccount
 
 import java.time.LocalDateTime
 import java.util.UUID
@@ -114,5 +113,21 @@ class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
       }
     }
   }
+  ".getCannotAffordPlan" - {
+    "returns 200 OK" in {
 
+      val journeyId = JourneyId("62ce7631b7602426d74f83b0")
+      val journey = TestJourney.createJourney(journeyId)
+      val sessionId = UUID.randomUUID().toString
+      val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
+      val journeyService = app.injector.instanceOf[JourneyService]
+      journeyService.saveJourney(journey)(fakeRequest).futureValue shouldBe (())
+
+      val controller: AffordabilityController = app.injector.instanceOf[AffordabilityController]
+
+      val res = controller.getCannotAffordPlan(fakeRequest)
+
+      status(res) shouldBe Status.OK
+    }
+  }
 }
