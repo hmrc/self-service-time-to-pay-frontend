@@ -351,7 +351,16 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       pageUnderTest.clickContinue()
       checkYourPaymentPlanPage.expectedHeadingContent(English)
     }
+  }
 
+  "select 'I cannot afford these payments'" in {
+    beginJourney()
+    pageUnderTest.selectCannotAfford()
+    pageUnderTest.clickContinue()
+    callUsCannotAffordPage.assertInitialPageIsDisplayed(English)
+
+    callUsCannotAffordPage.clickOnWelshLink()
+    callUsCannotAffordPage.assertInitialPageIsDisplayed(Welsh)
   }
 
   "returning to the page" - {
@@ -386,6 +395,14 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       howMuchYouCouldAffordPage.clickContinue()
 
       pageUnderTest.optionIsNotDisplayed(customAmountInput.toString, Some(customAmountPlanMonthsOutput.toString), Some(customAmountPlanInterestOutput.toString))
+    }
+    "selecting 'I cannot afford these payments', continue, then back, returns to the schedule selection page" in {
+      beginJourney()
+      pageUnderTest.selectCannotAfford()
+      pageUnderTest.clickContinue()
+      callUsCannotAffordPage.clickOnBackLink()
+
+      pageUnderTest.assertInitialPageIsDisplayed
     }
   }
 

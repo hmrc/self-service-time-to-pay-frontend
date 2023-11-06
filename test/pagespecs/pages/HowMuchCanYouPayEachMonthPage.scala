@@ -48,6 +48,11 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     click on specificRadioButton
   }
 
+  def selectCannotAfford(): Unit = probing {
+    val cannotAffordRadioButton = xpath(s"""//*[@id="cannotAfford"]""")
+    click on cannotAffordRadioButton
+  }
+
   def clickContinue(): Unit = probing{
     clickOnContinue()
   }
