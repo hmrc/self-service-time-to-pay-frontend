@@ -123,11 +123,17 @@
 
 @viewsHelpers.form(redirectCall) {
     <fieldset class="govuk-fieldset">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-            <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.results.title")</h1>
-        </legend>
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h1 class="govuk-heading-xl">@messages("ssttp.calculator.results.title")</h1>
+            </legend>
 
-        <p class="govuk-body">@Html(messages(s"ssttp.calculator.results.p1"))</p>
+
+        <p class="govuk-body">
+            @{previousFormSubmission.fold(Html(messages(s"ssttp.calculator.results.p1")))(_.selection match {
+                case Right(CustomPlanRequest(_)) => Html(messages(s"ssttp.calculator.results.p1.Alt"))
+                case Left (SelectedPlan(_)) => Html(messages(s"ssttp.calculator.results.p1"))
+            })}
+        </p>
 
         <details class="govuk-details">
             <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@messages("ssttp.calculator.how-we-calculate-interest.detail.title")</span></summary>
