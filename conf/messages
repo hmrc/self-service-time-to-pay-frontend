@@ -293,6 +293,7 @@ ssttp.calculator.form.payment_today.update = Update
 ssttp.calculator.form.continue = Continue
 
 ssttp.calculator.results.title = Select a payment plan
+ssttp.calculator.results.title.Alt = Another payment plan option has been added
 ssttp.calculator.results.h1 = How much can you pay each month?
 ssttp.calculator.results.p1 = Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be <strong>more</strong> as it will include interest and any remaining tax you owe.
 ssttp.calculator.results.p1.Alt = Based on what you entered, we have added another payment plan option. The final monthly payment in your plan will be <strong>more</strong> as it will include interest and any remaining tax you owe.

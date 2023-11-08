@@ -68,13 +68,13 @@
 })}
 
 @customAmountHasErrors = @{selectPlanForm("plan-selection").value.contains("customAmountOption")}
-
+@*
 @customAmountSelected() = @{
     if(customAmountHasErrors){
         "checked"
     }
 }
-
+*@
 @errorFocus(key: String) = @{
     if(customAmountHasErrors){
         "custom-amount-option"
@@ -124,7 +124,12 @@
 @viewsHelpers.form(redirectCall) {
     <fieldset class="govuk-fieldset">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                <h1 class="govuk-heading-xl">@messages("ssttp.calculator.results.title")</h1>
+                <h1 class="govuk-heading-xl">
+                    @{previousFormSubmission.fold(messages("ssttp.calculator.results.title"))(_.selection match {
+                        case Right(CustomPlanRequest(_)) => messages("ssttp.calculator.results.title.Alt")
+                        case Left (SelectedPlan(_)) => messages("ssttp.calculator.results.title")
+                    })}
+                </h1>
             </legend>
 
 
