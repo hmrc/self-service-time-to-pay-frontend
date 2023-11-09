@@ -93,6 +93,16 @@
 </div>
 }
 
+@legendAndP1Text = @{
+    previousFormSubmission.fold(
+        messages("ssttp.calculator.results.title") -> Html(messages(s"ssttp.calculator.results.p1"))
+    )(_.selection match {
+        case Right(CustomPlanRequest(_)) => messages("ssttp.calculator.results.title.custom-amount") -> Html(messages(s"ssttp.calculator.results.p1.custom-amount"))
+        case Left (SelectedPlan(amount)) => if (amount > minCustomAmount) messages("ssttp.calculator.results.title.custom-amount") -> Html(messages(s"ssttp.calculator.results.p1.custom-amount")) else messages("ssttp.calculator.results.title") -> Html(messages(s"ssttp.calculator.results.p1"))
+    })
+}
+
+
 @main(
     title = Messages("ssttp.calculator.results.title"),
     hasErrors = selectPlanForm.hasErrors
@@ -119,19 +129,12 @@
     <fieldset class="govuk-fieldset">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                 <h1 class="govuk-heading-xl">
-                    @{previousFormSubmission.fold(messages("ssttp.calculator.results.title"))(_.selection match {
-                        case Right(CustomPlanRequest(_)) => messages("ssttp.calculator.results.title.custom-amount")
-                        case Left (SelectedPlan(amount)) => if (amount > minCustomAmount) messages("ssttp.calculator.results.title.custom-amount") else messages("ssttp.calculator.results.title")
-                    })}
+                    @legendAndP1Text._1
                 </h1>
             </legend>
 
-
         <p class="govuk-body">
-            @{previousFormSubmission.fold(Html(messages(s"ssttp.calculator.results.p1")))(_.selection match {
-                case Right(CustomPlanRequest(_)) => Html(messages(s"ssttp.calculator.results.p1.custom-amount"))
-                case Left (SelectedPlan(amount)) => if (amount > minCustomAmount) Html(messages("ssttp.calculator.results.p1.custom-amount")) else Html(messages("ssttp.calculator.results.p1"))
-            })}
+            @legendAndP1Text._2
         </p>
 
         <details class="govuk-details">
