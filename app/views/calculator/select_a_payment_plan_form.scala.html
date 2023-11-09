@@ -68,13 +68,7 @@
 })}
 
 @customAmountHasErrors = @{selectPlanForm("plan-selection").value.contains("customAmountOption")}
-@*
-@customAmountSelected() = @{
-    if(customAmountHasErrors){
-        "checked"
-    }
-}
-*@
+
 @errorFocus(key: String) = @{
     if(customAmountHasErrors){
         "custom-amount-option"
@@ -121,13 +115,13 @@
 
 
 
-@viewsHelpers.form(redirectCall) {
+@viewsHelpers.form(redirectCall, Symbol("autocomplete") -> "off") {
     <fieldset class="govuk-fieldset">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                 <h1 class="govuk-heading-xl">
                     @{previousFormSubmission.fold(messages("ssttp.calculator.results.title"))(_.selection match {
                         case Right(CustomPlanRequest(_)) => messages("ssttp.calculator.results.title.Alt")
-                        case Left (SelectedPlan(_)) => messages("ssttp.calculator.results.title")
+                        case Left (SelectedPlan(amount)) => if (amount > minCustomAmount) messages("ssttp.calculator.results.title.Alt") else messages("ssttp.calculator.results.title")
                     })}
                 </h1>
             </legend>
@@ -136,7 +130,7 @@
         <p class="govuk-body">
             @{previousFormSubmission.fold(Html(messages(s"ssttp.calculator.results.p1")))(_.selection match {
                 case Right(CustomPlanRequest(_)) => Html(messages(s"ssttp.calculator.results.p1.Alt"))
-                case Left (SelectedPlan(_)) => Html(messages(s"ssttp.calculator.results.p1"))
+                case Left (SelectedPlan(amount)) => if (amount > minCustomAmount) Html(messages("ssttp.calculator.results.p1.Alt")) else Html(messages("ssttp.calculator.results.p1"))
             })}
         </p>
 
