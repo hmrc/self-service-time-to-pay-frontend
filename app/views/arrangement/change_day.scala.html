@@ -85,7 +85,7 @@
         ))
     }
 
-    @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submitChangeSchedulePaymentDay(), Symbol("id") -> "arrangementPaymentDayForm") {
+    @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submitChangeSchedulePaymentDay, Symbol("id") -> "arrangementPaymentDayForm") {
         @radios(Radios(
             name = "other",
             fieldset = Some(Fieldset(

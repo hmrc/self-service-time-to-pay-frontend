@@ -77,7 +77,7 @@
 
 </div>
 
-        @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submit(), Symbol("class") -> "group") {
+        @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submit, Symbol("class") -> "group") {
             @govukButton(Button(
                 classes = "form-group margin-top-30 form-field--submit",
                 content = Text(Messages("ssttp.arrangement.declaration.agreement.confirm")),

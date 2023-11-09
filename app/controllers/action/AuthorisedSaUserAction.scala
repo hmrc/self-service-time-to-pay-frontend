@@ -66,11 +66,11 @@ class AuthorisedSaUserAction @Inject() (
         case (_, None) =>
           logFail("no present UTR")(request)
           auditService.sendEligibilityNotEnrolledEvent(request.credentials)(request.request)
-          Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
+          Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline))
         case (false, _) =>
           logFail("no active IR-SA enrolment")(request)
           auditService.sendEligibilityInactiveEnrolmentEvent(maybeUtr, request.credentials)(request.request)
-          Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
+          Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline))
         case (true, Some(utr)) =>
           Right(new AuthorisedSaUserRequest[A](request, utr))
       }

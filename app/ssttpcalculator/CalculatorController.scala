@@ -51,7 +51,7 @@ class CalculatorController @Inject() (
 
   import requestSupport._
 
-  def getTaxLiabilities: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val getTaxLiabilities: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'Tax liabilities'")
 
@@ -59,7 +59,11 @@ class CalculatorController @Inject() (
     }
   }
 
-  def getPayTodayQuestion: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val submitTaxLiabilities: Action[AnyContent] = as.authorisedSaUser { _ =>
+    Redirect(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion)
+  }
+
+  val getPayTodayQuestion: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'Pay today question'")
 
@@ -73,7 +77,7 @@ class CalculatorController @Inject() (
    * Checks the response for the pay today question. If yes navigate to payment today page
    * otherwise navigate to calculator page and set the initial payment to 0
    */
-  def submitPayTodayQuestion: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val submitPayTodayQuestion: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Submit 'Pay today question'")
 
@@ -84,7 +88,7 @@ class CalculatorController @Inject() (
               maybePaymentToday = Some(PaymentToday(true))
             )
             journeyService.saveJourney(newJourney).map(_ =>
-              Redirect(ssttpcalculator.routes.CalculatorController.getPaymentToday()))
+              Redirect(ssttpcalculator.routes.CalculatorController.getPaymentToday))
 
           case PayTodayQuestion(Some(false)) =>
             val newJourney = journey.copy(
@@ -93,7 +97,7 @@ class CalculatorController @Inject() (
             )
 
             journeyService.saveJourney(newJourney).map(
-              _ => Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay()))
+              _ => Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay))
           case PayTodayQuestion(None) =>
             val msg = s"could not submitPayTodayQuestion, payToday must be defined"
             val ex = new RuntimeException(msg)
@@ -104,7 +108,7 @@ class CalculatorController @Inject() (
     }
   }
 
-  def getPaymentToday: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val getPaymentToday: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'Payment Today'")
 
@@ -116,7 +120,7 @@ class CalculatorController @Inject() (
     }
   }
 
-  def submitPaymentToday: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val submitPaymentToday: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Submit 'Payment today'")
 
@@ -128,14 +132,14 @@ class CalculatorController @Inject() (
             maybePaymentTodayAmount = Some(PaymentTodayAmount(form.amount))
           )
           journeyService.saveJourney(newJourney).map { _ =>
-            Redirect(ssttpcalculator.routes.CalculatorController.getPaymentSummary())
+            Redirect(ssttpcalculator.routes.CalculatorController.getPaymentSummary)
           }
         }
       )
     }
   }
 
-  def getPaymentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val getPaymentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'Payment summary'")
 
@@ -144,7 +148,7 @@ class CalculatorController @Inject() (
           val payToday = journey.paymentToday
           Ok(views.payment_summary(journey.taxpayer.selfAssessment.debits, payToday, journey.upfrontPayment))
         case Some(PaymentToday(false)) =>
-          Redirect(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion())
+          Redirect(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion)
         case None =>
           journeyLogger.warn("Illegal state")
           throw new RuntimeException(s"payToday must be defined")
@@ -152,7 +156,12 @@ class CalculatorController @Inject() (
     }
   }
 
-  def getCalculateInstalments: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val submitPaymentSummary: Action[AnyContent] = as.authorisedSaUser { _ =>
+    Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay)
+
+  }
+
+  val getCalculateInstalments: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'Calculate instalments'")
 
@@ -171,7 +180,7 @@ class CalculatorController @Inject() (
         defaultPlanOptions.values.toSeq.sortBy(_.instalmentAmount).headOption match {
           case None =>
             journeyLogger.info(s"No viable plans available: redirecting to 'We cannot agree your payment plan'")
-            Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
+            Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP)
 
           case Some(_) =>
             val minCustomAmount = defaultPlanOptions.values.toSeq.maxBy(_.instalmentAmount).instalmentAmount
@@ -202,7 +211,7 @@ class CalculatorController @Inject() (
     )
   }
 
-  def submitCalculateInstalments(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  val submitCalculateInstalments: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Submit 'Calculate instalments'")
 
@@ -235,7 +244,7 @@ class CalculatorController @Inject() (
       maybePlanSelection: Option[PlanSelection]
   )(implicit request: Request[_]): Result = {
     Ok(views.select_a_payment_plan_form(
-      routes.CalculatorController.submitCalculateInstalments(),
+      routes.CalculatorController.submitCalculateInstalments,
       selectPlanForm(minCustomAmount, maxCustomAmount),
       allPlanOptions,
       minCustomAmount.setScale(2, HALF_UP),
@@ -255,7 +264,7 @@ class CalculatorController @Inject() (
         Future.successful(
           BadRequest(
             views.select_a_payment_plan_form(
-              ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
+              ssttpcalculator.routes.CalculatorController.submitCalculateInstalments,
               formWithErrors,
               planOptions,
               minCustomAmount.setScale(2, HALF_UP),
@@ -269,18 +278,18 @@ class CalculatorController @Inject() (
     (validFormData: PlanSelectionRdBtnChoice) =>
       validFormData.selection match {
         case CannotAfford =>
-          Redirect(ssttpaffordability.routes.AffordabilityController.getCannotAffordPlan())
+          Redirect(ssttpaffordability.routes.AffordabilityController.getCannotAffordPlan)
         case PlanChoice(planSelection) => planSelection match {
           case Right(CustomPlanRequest(customAmount)) => {
             val planSelection = PlanSelection(Right(CustomPlanRequest(customAmount)))
             journeyService.saveJourney(journey.copy(maybePlanSelection = Some(planSelection.mongoSafe))).map { _ =>
-              Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
+              Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments)
             }
           }
           case Left(SelectedPlan(instalmentAmount)) => {
             val planSelection = PlanSelection(Left(SelectedPlan(instalmentAmount)))
             journeyService.saveJourney(journey.copy(maybePlanSelection = Some(planSelection.mongoSafe))).map { _ =>
-              Redirect(ssttparrangement.routes.ArrangementController.getCheckPaymentPlan())
+              Redirect(ssttparrangement.routes.ArrangementController.getCheckPaymentPlan)
             }
           }
         }

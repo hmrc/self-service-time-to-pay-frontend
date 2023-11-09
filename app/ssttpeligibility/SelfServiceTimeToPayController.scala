@@ -22,10 +22,8 @@ import controllers.action.Actions
 import enrolforsa.AddTaxesConnector
 
 import javax.inject._
-import journey.JourneyService
 import play.api.mvc._
 import req.RequestSupport
-import times.ClockProvider
 import util.Logging
 import views.Views
 
@@ -33,63 +31,61 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 class SelfServiceTimeToPayController @Inject() (
-    mcc:               MessagesControllerComponents,
-    submissionService: JourneyService,
-    as:                Actions,
-    views:             Views,
-    requestSupport:    RequestSupport,
-    clockProvider:     ClockProvider,
-    addTaxConnector:   AddTaxesConnector)(implicit appConfig: AppConfig,
-                                          ec: ExecutionContext
+    mcc:             MessagesControllerComponents,
+    as:              Actions,
+    views:           Views,
+    requestSupport:  RequestSupport,
+    addTaxConnector: AddTaxesConnector)(implicit appConfig: AppConfig,
+                                        ec: ExecutionContext
 ) extends FrontendBaseController(mcc) with Logging {
 
   import requestSupport._
 
-  def start: Action[AnyContent] = as.action { implicit request =>
+  val start: Action[AnyContent] = as.action { implicit request =>
     Ok(views.service_start(isSignedIn, mcc.messagesApi))
   }
 
-  def doStart(): Action[AnyContent] = as.action { implicit request =>
-    Redirect(ssttparrangement.routes.ArrangementController.determineEligibility())
+  val doStart: Action[AnyContent] = as.action { implicit request =>
+    Redirect(ssttparrangement.routes.ArrangementController.determineEligibility)
   }
 
-  def getCallUsAboutAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
+  val getCallUsAboutAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
     Ok(views.call_us_about_a_payment_plan(isWelsh, loggedIn = isSignedIn))
   }
 
-  def getTtpCallUs: Action[AnyContent] = getCallUsAboutAPaymentPlan
-  def getTtpCallUsTypeOfTax: Action[AnyContent] = getCallUsAboutAPaymentPlan
-  def getTtpCallUsExistingTTP: Action[AnyContent] = getCallUsAboutAPaymentPlan
-  def getTtpCallUsCalculatorInstalments: Action[AnyContent] = getCallUsAboutAPaymentPlan
-  def getTtpCallUsSignInQuestion: Action[AnyContent] = getCallUsAboutAPaymentPlan
-  def getIaCallUse: Action[AnyContent] = getCallUsAboutAPaymentPlan
-  def getNotSaEnrolled: Action[AnyContent] = getCallUsAboutAPaymentPlan
+  val getTtpCallUs: Action[AnyContent] = getCallUsAboutAPaymentPlan
+  val getTtpCallUsTypeOfTax: Action[AnyContent] = getCallUsAboutAPaymentPlan
+  val getTtpCallUsExistingTTP: Action[AnyContent] = getCallUsAboutAPaymentPlan
+  val getTtpCallUsCalculatorInstalments: Action[AnyContent] = getCallUsAboutAPaymentPlan
+  val getTtpCallUsSignInQuestion: Action[AnyContent] = getCallUsAboutAPaymentPlan
+  val getIaCallUse: Action[AnyContent] = getCallUsAboutAPaymentPlan
+  val getNotSaEnrolled: Action[AnyContent] = getCallUsAboutAPaymentPlan
 
-  def getDebtTooOld: Action[AnyContent] = as.action { implicit request =>
+  val getDebtTooOld: Action[AnyContent] = as.action { implicit request =>
     Ok(views.call_us_debt_too_old(isWelsh, loggedIn = isSignedIn))
   }
 
-  def getDebtTooLarge: Action[AnyContent] = as.action { implicit request =>
+  val getDebtTooLarge: Action[AnyContent] = as.action { implicit request =>
     Ok(views.debt_too_large(isSignedIn, isWelsh))
   }
 
-  def getFileYourTaxReturn: Action[AnyContent] = as.action { implicit request =>
+  val getFileYourTaxReturn: Action[AnyContent] = as.action { implicit request =>
     Ok(views.file_your_tax_return(isSignedIn))
   }
 
-  def getYouAlreadyHaveAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
+  val getYouAlreadyHaveAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
     Ok(views.you_already_have_a_payment_plan(isSignedIn, isWelsh))
   }
 
-  def getAccessYouSelfAssessmentOnline: Action[AnyContent] = as.action { implicit request =>
+  val getAccessYouSelfAssessmentOnline: Action[AnyContent] = as.action { implicit request =>
     Ok(views.you_need_to_request_access_to_self_assessment(isWelsh, isSignedIn))
   }
 
-  def getNotSoleSignatory: Action[AnyContent] = as.action { implicit request =>
+  val getNotSoleSignatory: Action[AnyContent] = as.action { implicit request =>
     Ok(views.not_sole_signatory(isWelsh, isSignedIn))
   }
 
-  def submitAccessYouSelfAssessmentOnline: Action[AnyContent] = as.authenticatedSaUser.async { implicit request =>
+  val submitAccessYouSelfAssessmentOnline: Action[AnyContent] = as.authenticatedSaUser.async { implicit request =>
     val logMessagePrefix = "Submit 'Access your self assessment online': "
     val logMessage = logMessagePrefix + "Sending user to PTA (add-taxes-frontend) to enroll for SA" +
       s"[utr=${request.maybeUtr.map(_.obfuscate)}]"
@@ -110,7 +106,7 @@ class SelfServiceTimeToPayController @Inject() (
             "Redirecting user to 'Not enrolled in SA' kick-out page"
         )
         Future.successful(Redirect(
-          ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()
+          ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled
         ))
     }
 
@@ -121,7 +117,7 @@ class SelfServiceTimeToPayController @Inject() (
     }
   }
 
-  def signOut(): Action[AnyContent] = as.action { implicit request =>
+  val signOut: Action[AnyContent] = as.action { _ =>
     Redirect(appConfig.logoutUrl).withNewSession
   }
 }

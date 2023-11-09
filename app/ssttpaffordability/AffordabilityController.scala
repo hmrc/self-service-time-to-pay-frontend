@@ -58,6 +58,10 @@ class AffordabilityController @Inject() (
     }
   }
 
+  val submitCheckYouCanAfford: Action[AnyContent] = as.authorisedSaUser { _ =>
+    Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending)
+  }
+
   val getAddIncomeAndSpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.authorizedForSsttp { implicit journey =>
       journeyLogger.info("Get 'Add income and spending'")
@@ -65,7 +69,7 @@ class AffordabilityController @Inject() (
       val spending = journey.maybeSpending.fold(Seq.empty[Expenses])(_.expenses)
       val income = journey.maybeIncome.fold(Seq.empty[IncomeBudgetLine])(_.budgetLines)
       if (spending.nonEmpty && income.nonEmpty) {
-        Redirect(ssttpaffordability.routes.AffordabilityController.getHowMuchYouCouldAfford())
+        Redirect(ssttpaffordability.routes.AffordabilityController.getHowMuchYouCouldAfford)
       } else {
         Future.successful(Ok(views.add_income_spending(income, spending)))
       }
@@ -80,6 +84,20 @@ class AffordabilityController @Inject() (
       val income = journey.maybeIncome.fold(Seq.empty[IncomeBudgetLine])(_.budgetLines)
       val remainingIncomeAfterSpending = journey.remainingIncomeAfterSpending
       Future.successful(Ok(views.how_much_you_could_afford(income, spending, remainingIncomeAfterSpending)))
+    }
+  }
+
+  val submitHowMuchYouCouldAfford: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    journeyService.authorizedForSsttp { implicit journey =>
+      journeyLogger.info("Submnit 'How much you could afford'")
+      val remainingIncomeAfterSpending = journey.remainingIncomeAfterSpending
+
+      val redirectTo = if (remainingIncomeAfterSpending <= 0)
+        ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP
+      else
+        ssttpcalculator.routes.CalculatorController.getCalculateInstalments
+
+      Future.successful(Redirect(redirectTo))
     }
   }
 
@@ -110,11 +128,11 @@ class AffordabilityController @Inject() (
         { (input: IncomeInput) =>
           if (input.hasPositiveTotal) {
             storeIncomeInputToJourney(input, journey).map { _ =>
-              Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
+              Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending)
             }
           } else {
             storeIncomeInputToJourney(IncomeInput.empty, journey).map { _ =>
-              Redirect(ssttpaffordability.routes.AffordabilityController.getCallUsNoIncome())
+              Redirect(ssttpaffordability.routes.AffordabilityController.getCallUsNoIncome)
             }
           }
         }
@@ -189,7 +207,7 @@ class AffordabilityController @Inject() (
             )),
             maybePlanSelection = None)
           journeyService.saveJourney(newJourney).map { _ =>
-            Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
+            Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending)
           }
         }
       )

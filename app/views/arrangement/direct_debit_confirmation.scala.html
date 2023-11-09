@@ -58,7 +58,7 @@
             </div>
 
 
-        @viewsHelpers.form(ssttparrangement.routes.ArrangementController.getTermsAndConditions(), Symbol("class") -> "group") {
+        @viewsHelpers.form(ssttpdirectdebit.routes.DirectDebitController.submitDirectDebitConfirmation, Symbol("class") -> "group") {
                 @govukButton(Button(
                 classes = "form-group margin-top-30 form-field--submit",
                 content = Text(Messages("ssttp.arrangement.direct-debit.form.submit")),

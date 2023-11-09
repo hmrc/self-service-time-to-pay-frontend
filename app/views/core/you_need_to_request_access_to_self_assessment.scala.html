@@ -37,7 +37,7 @@
     <p class="govuk-body">@messages("ssttp.you-need-to-request-access-to-self-assessment.p1")</p>
 
     @viewsHelpers.form(
-      ssttpeligibility.routes.SelfServiceTimeToPayController.submitAccessYouSelfAssessmentOnline(),
+      ssttpeligibility.routes.SelfServiceTimeToPayController.submitAccessYouSelfAssessmentOnline,
       Symbol("class") -> "group",
       Symbol("id") -> "start"
     ) {
