@@ -7,84 +7,86 @@
 GET         /assets/*file                                 controllers.Assets.versioned(path="/public", file: Asset)
 
 # Home page
-GET         /                                                             ssttpeligibility.SelfServiceTimeToPayController.start()
-GET         /govuk/start                                                  ssttpeligibility.SelfServiceTimeToPayController.doStart()
-POST        /                                                             ssttpeligibility.SelfServiceTimeToPayController.doStart()
+GET         /                                                             ssttpeligibility.SelfServiceTimeToPayController.start
+GET         /govuk/start                                                  ssttpeligibility.SelfServiceTimeToPayController.doStart
+POST        /                                                             ssttpeligibility.SelfServiceTimeToPayController.doStart
 
 # eligibility
-GET         /arrangement/determine-eligibility                            ssttparrangement.ArrangementController.determineEligibility()
+GET         /arrangement/determine-eligibility                            ssttparrangement.ArrangementController.determineEligibility
 
-GET         /eligibility/type-of-tax/call-us                              ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsTypeOfTax()
-GET         /eligibility/existing-ttp/call-us                             ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsExistingTTP()
-GET         /eligibility/ia/call-us                                       ssttpeligibility.SelfServiceTimeToPayController.getIaCallUse()
-GET         /eligibility/sign-in-question/call-us                         ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()
-GET         /call-us-debt-too-old                                         ssttpeligibility.SelfServiceTimeToPayController.getDebtTooOld()
-GET         /eligibility/debt-large/call-us                               ssttpeligibility.SelfServiceTimeToPayController.getDebtTooLarge()
-GET         /calculator/instalments/call-us                               ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()
-GET         /file-your-tax-return                                         ssttpeligibility.SelfServiceTimeToPayController.getFileYourTaxReturn()
-GET         /already-have-a-plan                                          ssttpeligibility.SelfServiceTimeToPayController.getYouAlreadyHaveAPaymentPlan()
-GET         /eligibility/call-us                                          ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUs()
-GET         /eligibility/not-enrolled                                     ssttpeligibility.SelfServiceTimeToPayController.getNotSaEnrolled()
-GET         /eligibility/not-sole-signatory                               ssttpeligibility.SelfServiceTimeToPayController.getNotSoleSignatory()
+GET         /eligibility/type-of-tax/call-us                              ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsTypeOfTax
+GET         /eligibility/existing-ttp/call-us                             ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsExistingTTP
+GET         /eligibility/ia/call-us                                       ssttpeligibility.SelfServiceTimeToPayController.getIaCallUse
+GET         /eligibility/sign-in-question/call-us                         ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion
+GET         /call-us-debt-too-old                                         ssttpeligibility.SelfServiceTimeToPayController.getDebtTooOld
+GET         /eligibility/debt-large/call-us                               ssttpeligibility.SelfServiceTimeToPayController.getDebtTooLarge
+GET         /calculator/instalments/call-us                               ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments
+GET         /file-your-tax-return                                         ssttpeligibility.SelfServiceTimeToPayController.getFileYourTaxReturn
+GET         /already-have-a-plan                                          ssttpeligibility.SelfServiceTimeToPayController.getYouAlreadyHaveAPaymentPlan
+GET         /eligibility/call-us                                          ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUs
+GET         /eligibility/not-enrolled                                     ssttpeligibility.SelfServiceTimeToPayController.getNotSaEnrolled
+GET         /eligibility/not-sole-signatory                               ssttpeligibility.SelfServiceTimeToPayController.getNotSoleSignatory
 
-GET         /eligibility/access-your-self-assessment-online                ssttpeligibility.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()
-POST        /eligibility/access-your-self-assessment-online                ssttpeligibility.SelfServiceTimeToPayController.submitAccessYouSelfAssessmentOnline()
+GET         /eligibility/access-your-self-assessment-online                ssttpeligibility.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline
+POST        /eligibility/access-your-self-assessment-online                ssttpeligibility.SelfServiceTimeToPayController.submitAccessYouSelfAssessmentOnline
 
 # Calculator
-GET         /calculator/tax-liabilities                                   ssttpcalculator.CalculatorController.getTaxLiabilities()
+GET         /calculator/tax-liabilities                                   ssttpcalculator.CalculatorController.getTaxLiabilities
+POST        /calculator/tax-liabilities                                   ssttpcalculator.CalculatorController.submitTaxLiabilities
 
-GET         /calculator/payment-today-question                            ssttpcalculator.CalculatorController.getPayTodayQuestion()
-POST        /calculator/payment-today-question                            ssttpcalculator.CalculatorController.submitPayTodayQuestion()
+GET         /calculator/payment-today-question                            ssttpcalculator.CalculatorController.getPayTodayQuestion
+POST        /calculator/payment-today-question                            ssttpcalculator.CalculatorController.submitPayTodayQuestion
 
-GET         /calculator/payment-today                                     ssttpcalculator.CalculatorController.getPaymentToday()
-POST        /calculator/payment-today                                     ssttpcalculator.CalculatorController.submitPaymentToday()
+GET         /calculator/payment-today                                     ssttpcalculator.CalculatorController.getPaymentToday
+POST        /calculator/payment-today                                     ssttpcalculator.CalculatorController.submitPaymentToday
 
-GET         /calculator/payment-summary                                   ssttpcalculator.CalculatorController.getPaymentSummary()
+GET         /calculator/payment-summary                                   ssttpcalculator.CalculatorController.getPaymentSummary
+POST        /calculator/payment-summary                                   ssttpcalculator.CalculatorController.submitPaymentSummary
 
-GET         /calculator/instalments                                       ssttpcalculator.CalculatorController.getCalculateInstalments()
-POST        /calculator/instalments                                       ssttpcalculator.CalculatorController.submitCalculateInstalments()
+GET         /calculator/instalments                                       ssttpcalculator.CalculatorController.getCalculateInstalments
+POST        /calculator/instalments                                       ssttpcalculator.CalculatorController.submitCalculateInstalments
 
-GET         /arrangement/instalment-summary/select-date                   ssttparrangement.ArrangementController.getChangeSchedulePaymentDay()
-POST        /arrangement/instalment-summary/select-date                   ssttparrangement.ArrangementController.submitChangeSchedulePaymentDay()
-
-#GET         /arrangement/instalment-summary                               ssttparrangement.ArrangementController.getInstalmentSummary()
-#POST        /arrangement/instalment-summary                               ssttparrangement.ArrangementController.submitInstalmentSummary()
+GET         /arrangement/instalment-summary/select-date                   ssttparrangement.ArrangementController.getChangeSchedulePaymentDay
+POST        /arrangement/instalment-summary/select-date                   ssttparrangement.ArrangementController.submitChangeSchedulePaymentDay
 
 
 # Arrangement
-POST        /arrangement                                                  ssttparrangement.ArrangementController.start()
-GET         /arrangement/check-your-payment-plan                          ssttparrangement.ArrangementController.getCheckPaymentPlan()
-POST        /arrangement/check-your-payment-plan                          ssttparrangement.ArrangementController.submitCheckPaymentPlan()
-GET         /arrangement/about-your-bank-account                          ssttpdirectdebit.DirectDebitController.getAboutBankAccount()
-POST        /arrangement/about-your-bank-account                          ssttpdirectdebit.DirectDebitController.submitAboutBankAccount()
-GET         /arrangement/terms-and-conditions                             ssttparrangement.ArrangementController.getTermsAndConditions()
-GET         /arrangement/direct-debit                                     ssttpdirectdebit.DirectDebitController.getDirectDebit()
+POST        /arrangement                                                  ssttparrangement.ArrangementController.start
+GET         /arrangement/check-your-payment-plan                          ssttparrangement.ArrangementController.getCheckPaymentPlan
+POST        /arrangement/check-your-payment-plan                          ssttparrangement.ArrangementController.submitCheckPaymentPlan
+GET         /arrangement/about-your-bank-account                          ssttpdirectdebit.DirectDebitController.getAboutBankAccount
+POST        /arrangement/about-your-bank-account                          ssttpdirectdebit.DirectDebitController.submitAboutBankAccount
+GET         /arrangement/terms-and-conditions                             ssttparrangement.ArrangementController.getTermsAndConditions
+GET         /arrangement/direct-debit                                     ssttpdirectdebit.DirectDebitController.getDirectDebit
 POST        /arrangement/direct-debit                                     ssttpdirectdebit.DirectDebitController.submitDirectDebit
-GET         /arrangement/direct-debit-confirmation                        ssttpdirectdebit.DirectDebitController.getDirectDebitConfirmation()
-GET         /arrangement/view-payment-plan                                ssttparrangement.ArrangementController.viewPaymentPlan()
-GET         /arrangement/direct-debit-assistance                          ssttpdirectdebit.DirectDebitController.getDirectDebitAssistance()
-GET         /arrangement/direct-debit-error                               ssttpdirectdebit.DirectDebitController.getDirectDebitError()
-POST        /arrangement/submit                                           ssttparrangement.ArrangementController.submit()
-GET         /arrangement/summary                                          ssttparrangement.ArrangementController.applicationComplete()
+GET         /arrangement/direct-debit-confirmation                        ssttpdirectdebit.DirectDebitController.getDirectDebitConfirmation
+POST        /arrangement/direct-debit-confirmation                        ssttpdirectdebit.DirectDebitController.submitDirectDebitConfirmation
+GET         /arrangement/view-payment-plan                                ssttparrangement.ArrangementController.viewPaymentPlan
+GET         /arrangement/direct-debit-assistance                          ssttpdirectdebit.DirectDebitController.getDirectDebitAssistance
+GET         /arrangement/direct-debit-error                               ssttpdirectdebit.DirectDebitController.getDirectDebitError
+POST        /arrangement/submit                                           ssttparrangement.ArrangementController.submit
+GET         /arrangement/summary                                          ssttparrangement.ArrangementController.applicationComplete
 
-GET         /sign-out                                                     ssttpeligibility.SelfServiceTimeToPayController.signOut()
+GET         /sign-out                                                     ssttpeligibility.SelfServiceTimeToPayController.signOut
 
 GET         /language/:language                                           langswitch.LanguageSwitchController.switchToLanguage(language: Language)
 
 
-GET         /session/keep-alive                                           controllers.TimeoutController.keepAliveSession()
-GET         /delete-answers                                               controllers.TimeoutController.killSession()
+GET         /session/keep-alive                                           controllers.TimeoutController.keepAliveSession
+GET         /delete-answers                                               controllers.TimeoutController.killSession
 
 
 # Affordability
-GET         /start-affordability                                          ssttpaffordability.AffordabilityController.getCheckYouCanAfford()
-GET         /add-income-spending                                          ssttpaffordability.AffordabilityController.getAddIncomeAndSpending()
-GET         /monthly-income                                               ssttpaffordability.AffordabilityController.getYourMonthlyIncome()
-POST        /monthly-income                                               ssttpaffordability.AffordabilityController.submitMonthlyIncome()
-GET         /call-us-no-income                                            ssttpaffordability.AffordabilityController.getCallUsNoIncome()
-GET         /monthly-spending                                             ssttpaffordability.AffordabilityController.getYourMonthlySpending()
-POST        /monthly-spending                                             ssttpaffordability.AffordabilityController.submitMonthlySpending()
-GET         /how-much-you-could-afford                                    ssttpaffordability.AffordabilityController.getHowMuchYouCouldAfford()
-GET         /we-cannot-agree-your-payment-plan                            ssttpaffordability.AffordabilityController.getWeCannotAgreeYourPP()
-GET         /set-up-payment-plan-adviser                                  ssttpaffordability.AffordabilityController.getSetUpPlanWithAdviser()
-GET         /call-us-about-a-payment-plan                                 ssttpaffordability.AffordabilityController.getCannotAffordPlan()
+GET         /start-affordability                                          ssttpaffordability.AffordabilityController.getCheckYouCanAfford
+POST        /start-affordability                                          ssttpaffordability.AffordabilityController.submitCheckYouCanAfford
+GET         /add-income-spending                                          ssttpaffordability.AffordabilityController.getAddIncomeAndSpending
+GET         /monthly-income                                               ssttpaffordability.AffordabilityController.getYourMonthlyIncome
+POST        /monthly-income                                               ssttpaffordability.AffordabilityController.submitMonthlyIncome
+GET         /call-us-no-income                                            ssttpaffordability.AffordabilityController.getCallUsNoIncome
+GET         /monthly-spending                                             ssttpaffordability.AffordabilityController.getYourMonthlySpending
+POST        /monthly-spending                                             ssttpaffordability.AffordabilityController.submitMonthlySpending
+GET         /how-much-you-could-afford                                    ssttpaffordability.AffordabilityController.getHowMuchYouCouldAfford
+POST        /how-much-you-could-afford                                    ssttpaffordability.AffordabilityController.submitHowMuchYouCouldAfford
+GET         /we-cannot-agree-your-payment-plan                            ssttpaffordability.AffordabilityController.getWeCannotAgreeYourPP
+GET         /set-up-payment-plan-adviser                                  ssttpaffordability.AffordabilityController.getSetUpPlanWithAdviser
+GET         /call-us-about-a-payment-plan                                 ssttpaffordability.AffordabilityController.getCannotAffordPlan

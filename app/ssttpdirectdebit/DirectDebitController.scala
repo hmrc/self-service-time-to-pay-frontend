@@ -63,7 +63,7 @@ class DirectDebitController @Inject() (
 
   implicit val config: ViewConfig = viewConfig
 
-  def getAboutBankAccount: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
+  val getAboutBankAccount: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'About bank account'")
 
@@ -79,7 +79,7 @@ class DirectDebitController @Inject() (
     }
   }
 
-  def submitAboutBankAccount: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
+  val submitAboutBankAccount: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp { implicit journey =>
       journeyLogger.info("Submit 'About bank account'")
 
@@ -98,8 +98,8 @@ class DirectDebitController @Inject() (
             )
               .map { _ =>
                 val redirectTo = detailsAboutBankAccountForm.isSoleSignatory match {
-                  case IsSoleSignatory.Yes => ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()
-                  case IsSoleSignatory.No  => ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSoleSignatory()
+                  case IsSoleSignatory.Yes => ssttpdirectdebit.routes.DirectDebitController.getDirectDebit
+                  case IsSoleSignatory.No  => ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSoleSignatory
                 }
                 Redirect(redirectTo)
               }
@@ -108,7 +108,7 @@ class DirectDebitController @Inject() (
     }
   }
 
-  def getDirectDebit: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
+  val getDirectDebit: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp { implicit journey =>
       journeyLogger.info("Get 'Direct debit'")
 
@@ -127,7 +127,7 @@ class DirectDebitController @Inject() (
     }
   }
 
-  def getDirectDebitAssistance: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
+  val getDirectDebitAssistance: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'Direct debit assistance'")
 
@@ -137,7 +137,7 @@ class DirectDebitController @Inject() (
     }
   }
 
-  def getDirectDebitError: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
+  val getDirectDebitError: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'Direct debit error'")
 
@@ -148,7 +148,7 @@ class DirectDebitController @Inject() (
     }
   }
 
-  def getDirectDebitConfirmation: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
+  val getDirectDebitConfirmation: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'Direct debit confirmation'")
 
@@ -162,7 +162,11 @@ class DirectDebitController @Inject() (
     }
   }
 
-  def submitDirectDebit: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
+  val submitDirectDebitConfirmation: Action[AnyContent] = actions.authorisedSaUser { implicit request =>
+    Redirect(ssttparrangement.routes.ArrangementController.getTermsAndConditions)
+  }
+
+  val submitDirectDebit: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp { implicit journey =>
       journeyLogger.info("Submit 'Direct debit'")
 
@@ -177,7 +181,7 @@ class DirectDebitController @Inject() (
             formWithErrors))),
         (validFormData: ArrangementDirectDebit) =>
           if (ArrangementDirectDebit.to(validFormData) == journey.maybeBankDetails) {
-            Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
+            Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation)
           } else {
             barsService.validateBankDetails(validFormData.sortCode, validFormData.accountNumber, validFormData.accountName, journey.maybeTypeOfAccountDetails, request.utr).flatMap {
 
@@ -187,7 +191,7 @@ class DirectDebitController @Inject() (
                   journey.copy(maybeBankDetails = Some(BankDetails(journey.maybeTypeOfAccountDetails.map(_.typeOfAccount),
                                                                    validFormData.sortCode, validFormData.accountNumber, validFormData.accountName)))
                 ).map { _ =>
-                    Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
+                    Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation)
                   }
               case InvalidBankDetails(obfuscatedBarsResponse) =>
                 journeyLogger.info(s"Bank details are invalid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}")

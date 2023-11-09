@@ -53,7 +53,7 @@ class JourneyService @Inject() (
       journey <- getJourney()
       result <- journey match {
         case journey if journey.isFinished =>
-          Future.successful(Results.Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
+          Future.successful(Results.Redirect(ssttparrangement.routes.ArrangementController.applicationComplete))
 
         case _ =>
           journey.requireIsEligible()

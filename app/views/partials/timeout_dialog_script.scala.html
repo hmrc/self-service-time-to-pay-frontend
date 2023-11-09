@@ -25,8 +25,8 @@
 
 
 @timeoutDialogue(
-    signOutUrl = routes.TimeoutController.killSession().url,
-    keepAliveUrl = Some(controllers.routes.TimeoutController.keepAliveSession().url),
+    signOutUrl = routes.TimeoutController.killSession.url,
+    keepAliveUrl = Some(controllers.routes.TimeoutController.keepAliveSession.url),
     timeout = Some(viewConf.timeoutDialogTimeout),
     countdown = Some(viewConf.timeoutDialogCountdown),
     title = None,

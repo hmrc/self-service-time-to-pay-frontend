@@ -50,7 +50,7 @@
                     else messages("ssttp.arrangement.check-payment-plan.no")}
             </dd>
             <dd class="govuk-summary-list__actions">
-                <a id="upfront-payment" class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">
+                <a id="upfront-payment" class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion">
                     @messages("ssttp.arrangement.check-payment-plan.change")
                     <span class="govuk-visually-hidden">@messages("ssttp.arrangement.check-payment-plan.upfront-payment.change-hidden")
                     </span>
@@ -70,7 +70,7 @@
                 @partials.currency(paymentSchedule.initialPayment)
             </dd>
             <dd class="govuk-summary-list__actions">
-                <a id="upfront-payment-amount" class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">
+                <a id="upfront-payment-amount" class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion">
                     @messages("ssttp.arrangement.check-payment-plan.change")
                     <span class="govuk-visually-hidden"> @messages("ssttp.arrangement.check-payment-plan.upfront-payment.amount.change-hidden")
                     </span>
@@ -91,7 +91,7 @@
                 @messages("ssttp.arrangement.check-payment-plan.payment-date.ending", getDayOfMonthOrdinal(paymentSchedule.firstInstalment.paymentDate))
             </dd>
             <dd class="govuk-summary-list__actions">
-                <a id="collection-day" class="govuk-link" href="@ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay()">
+                <a id="collection-day" class="govuk-link" href="@ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay">
                     @messages("ssttp.arrangement.check-payment-plan.change")
                     <span class="govuk-visually-hidden"> @messages("ssttp.arrangement.check-payment-plan.payments-collected-on.change-hidden")
                     </span>
@@ -108,7 +108,7 @@
        </dt>
        <dd class="govuk-summary-list__value "></dd>
            <dd class="govuk-summary-list__actions">
-               <a id="monthly-payment" class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()">
+               <a id="monthly-payment" class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments">
                    @messages("ssttp.arrangement.check-payment-plan.change")
                <span class="govuk-visually-hidden"> @messages("ssttp.arrangement.check-payment-plan.payments-collected-on.change-hidden")</span>
                </a>
@@ -166,7 +166,7 @@
             content = Text(messages("ssttp.arrangement.check-payment-plan.warning"))))
     }
 
-    @viewsHelpers.form(ssttpdirectdebit.routes.DirectDebitController.getAboutBankAccount()) {
+    @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submitCheckPaymentPlan) {
         @viewsHelpers.continue(Messages("ssttp.arrangement.check-payment-plan.agree"))
     }
 
