@@ -298,8 +298,10 @@ ssttp.calculator.form.payment_today.update = Diweddaru
 ssttp.calculator.form.continue = Yn eich blaen
 
 ssttp.calculator.results.title = Dewiswch gynllun talu
-ssttp.calculator.results.h1 = Faint y gallwch ei dalu bob mis?
+ssttp.calculator.results.title.custom-amount = Mae opsiwn cynllun talu arall wedi’i ychwanegu
+ssttp.calculator.results.h2 = Faint y gallwch ei dalu bob mis?
 ssttp.calculator.results.p1 = Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn <strong>fwy</strong> oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
+ssttp.calculator.results.p1.custom-amount = Yn seiliedig ar yr hyn a nodwyd gennych, rydym wedi ychwanegu opsiwn cynllun talu arall. Bydd y taliad misol olaf yn eich cynllun yn <strong>fwy</strong> oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
 ssttp.calculator.results.p3 = Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
 ssttp.calculator.results.amount.option =  <strong>{0} y mis</strong>, am {1} mis
 ssttp.calculator.results.amount.option.interest-hint = Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef  {0}

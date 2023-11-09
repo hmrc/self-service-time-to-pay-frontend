@@ -69,12 +69,6 @@
 
 @customAmountHasErrors = @{selectPlanForm("plan-selection").value.contains("customAmountOption")}
 
-@customAmountSelected() = @{
-    if(customAmountHasErrors){
-        "checked"
-    }
-}
-
 @errorFocus(key: String) = @{
     if(customAmountHasErrors){
         "custom-amount-option"
@@ -99,6 +93,16 @@
 </div>
 }
 
+@legendAndP1Text = @{
+    previousFormSubmission.fold(
+        messages("ssttp.calculator.results.title") -> Html(messages(s"ssttp.calculator.results.p1"))
+    )(_.selection match {
+        case Right(CustomPlanRequest(_)) => messages("ssttp.calculator.results.title.custom-amount") -> Html(messages(s"ssttp.calculator.results.p1.custom-amount"))
+        case Left (SelectedPlan(amount)) => if (amount > minCustomAmount) messages("ssttp.calculator.results.title.custom-amount") -> Html(messages(s"ssttp.calculator.results.p1.custom-amount")) else messages("ssttp.calculator.results.title") -> Html(messages(s"ssttp.calculator.results.p1"))
+    })
+}
+
+
 @main(
     title = Messages("ssttp.calculator.results.title"),
     hasErrors = selectPlanForm.hasErrors
@@ -121,13 +125,17 @@
 
 
 
-@viewsHelpers.form(redirectCall) {
+@viewsHelpers.form(redirectCall, Symbol("autocomplete") -> "off") {
     <fieldset class="govuk-fieldset">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-            <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.results.title")</h1>
-        </legend>
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h1 class="govuk-heading-xl">
+                    @legendAndP1Text._1
+                </h1>
+            </legend>
 
-        <p class="govuk-body">@Html(messages(s"ssttp.calculator.results.p1"))</p>
+        <p class="govuk-body">
+            @legendAndP1Text._2
+        </p>
 
         <details class="govuk-details">
             <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@messages("ssttp.calculator.how-we-calculate-interest.detail.title")</span></summary>
@@ -140,7 +148,7 @@
 
         <p class="govuk-body">@messages("ssttp.calculator.results.p3")</p>
 
-        <h2 class="govuk-heading-m">@messages("ssttp.calculator.results.h1")</h2>
+        <h2 class="govuk-heading-m">@messages("ssttp.calculator.results.h2")</h2>
 
         @radios(Radios(
             name = "plan-selection",
