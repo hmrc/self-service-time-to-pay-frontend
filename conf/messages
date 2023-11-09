@@ -293,10 +293,10 @@ ssttp.calculator.form.payment_today.update = Update
 ssttp.calculator.form.continue = Continue
 
 ssttp.calculator.results.title = Select a payment plan
-ssttp.calculator.results.title.Alt = Another payment plan option has been added
-ssttp.calculator.results.h1 = How much can you pay each month?
+ssttp.calculator.results.title.custom-amount = Another payment plan option has been added
+ssttp.calculator.results.h2 = How much can you pay each month?
 ssttp.calculator.results.p1 = Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be <strong>more</strong> as it will include interest and any remaining tax you owe.
-ssttp.calculator.results.p1.Alt = Based on what you entered, we have added another payment plan option. The final monthly payment in your plan will be <strong>more</strong> as it will include interest and any remaining tax you owe.
+ssttp.calculator.results.p1.custom-amount = Based on what you entered, we have added another payment plan option. The final monthly payment in your plan will be <strong>more</strong> as it will include interest and any remaining tax you owe.
 ssttp.calculator.results.p3 = If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
 ssttp.calculator.results.amount.option =  <strong>{0} per month</strong> over {1} months
 ssttp.calculator.results.amount.option.interest-hint = Includes total interest estimated at {0}

@@ -120,8 +120,8 @@
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                 <h1 class="govuk-heading-xl">
                     @{previousFormSubmission.fold(messages("ssttp.calculator.results.title"))(_.selection match {
-                        case Right(CustomPlanRequest(_)) => messages("ssttp.calculator.results.title.Alt")
-                        case Left (SelectedPlan(amount)) => if (amount > minCustomAmount) messages("ssttp.calculator.results.title.Alt") else messages("ssttp.calculator.results.title")
+                        case Right(CustomPlanRequest(_)) => messages("ssttp.calculator.results.title.custom-amount")
+                        case Left (SelectedPlan(amount)) => if (amount > minCustomAmount) messages("ssttp.calculator.results.title.custom-amount") else messages("ssttp.calculator.results.title")
                     })}
                 </h1>
             </legend>
@@ -129,8 +129,8 @@
 
         <p class="govuk-body">
             @{previousFormSubmission.fold(Html(messages(s"ssttp.calculator.results.p1")))(_.selection match {
-                case Right(CustomPlanRequest(_)) => Html(messages(s"ssttp.calculator.results.p1.Alt"))
-                case Left (SelectedPlan(amount)) => if (amount > minCustomAmount) Html(messages("ssttp.calculator.results.p1.Alt")) else Html(messages("ssttp.calculator.results.p1"))
+                case Right(CustomPlanRequest(_)) => Html(messages(s"ssttp.calculator.results.p1.custom-amount"))
+                case Left (SelectedPlan(amount)) => if (amount > minCustomAmount) Html(messages("ssttp.calculator.results.p1.custom-amount")) else Html(messages("ssttp.calculator.results.p1"))
             })}
         </p>
 
@@ -145,7 +145,7 @@
 
         <p class="govuk-body">@messages("ssttp.calculator.results.p3")</p>
 
-        <h2 class="govuk-heading-m">@messages("ssttp.calculator.results.h1")</h2>
+        <h2 class="govuk-heading-m">@messages("ssttp.calculator.results.h2")</h2>
 
         @radios(Radios(
             name = "plan-selection",

@@ -291,13 +291,15 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
         }
 
         private def customAmountTextEnglish(amount: String) =
-          s"""Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
-             |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
+          s"""Another payment plan option has been added
+             |Based on what you entered, we have added another payment plan option.
+             |The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
           """.stripMargin
 
         private def customAmountTextWelsh(amount: String) =
-          s"""Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn fwy oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
-             |Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
+          s"""Mae opsiwn cynllun talu arall wedi’i ychwanegu
+             |Yn seiliedig ar yr hyn a nodwyd gennych, rydym wedi ychwanegu opsiwn cynllun talu arall.
+             |Bydd y taliad misol olaf yn eich cynllun yn fwy oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
           """.stripMargin
       }
     }
