@@ -33,6 +33,16 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     case Languages.Welsh   => "Dewiswch gynllun talu"
   }
 
+  def expectedHeadingCustomContent(language: Language): String = language match {
+    case Languages.English => "Another payment plan option has been added"
+    case Languages.Welsh   => "Mae opsiwn cynllun talu arall wedi’i ychwanegu"
+  }
+
+  def expectedHeadingCustomContentWithErrorPrefix(language: Language): String = language match {
+    case Languages.English => "Error: " + expectedHeadingCustomContent(English)
+    case Languages.Welsh   => "Gwall: " + expectedHeadingCustomContent(Welsh)
+  }
+
   def expectedHeadingContentWithErrorPrefix(language: Language): String = language match {
     case Languages.English => "Error: " + expectedHeadingContent(English)
     case Languages.Welsh   => "Gwall: " + expectedHeadingContent(Welsh)
@@ -128,7 +138,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
   )(implicit lang: Language = English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
-    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
+    pageTitle shouldBe expectedTitle(expectedHeadingCustomContent(lang), lang)
 
     assertPageWithCustomAmountContentIsDisplayed(amount, months, interest)(lang)
     ()
@@ -146,6 +156,10 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
   def assertExpectedHeadingContentWithErrorPrefix(implicit lang: Language = English): Assertion = probing {
     pageTitle shouldBe expectedTitle(expectedHeadingContentWithErrorPrefix(lang), lang)
+  }
+
+  def assertExpectedHeadingCustomContentWithErrorPrefix(implicit lang: Language = English): Assertion = probing {
+    pageTitle shouldBe expectedTitle(expectedHeadingCustomContentWithErrorPrefix(lang), lang)
   }
 
   def assertNoOptionSelectedErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {

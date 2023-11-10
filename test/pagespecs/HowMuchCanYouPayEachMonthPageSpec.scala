@@ -184,7 +184,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       pageUnderTest.clickContinue()
 
       pageUnderTest.clickContinue()
-      pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
+      pageUnderTest.assertExpectedHeadingCustomContentWithErrorPrefix
       pageUnderTest.assertNoOptionSelectedErrorIsDisplayed
       pageUnderTest.assertPageWithCustomAmountContentIsDisplayed(customAmountInput.toString, Some(customAmountPlanMonthsOutput.toString), Some(customAmountPlanInterestOutput.toString))
     }
@@ -285,7 +285,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
           pageUnderTest.enterCustomAmount()
           pageUnderTest.clickContinue()
 
-          pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
+          pageUnderTest.assertExpectedHeadingCustomContentWithErrorPrefix
           pageUnderTest.assertNoInputErrorIsDisplayed
         }
 
