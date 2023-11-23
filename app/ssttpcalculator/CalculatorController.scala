@@ -198,13 +198,9 @@ class CalculatorController @Inject() (
     val today = clockProvider.nowDate()
     val numberOfWorkingDaysToAdd = appConfig.numberOfWorkingDaysToAdd
 
-    lazy val calculate5WorkingsDays =
-      if (appConfig.useDateCalculatorService) dateCalculatorService.addWorkingDays(today, numberOfWorkingDaysToAdd)
-      else Future.successful(today.plusDays(10))
-
     journey.maybeDateFirstPaymentCanBeTaken.map(Future.successful).getOrElse(
       for {
-        fiveWorkingDaysFromNow <- calculate5WorkingsDays
+        fiveWorkingDaysFromNow <- dateCalculatorService.addWorkingDays(today, numberOfWorkingDaysToAdd)
         addWorkingDaysResult = AddWorkingDaysResult(today, numberOfWorkingDaysToAdd, fiveWorkingDaysFromNow)
         _ <- journeyService.saveJourney(journey.copy(maybeDateFirstPaymentCanBeTaken = Some(addWorkingDaysResult)))
       } yield addWorkingDaysResult

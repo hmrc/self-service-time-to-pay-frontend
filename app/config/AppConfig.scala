@@ -61,7 +61,5 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
 
   lazy val maxLengthOfPaymentPlan: Int = servicesConfig.getInt("calculatorConfig.maximumLengthOfPaymentPlan")
 
-  lazy val useDateCalculatorService = servicesConfig.getBoolean("features.call-date-calculator-service")
-
   lazy val numberOfWorkingDaysToAdd = servicesConfig.getInt("calculatorConfig.firstPaymentTakenInNumberOfWorkingDays")
 }
