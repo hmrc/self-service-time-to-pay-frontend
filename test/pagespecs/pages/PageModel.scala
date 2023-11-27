@@ -20,10 +20,10 @@ import java.io.{File, FileInputStream, FileOutputStream}
 import java.time.LocalDateTime.now
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 import java.util.concurrent.atomic.AtomicInteger
-
 import langswitch.{Language, Languages}
 import org.openqa.selenium.OutputType.FILE
 import org.openqa.selenium.{By, TakesScreenshot, WebDriver}
+import org.scalatest.Assertion
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatestplus.selenium.WebBrowser
 import play.api.Logger
@@ -93,7 +93,14 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
   def readGlobalHeaderText(): String = className("hmrc-header__service-name").element.text
 
   def href(id: String): Option[String] = find(IdQuery(id)).fold(Option.empty[String])(e => e.attribute("href"))
+
   def backButtonHref: Option[String] = href("back-link")
+
+  def hasBackButton: Assertion = probing {
+    val backButtonElement = WebBrowser.find(WebBrowser.ClassNameQuery("govuk-back-link"))
+    backButtonElement.fold(Option.empty[String])(e => Some(e.text)) shouldBe Some("Back")
+    backButtonElement.fold(Option.empty[String])(e => e.attribute("data-module")) shouldBe Some("hmrc-back-link")
+  }
 
   def readPath(): String = new java.net.URL(webDriver.getCurrentUrl).getPath
 
