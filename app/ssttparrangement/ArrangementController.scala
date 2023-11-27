@@ -82,18 +82,6 @@ class ArrangementController @Inject() (
   val paymentFrequency = "Calendar Monthly"
   val paymentCurrency = "GBP"
 
-  val start: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyService.getJourney().flatMap {
-      case journey if journey.inProgress && journey.maybeSelectedPlanAmount.isDefined =>
-        eligibilityCheck(journey)
-      case j =>
-        val msg = "Illegal state, journey must be in progress with defined payment amount"
-        val ex = new RuntimeException(msg)
-        journeyLogger.warn(msg)(request, j)
-        throw ex
-    }
-  }
-
   /**
    * This step is performed immediately after the user has logged in. It grabs the Taxpayer data and
    * then performs several checks to determine where the user should go next. This is because there are

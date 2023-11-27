@@ -51,7 +51,6 @@ POST        /arrangement/instalment-summary/select-date                   ssttpa
 
 
 # Arrangement
-POST        /arrangement                                                  ssttparrangement.ArrangementController.start
 GET         /arrangement/check-your-payment-plan                          ssttparrangement.ArrangementController.getCheckPaymentPlan
 POST        /arrangement/check-your-payment-plan                          ssttparrangement.ArrangementController.submitCheckPaymentPlan
 GET         /arrangement/about-your-bank-account                          ssttpdirectdebit.DirectDebitController.getAboutBankAccount
