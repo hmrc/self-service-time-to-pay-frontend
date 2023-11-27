@@ -1,10 +1,10 @@
 
 import play.sbt.PlayImport.ws
-import sbt.*
+import sbt._
 
 object AppDependencies {
 
-  val boostrapVersion = "8.0.0"
+  val boostrapVersion = "8.1.0"
   val cryptoVersion = "7.6.0"
 
   val compile = Seq(

@@ -16,9 +16,17 @@ class DeleteAnswersPageSpec extends ItSpec {
     deleteAnswersPage.assertInitialPageIsDisplayed(Welsh)
   }
 
-  "back button" in {
+  "sign in button" in {
     deleteAnswersPage.open()
-    deleteAnswersPage.hasBackButton
+    deleteAnswersPage.assertHasSignInButton()
+
+    deleteAnswersPage.clickOnWelshLink()
+    deleteAnswersPage.assertHasSignInButton(Welsh)
+  }
+
+  "no back button" in {
+    deleteAnswersPage.open()
+    deleteAnswersPage.hasNoBackLink
   }
 
 }

@@ -96,10 +96,14 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
 
   def backButtonHref: Option[String] = href("back-link")
 
-  def hasBackButton: Assertion = probing {
-    val backButtonElement = WebBrowser.find(WebBrowser.ClassNameQuery("govuk-back-link"))
-    backButtonElement.fold(Option.empty[String])(e => Some(e.text)) shouldBe Some("Back")
-    backButtonElement.fold(Option.empty[String])(e => e.attribute("data-module")) shouldBe Some("hmrc-back-link")
+  def hasBackLink: Assertion = probing {
+    val backLinkElement = WebBrowser.find(WebBrowser.ClassNameQuery("govuk-back-link"))
+    backLinkElement.fold(Option.empty[String])(e => Some(e.text)) shouldBe Some("Back")
+    backLinkElement.fold(Option.empty[String])(e => e.attribute("data-module")) shouldBe Some("hmrc-back-link")
+  }
+
+  def hasNoBackLink: Assertion = probing {
+    WebBrowser.find(WebBrowser.ClassNameQuery("govuk-back-link")) shouldBe None
   }
 
   def readPath(): String = new java.net.URL(webDriver.getCurrentUrl).getPath

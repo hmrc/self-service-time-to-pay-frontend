@@ -22,15 +22,20 @@
     implicit val viewConf: ViewConfig
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(signInAgain: String)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = Messages("delete-answers.heading"),
     allowTimeoutDialog = false,
-    welshToggleEnabled = true
+    welshToggleEnabled = true,
+    hasBackLink = false
 ) {
 <h1 class="govuk-heading-xl">@Messages("delete-answers.heading")</h1>
 <section class="govuk-body">
     <p>@Messages("delete-answers.message")</p>
+
+    <a href="@{signInAgain}" class="govuk-button">
+        @{Messages("delete-answers.sign-in")}
+    </a>
 </section>
 }

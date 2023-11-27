@@ -73,6 +73,7 @@ GET         /language/:language                                           langsw
 
 GET         /session/keep-alive                                           controllers.TimeoutController.keepAliveSession
 GET         /delete-answers                                               controllers.TimeoutController.killSession
+GET         /sign-in                                                      controllers.TimeoutController.signInAgain
 
 
 # Affordability

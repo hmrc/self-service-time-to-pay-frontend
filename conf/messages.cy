@@ -694,6 +694,7 @@ timeoutDialog.sign-out-button-text.logged-out = Dileu’ch atebion
 
 delete-answers.heading = Er eich diogelwch, gwnaethom eich allgofnodi
 delete-answers.message = Ni wnaethom gadw’ch atebion.
+delete-answers.sign-in = Mewngofnodi
 
 
 # telephone numbers

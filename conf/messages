@@ -712,6 +712,7 @@ timeoutDialog.sign-out-button-text.logged-out = Delete your answers
 
 delete-answers.heading = For your security, we signed you out
 delete-answers.message = We did not save your answers.
+delete-answers.sign-in = Sign in
 
 
 # telephone numbers
