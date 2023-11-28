@@ -17,6 +17,7 @@
 package controllers
 
 import play.api.http.Status
+import play.api.mvc.Session
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testsupport.{ItSpec, WireMockSupport}
@@ -29,9 +30,10 @@ class TimeoutControllerSpec extends ItSpec {
   "TimeoutController" - {
     ".killSession" - {
       "should display 'delete-answers' page with sign in again url to TimeoutController.signInAgain" in {
-        val result = controller.killSession(FakeRequest())
+        val result = controller.killSession(FakeRequest().withSession("key" -> "value"))
 
         status(result) shouldBe Status.OK
+        session(result) shouldBe Session()
       }
     }
     ".signInAgain" - {

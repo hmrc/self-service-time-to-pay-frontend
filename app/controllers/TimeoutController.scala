@@ -17,7 +17,7 @@
 package controllers
 
 import config.ViewConfig
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import util.Logging
 import views.Views
@@ -36,7 +36,8 @@ class TimeoutController @Inject() (views:      Views,
   val killSession: Action[AnyContent] = Action { implicit request =>
     appLogger.info("Kill session")
 
-    Ok(views.delete_answers(controllers.routes.TimeoutController.signInAgain.url)).withNewSession
+    val signInAgainCall = Call("GET", controllers.routes.TimeoutController.signInAgain.url)
+    Ok(views.delete_answers(signInAgainCall)).withNewSession
   }
 
   val signInAgain: Action[AnyContent] = Action { implicit request =>

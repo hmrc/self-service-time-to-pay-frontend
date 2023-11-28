@@ -22,7 +22,7 @@
     implicit val viewConf: ViewConfig
 )
 
-@(signInAgain: String)(implicit request: Request[_], messages: Messages)
+@(signInAgain: Call)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = Messages("delete-answers.heading"),
@@ -34,7 +34,7 @@
 <section class="govuk-body">
     <p>@Messages("delete-answers.message")</p>
 
-    <a href="@{signInAgain}" class="govuk-button">
+    <a href="@{signInAgain.url}" class="govuk-button">
         @{Messages("delete-answers.sign-in")}
     </a>
 </section>

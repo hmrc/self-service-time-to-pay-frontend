@@ -77,14 +77,14 @@ class JourneyServiceSpec extends ItSpec {
     }
     ".authorizedForSsttp(block)" - {
       "redirects to /delete-answers if no journey id in the session is found" in new DummyAction {
-        private val result = service.authorizedForSsttp(dummyBlock)(fakeRequest)
+        val result: Future[Result] = service.authorizedForSsttp(dummyBlock)(fakeRequest)
 
         status(result) shouldBe HttpStatus.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.TimeoutController.killSession.url)
       }
       "redirects to /delete-answers if no journey is found for the session's journey id" in new DummyAction {
         val unusedJourneyId = "51ba6742c7602426d74f84c0"
-        private val result = service.authorizedForSsttp(dummyBlock)(fakeRequest.withSession("ssttp.journeyId" -> unusedJourneyId))
+        val result: Future[Result] = service.authorizedForSsttp(dummyBlock)(fakeRequest.withSession("ssttp.journeyId" -> unusedJourneyId))
 
         status(result) shouldBe HttpStatus.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.TimeoutController.killSession.url)
