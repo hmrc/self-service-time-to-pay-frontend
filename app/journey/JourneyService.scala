@@ -18,6 +18,7 @@ package journey
 
 import journey.Statuses.{ApplicationComplete, InProgress}
 import play.api.mvc.{Request, Result, Results}
+import uk.gov.hmrc.auth.core.NoActiveSession
 import uk.gov.hmrc.play.http.logging.Mdc
 
 import javax.inject.Inject
@@ -40,8 +41,17 @@ class JourneyService @Inject() (
     )
   }
 
+  case class JourneyNotFound(msg: String = "Journey for journey id in session not found") extends NoActiveSession(msg)
+  case class NoJourneyIdForSessionFound(msg: String = "No journey id found in session") extends NoActiveSession(msg)
+
   def getJourney()(implicit request: Request[_]): Future[Journey] = Mdc.preservingMdc {
-    getMaybeJourney().map(_.getOrElse(throw new RuntimeException(s"Journey not found [ID: ${request.readJourneyId}]")))
+    request.readJourneyId match {
+      case Some(id) => getMaybeJourney().flatMap {
+        case Some(journey) => Future.successful(journey)
+        case None          => Future.failed(JourneyNotFound(s"Journey for journey id in session not found [Journey ID: $id]"))
+      }
+      case None => Future.failed(NoJourneyIdForSessionFound(s"No journey id found in session [Session: ${request.session}"))
+    }
   }
 
   /**
