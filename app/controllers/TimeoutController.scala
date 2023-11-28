@@ -36,8 +36,7 @@ class TimeoutController @Inject() (views:      Views,
   val killSession: Action[AnyContent] = Action { implicit request =>
     appLogger.info("Kill session")
 
-    val signInAgainCall = Call("GET", controllers.routes.TimeoutController.signInAgain.url)
-    Ok(views.delete_answers(signInAgainCall)).withNewSession
+    Ok(views.delete_answers(controllers.routes.TimeoutController.signInAgain)).withNewSession
   }
 
   val signInAgain: Action[AnyContent] = Action { implicit request =>
