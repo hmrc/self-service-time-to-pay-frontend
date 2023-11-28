@@ -29,7 +29,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, status}
+import play.api.test.Helpers.{await, status, redirectLocation}
 import testsupport.stubs.{ArrangementStub, AuditStub, DirectDebitStub, TaxpayerStub}
 import testsupport.testdata.{TdRequest, TestJourney}
 import testsupport.{FakeAuthConnector, WireMockSupport}
@@ -94,21 +94,21 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
     val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
   }
 
-  "ArrangementController" should {
+  "ArrangementController" when {
+    ".submit" should {
+      "be able to submit a new arrangement" in new Context() {
+        DirectDebitStub.postPaymentPlan
+        ArrangementStub.postTtpArrangement
+        TaxpayerStub.getTaxpayer()
 
-    "be able to submit a new arrangement" in new Context() {
-      DirectDebitStub.postPaymentPlan
-      ArrangementStub.postTtpArrangement
-      TaxpayerStub.getTaxpayer()
+        val res = controller.submit()(fakeRequest)
+        status(res) mustBe Status.SEE_OTHER
+        res.value.get.get.header.headers("Location") mustBe "/pay-what-you-owe-in-instalments/arrangement/summary"
 
-      val res = controller.submit()(fakeRequest)
-      status(res) mustBe Status.SEE_OTHER
-      res.value.get.get.header.headers("Location") mustBe "/pay-what-you-owe-in-instalments/arrangement/summary"
-
-      AuditStub.verifyEventAudited(
-        "ManualAffordabilityPlanSetUp",
-        Json.parse(
-          """
+        AuditStub.verifyEventAudited(
+          "ManualAffordabilityPlanSetUp",
+          Json.parse(
+            """
               |{
               |  "bankDetails" : {
               |    "name" : "Darth Vader",
@@ -188,111 +188,154 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
               |  }
               |}
               |""".stripMargin
-        ).as[JsObject]
-      )
+          ).as[JsObject]
+        )
+      }
+    }
+    ".getCheckPaymentPlan" should {
+      "return a 200 and audits a successful Manual Affordability event, when leftover income passes check" in new Context(
+        frozenDateTime = "2020-05-02T09:00:00.000"
+      ) {
+        val res = controller.getCheckPaymentPlan()(fakeRequest)
+        status(res) mustBe Status.OK
+        AuditStub.verifyEventAudited(
+          "ManualAffordabilityCheck",
+          Json.parse(
+            """
+              |{
+              | "income" : {
+              |   "monthlyIncomeAfterTax" : "2000.00",
+              |   "benefits" : "0.00",
+              |   "otherMonthlyIncome" : "0.00",
+              |   "totalIncome" : "2000.00"
+              |   },
+              | "outgoings" : {
+              |   "housing" : "500.00",
+              |   "pensionContributions" : "0.00",
+              |   "councilTax" : "0.00",
+              |   "utilities" : "0.00",
+              |   "debtRepayments" : "0.00",
+              |   "travel" : "0.00",
+              |   "childcareCosts" : "0.00",
+              |   "insurance" : "0.00",
+              |   "groceries" : "0.00",
+              |   "health" : "0.00",
+              |   "totalOutgoings" : "500.00"
+              |   },
+              | "status" : "Pass",
+              | "utr" : "6573196998"
+              |}
+              |""".stripMargin
+          ).as[JsObject]
+        )
+      }
     }
 
-    ".getCheckPaymentPlan returns a 200 and audits a successful Manual Affordability event, when leftover income passes check" in new Context(
-      frozenDateTime = "2020-05-02T09:00:00.000"
-    ) {
-      val res = controller.getCheckPaymentPlan()(fakeRequest)
-      status(res) mustBe Status.OK
-      AuditStub.verifyEventAudited(
-        "ManualAffordabilityCheck",
-        Json.parse(
-          """
-            |{
-            | "income" : {
-            |   "monthlyIncomeAfterTax" : "2000.00",
-            |   "benefits" : "0.00",
-            |   "otherMonthlyIncome" : "0.00",
-            |   "totalIncome" : "2000.00"
-            |   },
-            | "outgoings" : {
-            |   "housing" : "500.00",
-            |   "pensionContributions" : "0.00",
-            |   "councilTax" : "0.00",
-            |   "utilities" : "0.00",
-            |   "debtRepayments" : "0.00",
-            |   "travel" : "0.00",
-            |   "childcareCosts" : "0.00",
-            |   "insurance" : "0.00",
-            |   "groceries" : "0.00",
-            |   "health" : "0.00",
-            |   "totalOutgoings" : "500.00"
-            |   },
-            | "status" : "Pass",
-            | "utr" : "6573196998"
-            |}
-            |""".stripMargin
-        ).as[JsObject]
-      )
+    ".applicationComplete" should {
+      "show the arrangement set up page" in new Context(journeyOverride = Some {
+        TestJourney.createJourney(_).copy(
+          status                           = ApplicationComplete,
+          maybeArrangementSubmissionStatus = Some(ArrangementSubmissionStatus.Success)
+        )
+      }) {
+        val res = controller.applicationComplete()(fakeRequest)
+        status(res) mustBe Status.OK
+
+        AuditStub.verifyNothingAudited()
+      }
+      "redirect to /delete-answers if no journey id in the session is found" in {
+        val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
+
+        val result = controller.applicationComplete()(FakeRequest())
+
+        status(result) mustBe Status.SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TimeoutController.killSession.url)
+      }
+      "redirect to /delete-answers if no journey is found for the session's journey id" in {
+        val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
+        val unusedJourneyId = "51ba6742c7602426d74f84c0"
+        val result = controller.applicationComplete()(FakeRequest().withSession("ssttp.journeyId" -> unusedJourneyId))
+
+        status(result) mustBe Status.SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TimeoutController.killSession.url)
+      }
     }
+    ".viewPaymentPlan" should {
+      "redirect to /delete-answers if no journey id in the session is found" in {
+        val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
 
-    "be able to show the arrangement set up page" in new Context(journeyOverride = Some{
-      TestJourney.createJourney(_).copy(
-        status                           = ApplicationComplete,
-        maybeArrangementSubmissionStatus = Some(ArrangementSubmissionStatus.Success)
-      )
-    }) {
-      val res = controller.applicationComplete()(fakeRequest)
-      status(res) mustBe Status.OK
+        val result = controller.viewPaymentPlan()(FakeRequest())
 
-      AuditStub.verifyNothingAudited()
+        status(result) mustBe Status.SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TimeoutController.killSession.url)
+      }
+      "redirect to /delete-answers if no journey is found for the session's journey id" in {
+        val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
+        val unusedJourneyId = "51ba6742c7602426d74f84c0"
+        val result = controller.viewPaymentPlan()(FakeRequest().withSession("ssttp.journeyId" -> unusedJourneyId))
+
+        status(result) mustBe Status.SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TimeoutController.killSession.url)
+      }
+
     }
+    ".paymentPlan" should {
 
-    ".paymentPlan returns payment plan request with submission date to nearest millisecond (not micro-second)" in new Context() {
-      val ddInstruction = DirectDebitInstruction(None, None, None)
+      "return payment plan request with submission date to nearest millisecond (not micro-second)" in new Context() {
+        val ddInstruction = DirectDebitInstruction(None, None, None)
 
-      val result = controller.paymentPlan(journey, ddInstruction)(fakeRequest)
+        val result = controller.paymentPlan(journey, ddInstruction)(fakeRequest)
 
-      result.submissionDateTime must endWith regex "\\.\\d{3}Z$"
+        result.submissionDateTime must endWith regex "\\.\\d{3}Z$"
+      }
+
+      "return payment plan request with account number left padded from 6 to 8 digits with zeros" in new Context(journeyOverride = Some {
+        TestJourney.createJourney(_).copy(
+          maybeBankDetails = Some(BankDetails(Some(Personal), "111111", "123456", "Darth Vader", None))
+        )
+      }) {
+        val result = controller.makePaymentPlanRequest(journey)(fakeRequest)
+
+        result.directDebitInstruction.accountNumber.exists(_.matches("^00\\d{6}$")) mustBe true
+      }
+
+      "return payment plan request with account number left padded from 7 to 8 digits with zeros" in new Context(journeyOverride = Some {
+        TestJourney.createJourney(_).copy(
+          maybeBankDetails = Some(BankDetails(Some(Personal), "111111", "1234567", "Darth Vader", None))
+        )
+      }) {
+        val result = controller.makePaymentPlanRequest(journey)(fakeRequest)
+
+        result.directDebitInstruction.accountNumber.exists(_.matches("^0\\d{7}$")) mustBe true
+      }
+
+      "return payment plan request with account number with 8 digits" in new Context() {
+        val result = controller.makePaymentPlanRequest(journey)(fakeRequest)
+
+        result.directDebitInstruction.accountNumber.map(_.length) mustBe Some(8)
+      }
     }
+    ".getCheckPaymentPlan" should {
 
-    ".paymentPlan returns payment plan request with account number left padded from 6 to 8 digits with zeros" in new Context(journeyOverride = Some {
-      TestJourney.createJourney(_).copy(
-        maybeBankDetails = Some(BankDetails(Some(Personal), "111111", "123456", "Darth Vader", None))
-      )
-    }) {
-      val result = controller.makePaymentPlanRequest(journey)(fakeRequest)
+      "display 'Set up a payment plan with an adviser' page if selected plan fails NDDS validation" in new Context() {
+        val res = controller.getCheckPaymentPlan()(fakeRequest)
+        status(res) mustBe Status.SEE_OTHER
+        res.value.get.get.header.headers("Location") mustBe "/pay-what-you-owe-in-instalments/set-up-payment-plan-adviser"
+      }
 
-      result.directDebitInstruction.accountNumber.exists(_.matches("^00\\d{6}$")) mustBe true
-    }
+      "display 'Check your payment plan' page if selected plan passes NDDS validation" in new Context() {
+        override val fakeRequest =
+          FakeRequest()
+            .withAuthToken()
+            .withSession(
+              SessionKeys.sessionId -> sessionId,
+              "ssttp.journeyId" -> journeyId.toHexString,
+              "ssttp.frozenDateTime" -> "2020-06-09T00:00:00.880"
+            )
 
-    ".paymentPlan returns payment plan request with account number left padded from 7 to 8 digits with zeros" in new Context(journeyOverride = Some {
-      TestJourney.createJourney(_).copy(
-        maybeBankDetails = Some(BankDetails(Some(Personal), "111111", "1234567", "Darth Vader", None))
-      )
-    }) {
-      val result = controller.makePaymentPlanRequest(journey)(fakeRequest)
-
-      result.directDebitInstruction.accountNumber.exists(_.matches("^0\\d{7}$")) mustBe true
-    }
-
-    ".paymentPlan returns payment plan request with account number with 8 digits" in new Context() {
-      val result = controller.makePaymentPlanRequest(journey)(fakeRequest)
-
-      result.directDebitInstruction.accountNumber.map(_.length) mustBe Some(8)
-    }
-
-    ".getCheckPaymentPlan displays 'Set up a payment plan with an adviser' page if selected plan fails NDDS validation" in new Context() {
-      val res = controller.getCheckPaymentPlan()(fakeRequest)
-      status(res) mustBe Status.SEE_OTHER
-      res.value.get.get.header.headers("Location") mustBe "/pay-what-you-owe-in-instalments/set-up-payment-plan-adviser"
-    }
-
-    ".getCheckPaymentPlan displays 'Check your payment plan' page if selected plan passes NDDS validation" in new Context() {
-      override val fakeRequest =
-        FakeRequest()
-          .withAuthToken()
-          .withSession(
-            SessionKeys.sessionId -> sessionId,
-            "ssttp.journeyId" -> journeyId.toHexString,
-            "ssttp.frozenDateTime" -> "2020-06-09T00:00:00.880"
-          )
-
-      val res = controller.getCheckPaymentPlan()(fakeRequest)
-      status(res) mustBe Status.OK
+        val res = controller.getCheckPaymentPlan()(fakeRequest)
+        status(res) mustBe Status.OK
+      }
     }
   }
 

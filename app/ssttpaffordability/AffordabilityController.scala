@@ -217,7 +217,7 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'We cannot agree your payment plan'")
 
-      journeyService.getJourney().map(auditService.sendPlanNotAffordableEvent)
+      auditService.sendPlanNotAffordableEvent(journey)
       Ok(views.we_cannot_agree_your_pp(isSignedIn, isWelsh))
     }
   }
@@ -226,7 +226,7 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'Set up a payment plan with an adviser'")
 
-      journeyService.getJourney().map(auditService.sendPlanFailsNDDSValidationEvent)
+      auditService.sendPlanFailsNDDSValidationEvent(journey)
       Ok(views.set_up_a_payment_plan_with_an_adviser(isWelsh))
     }
   }

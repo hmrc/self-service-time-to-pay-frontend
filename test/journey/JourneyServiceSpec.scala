@@ -18,12 +18,16 @@ package journey
 
 import journey.JourneyService.{JourneyNotFound, NoJourneyIdForSessionFound}
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import play.api.http.{HttpEntity, Status => HttpStatus}
+import play.api.mvc.{AnyContentAsEmpty, ResponseHeader, Result}
 import testsupport.ItSpec
 import testsupport.testdata.TestJourney
 import uk.gov.hmrc.http.SessionKeys
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import java.util.UUID
+import scala.concurrent.Future
 
 class JourneyServiceSpec extends ItSpec {
 
@@ -71,6 +75,31 @@ class JourneyServiceSpec extends ItSpec {
         }
       }
     }
+    ".authorizedForSsttp(block)" - {
+      "redirects to /delete-answers if no journey id in the session is found" in new DummyAction {
+        val result = service.authorizedForSsttp(dummyBlock)(fakeRequest)
+
+        status(result) shouldBe HttpStatus.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.TimeoutController.killSession.url)
+      }
+      "redirects to /delete-answers if no journey is found for the session's journey id" in new DummyAction {
+        val unusedJourneyId = "51ba6742c7602426d74f84c0"
+        val result = service.authorizedForSsttp(dummyBlock)(fakeRequest.withSession("ssttp.journeyId" -> unusedJourneyId))
+
+        status(result) shouldBe HttpStatus.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.TimeoutController.killSession.url)
+      }
+
+    }
+  }
+
+  class DummyAction {
+    val dummyBlock: Journey => Future[Result] = (j: Journey) => Future(Result.apply(
+      ResponseHeader(HttpStatus.OK),
+      HttpEntity.NoEntity
+    ))
+
+    val fakeRequest: FakeRequest[Any] = FakeRequest()
   }
 
 }

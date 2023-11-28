@@ -17,6 +17,7 @@
 package journey
 
 import journey.JourneyService.{JourneyNotFound, NoJourneyIdForSessionFound}
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result, Results}
 import uk.gov.hmrc.auth.core.NoActiveSession
 import uk.gov.hmrc.http.SessionKeys
@@ -61,7 +62,7 @@ class JourneyService @Inject() (
    */
   def authorizedForSsttp(block: Journey => Future[Result])(implicit request: Request[_]): Future[Result] = {
 
-    for {
+    (for {
       journey <- getJourney()
       result <- journey match {
         case journey if journey.isFinished =>
@@ -71,7 +72,9 @@ class JourneyService @Inject() (
           journey.requireIsEligible()
           block(journey)
       }
-    } yield result
+    } yield result) recover {
+      case _: NoActiveSession => Redirect(controllers.routes.TimeoutController.killSession)
+    }
   }
 }
 

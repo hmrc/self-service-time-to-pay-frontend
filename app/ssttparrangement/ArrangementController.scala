@@ -35,6 +35,7 @@ import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.{EligibilityService, IaService}
 import times.ClockProvider
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
+import uk.gov.hmrc.auth.core.NoActiveSession
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -280,6 +281,8 @@ class ArrangementController @Inject() (
           journey.ddRef
         ))
       } else technicalDifficulties(journey)
+    } recover {
+      case _: NoActiveSession => Redirect(controllers.routes.TimeoutController.killSession)
     }
   }
 
@@ -289,6 +292,8 @@ class ArrangementController @Inject() (
 
       val schedule = selectedSchedule(journey)
       Future.successful(Ok(views.view_payment_plan(schedule, journey.ddRef)))
+    } recover {
+      case _: NoActiveSession => Redirect(controllers.routes.TimeoutController.killSession)
     }
   }
 
