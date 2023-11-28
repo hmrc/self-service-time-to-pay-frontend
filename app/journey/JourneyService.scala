@@ -16,10 +16,9 @@
 
 package journey
 
-import journey.JourneyService.{JourneyNotFound, NoJourneyIdForSessionFound}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result, Results}
-import uk.gov.hmrc.auth.core.NoActiveSession
+import uk.gov.hmrc.auth.core.{NoActiveSession, SessionRecordNotFound}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.play.http.logging.Mdc
 
@@ -47,11 +46,11 @@ class JourneyService @Inject() (
     request.readJourneyId match {
       case Some(id) => getMaybeJourney().flatMap {
         case Some(journey) => Future.successful(journey)
-        case None => Future.failed(JourneyNotFound(
+        case None => Future.failed(SessionRecordNotFound(
           s"Journey for journey Id in session not found [Journey Id: ${id.value.toString}]")
         )
       }
-      case None => Future.failed(NoJourneyIdForSessionFound(
+      case None => Future.failed(SessionRecordNotFound(
         s"No journey Id found in session [Session Id: ${request.session.get(SessionKeys.sessionId).getOrElse("")}]"
       ))
     }
@@ -76,10 +75,4 @@ class JourneyService @Inject() (
       case _: NoActiveSession => Redirect(controllers.routes.TimeoutController.killSession)
     }
   }
-}
-
-object JourneyService {
-  case class JourneyNotFound(msg: String = "Journey for journey id in session not found") extends NoActiveSession(msg)
-
-  case class NoJourneyIdForSessionFound(msg: String = "No journey id found in session") extends NoActiveSession(msg)
 }
