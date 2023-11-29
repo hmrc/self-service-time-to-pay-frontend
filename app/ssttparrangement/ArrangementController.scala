@@ -35,6 +35,7 @@ import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.{EligibilityService, IaService}
 import times.ClockProvider
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
+import uk.gov.hmrc.auth.core.NoActiveSession
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -81,18 +82,6 @@ class ArrangementController @Inject() (
   val cesa: String = "CESA"
   val paymentFrequency = "Calendar Monthly"
   val paymentCurrency = "GBP"
-
-  val start: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyService.getJourney().flatMap {
-      case journey if journey.inProgress && journey.maybeSelectedPlanAmount.isDefined =>
-        eligibilityCheck(journey)
-      case j =>
-        val msg = "Illegal state, journey must be in progress with defined payment amount"
-        val ex = new RuntimeException(msg)
-        journeyLogger.warn(msg)(request, j)
-        throw ex
-    }
-  }
 
   /**
    * This step is performed immediately after the user has logged in. It grabs the Taxpayer data and
@@ -292,6 +281,8 @@ class ArrangementController @Inject() (
           journey.ddRef
         ))
       } else technicalDifficulties(journey)
+    } recover {
+      case _: NoActiveSession => Redirect(controllers.routes.TimeoutController.killSession)
     }
   }
 
@@ -301,6 +292,8 @@ class ArrangementController @Inject() (
 
       val schedule = selectedSchedule(journey)
       Future.successful(Ok(views.view_payment_plan(schedule, journey.ddRef)))
+    } recover {
+      case _: NoActiveSession => Redirect(controllers.routes.TimeoutController.killSession)
     }
   }
 

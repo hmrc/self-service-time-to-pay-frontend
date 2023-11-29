@@ -16,7 +16,8 @@
 
 package controllers
 
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import config.ViewConfig
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import util.Logging
 import views.Views
@@ -24,8 +25,9 @@ import views.Views
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TimeoutController @Inject() (views: Views,
-                                   mcc:   MessagesControllerComponents)
+class TimeoutController @Inject() (views:      Views,
+                                   mcc:        MessagesControllerComponents,
+                                   viewConfig: ViewConfig)
   (implicit ec: ExecutionContext) extends FrontendController(mcc) with Logging {
   implicit def toFuture(r: Result): Future[Result] = Future.successful(r)
 
@@ -34,6 +36,17 @@ class TimeoutController @Inject() (views: Views,
   val killSession: Action[AnyContent] = Action { implicit request =>
     appLogger.info("Kill session")
 
-    Ok(views.delete_answers()).withNewSession
+    Ok(views.delete_answers(controllers.routes.TimeoutController.signInAgain)).withNewSession
   }
+
+  val signInAgain: Action[AnyContent] = Action { implicit request =>
+    Redirect(
+      viewConfig.loginUrl,
+      Map(
+        "continue" -> Seq(viewConfig.frontendBaseUrl + ssttpeligibility.routes.SelfServiceTimeToPayController.start.url),
+        "origin" -> Seq("pay-online")
+      )
+    )
+  }
+
 }
