@@ -156,6 +156,15 @@ class DirectDebitPageSpec extends ItSpec {
     directDebitConfirmationPage.assertInitialPageIsDisplayed()
   }
 
+  "enter valid bank account with special characters in account name" in {
+    beginJourney()
+    directDebitPage.fillOutForm("Mr John Campbell-Bambe'll & A. Poo/py", DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBanksIsSuccessful()
+    directDebitPage.clickContinue()
+    directDebitConfirmationPage.assertInitialPageIsDisplayed()
+  }
+
   "enter valid bank account given business partner not found succeeds" in {
     beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)

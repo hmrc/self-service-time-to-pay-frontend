@@ -29,7 +29,7 @@ object DirectDebitForm {
   val directDebitMapping = mapping(
     "accountName" -> text.verifying("ssttp.direct-debit.form.error.accountName.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.accountName.check", x => condTrue(x.trim != "", x.trim.length <= 39 && x.trim.length > 1))
-      .verifying("ssttp.direct-debit.form.error.accountName.check", x => (x.trim == "") | x.matches("^[a-zA-Z '.&/]{1,39}$")), // regex from API#1856
+      .verifying("ssttp.direct-debit.form.error.accountName.check", x => (x.trim == "") | x.matches("^[a-zA-Z '-.&/]{1,39}$")), // regex from API#1856
     "sortCode" -> text
       .verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => condTrue(x.trim != "", isValidSortCode(x))),
@@ -38,9 +38,8 @@ object DirectDebitForm {
   )({ case (name, sc, acctNo) => ArrangementDirectDebit(name, cleanSortCode(sc), cleanAccountNumber(acctNo)) }
     )({ case arrangementDirectDebit => Some((arrangementDirectDebit.accountName, arrangementDirectDebit.sortCode, arrangementDirectDebit.accountNumber)) })
 
-  def isValidSortCode(sortCode: String): Boolean = {
+  def isValidSortCode(sortCode: String): Boolean =
     hasValidSortCodeCharacters(sortCode) && has6Numbers(sortCode)
-  }
 
   private def has6Numbers(sortCode: String): Boolean = validateNumberLength(sortCode, 6)
 
