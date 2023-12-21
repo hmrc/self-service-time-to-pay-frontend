@@ -78,7 +78,7 @@ class LoginService @Inject() (httpClient: HttpClient, servicesConfig: ServicesCo
       "credId" -> credId,
       "affinityGroup" -> tu.affinityGroup.v,
       "confidenceLevel" -> tu.confidenceLevel,
-      "credentialStrength" -> "weak",
+      "credentialStrength" -> "strong",
       "credentialRole" -> "User",
       "usersName" -> JsNull,
       "enrolments" -> enrolments,
