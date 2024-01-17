@@ -55,7 +55,7 @@ ssttp.amounts_due.amount = Amount:
 ssttp.sidebar.help-and-advice.title = Help and advice
 ssttp.sidebar.help-and-advice.ways-to-pay = Different ways to pay HMRC
 ssttp.sidebar.help-and-advice.payments-on-account = Learn about payments on account
-ssttp.sidebar.help-and-advice.dont-pay = What happens if you don''t pay your bill
+ssttp.sidebar.help-and-advice.dont-pay = What happens if you don’t pay your bill
 ssttp.sidebar.help-and-advice.feedback = Please leave some feedback and tell us what you think of this service.
 ssttp.sidebar.help-and-advice.feedback.submit = Send us your feedback
 
@@ -320,7 +320,7 @@ ssttp.calculator.results.month.option.table.total.paid = Total paid:
 ssttp.calculator.results.section.title = How we calculate interest
 ssttp.calculator.results.section.p1 = We only charge interest on overdue amounts.
 ssttp.calculator.results.section.p2 = We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
-ssttp.calculator.results.section.p3 = If the interest rate changes during your plan, your monthly payments will not change. If we need to, we''ll settle the difference at the end of the plan.
+ssttp.calculator.results.section.p3 = If the interest rate changes during your plan, your monthly payments will not change. If we need to, we’ll settle the difference at the end of the plan.
 ssttp.calculator.results.error.title = There is a problem
 ssttp.calculator.results.month.greater-then-six.header = Need a longer payment plan?
 ssttp.calculator.results.month.greater-then-six.intro = The interest rate and overall repayment will be higher when you choose a longer payment plan.
@@ -351,7 +351,7 @@ ssttp.calculator.check-calculation.p1 = If you do not pay your tax bill on time,
 ssttp.calculator.check-calculation.how-we-calculate-interest = How we calculate interest
 ssttp.calculator.check-calculation.how-we-calculate-interest.p1 = We only charge interest on overdue amounts.
 ssttp.calculator.check-calculation.how-we-calculate-interest.p2 = We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
-ssttp.calculator.check-calculation.how-we-calculate-interest.p3 = If the interest rate changes during your plan, your monthly payments will not change. If we need to, we''ll settle the difference at the end of the plan.
+ssttp.calculator.check-calculation.how-we-calculate-interest.p3 = If the interest rate changes during your plan, your monthly payments will not change. If we need to, we’ll settle the difference at the end of the plan.
 ssttp.calculator.check-calculation.cant-afford = I cannot afford the minimum payment
 ssttp.calculator.check-calculation.cant-afford.p1 = You may still be able to set up a payment plan over the phone, but you are not eligible for an online payment plan.
 ssttp.calculator.check-calculation.cant-afford.p2.1 = We recommend you speak to an adviser on
@@ -405,8 +405,8 @@ ssttp.call-us.before-call-have.li2 = information on any savings or investments y
 ssttp.call-us.before-call-have.li3 = your bank details
 ssttp.call-us.before-call-have.li4 = details of your income and spending
 
-ssttp.call-us.ask.h2 = We''re likely to ask:
-ssttp.call-us.ask.li1 = what you''ve done to try to pay the bill
+ssttp.call-us.ask.h2 = We’re likely to ask:
+ssttp.call-us.ask.li1 = what you’ve done to try to pay the bill
 ssttp.call-us.ask.li2 = if you can pay some of the bill now
 
 ssttp.call-us.title = Please call us
@@ -433,6 +433,9 @@ ssttp.file-your-tax-return.title = File your Self Assessment tax return to use t
 ssttp.file-your-tax-return.p1 = You must  <a class="govuk-link" href="https://www.gov.uk/log-in-file-self-assessment-tax-return">file your tax return</a> before you can set up a Self Assessment payment plan online.
 ssttp.file-your-tax-return.p2 = Call us on <strong>0300 123 1813</strong> if you need to speak to an adviser.
 ssttp.file-your-tax-return.p3 = Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
+
+ssttp.call-us-cannot-set-up-plan.title = Call us about a payment plan
+ssttp.call-us-cannot-set-up-plan.p1 = You cannot set up a Self Assessment payment plan online.
 
 ssttp.arrangement.type_of_account.title = About your bank account
 ssttp.arrangement.type_of_account.details = What type of account details are you providing?
@@ -531,7 +534,7 @@ ssttp.direct-debit.form.accountNumber.hint = Must be between 6 and 8 digits long
 ssttp.direct-debit.form.sortCode.hint = Must be 6 digits long
 ssttp.direct-debit.form.error.accountName.required = Enter an account name
 ssttp.direct-debit.form.error.accountName.check = Check your account name is correct
-ssttp.direct-debit.form.bank-not-found-heading = This isn''t a valid bank account
+ssttp.direct-debit.form.bank-not-found-heading = This isn’'t a valid bank account
 ssttp.direct-debit.form.bank-not-found-info = Re-enter your bank details
 ssttp.direct-debit.form.invalid.combo = Enter a valid combination of bank account number and sort code
 ssttp.direct-debit.form.error.accountNumber.required = Enter an account number

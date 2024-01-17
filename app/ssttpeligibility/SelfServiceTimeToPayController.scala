@@ -49,7 +49,7 @@ class SelfServiceTimeToPayController @Inject() (
     Redirect(ssttparrangement.routes.ArrangementController.determineEligibility)
   }
 
-  val getCallUsAboutAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
+  private val getCallUsAboutAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
     Ok(views.call_us_about_a_payment_plan(isWelsh, loggedIn = isSignedIn))
   }
 
@@ -60,6 +60,10 @@ class SelfServiceTimeToPayController @Inject() (
   val getTtpCallUsSignInQuestion: Action[AnyContent] = getCallUsAboutAPaymentPlan
   val getIaCallUse: Action[AnyContent] = getCallUsAboutAPaymentPlan
   val getNotSaEnrolled: Action[AnyContent] = getCallUsAboutAPaymentPlan
+
+  val callUsCannotSetUpPlan: Action[AnyContent] = as.action { implicit request =>
+    Ok(views.call_us_cannot_set_up_plan(isWelsh, loggedIn = isSignedIn))
+  }
 
   val getDebtTooOld: Action[AnyContent] = as.action { implicit request =>
     Ok(views.call_us_debt_too_old(isWelsh, loggedIn = isSignedIn))

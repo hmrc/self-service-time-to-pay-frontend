@@ -74,8 +74,8 @@ class GeneralCallUsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends
           |information on any savings or investments you have
           |your bank details
           |details of your income and spending
-          |We're likely to ask:
-          |what you've done to try to pay the bill
+          |We’re likely to ask:
+          |what you’ve done to try to pay the bill
           |if you can pay some of the bill now
         """.stripMargin
 

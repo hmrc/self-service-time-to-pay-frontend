@@ -137,7 +137,6 @@ ssttp.affordability.call-us-no-income.p2 = Ffoniwch ni ar <strong>0300 200 1900<
 ssttp.affordability.call-us-no-income.p3 = Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
 ssttp.affordability.call-us-no-income.p4 = Os ydych wedi gwneud camgymeriad, <a class="govuk-link" id="back-to-income" href={0}>ewch yn ôl i ychwanegu’ch incwm</a>.
 
-
 ssttp.affordability.your-monthly-spending.h1 = Eich gwariant misol
 ssttp.affordability.your-monthly-spending.instruction = Ychwanegwch wybodaeth amdanoch chi’ch hun yn unig. Os ydych yn byw gyda phobl eraill, nodwch eich cyfran chi o’r gwariant. Gallwch adael blwch yn wag os nad yw’n berthnasol i chi.
 ssttp.affordability.your-monthly-spending.form.housing = Tai
@@ -384,6 +383,9 @@ ssttp.extra-support.p1 = Dysgwch am y ffyrdd gwahanol o <a class="govuk-link" id
 ssttp.extra-support.p2 = Gallwch hefyd ddefnyddio <a class="govuk-link" id="relay-uk" href="https://www.relayuk.bt.com/">Relay UK</a> os na allwch glywed na siarad dros y ffôn: deialwch <strong>18001</strong> ac yna <strong>0345 300 3900</strong>. Sylwer – dim ond galwadau ffôn Saesneg eu hiaith y mae Relay UK yn gallu ymdrin â nhw.
 ssttp.extra-support.p3= Os ydych y tu allan i’r DU: <strong>+44 300 200 1900</strong>.
 
+ssttp.call-us-cannot-set-up-plan.title = Ffoniwch ni ynghylch cynllun talu
+ssttp.call-us-cannot-set-up-plan.p1 = Ni allwch drefnu cynllun talu Hunanasesiad ar-lein.
+
 ssttp.arrangement.type_of_account.title = Ynglŷn â’ch cyfrif banc
 ssttp.arrangement.type_of_account.details = Pa fath o fanylion cyfrif yr ydych yn eu rhoi?
 ssttp.arrangement.type_of_account.business = Cyfrif banc busnes
@@ -580,7 +582,7 @@ ssttp.debt-too-large.opening.hours.h1 = Ein horiau agor yw:
 ssttp.debt-too-large.opening.hours.l1 = Dydd Llun i ddydd Gwener: 08:30 i 17:00 (rydym ar gau ar benwythnosau a gwyliau banc)
 ssttp.debt-too-large.opening.hours.l2 =
 
-error.required = Mae''r maes hwn yn ofynnol
+error.required = Mae’r maes hwn yn ofynnol
 
 ssttp.monthy.amount.title = Faint y gallwch fforddio ei dalu bob mis?
 ssttp.monthly.amount.hint = Nodwch swm sydd rhwng {0} a {1}

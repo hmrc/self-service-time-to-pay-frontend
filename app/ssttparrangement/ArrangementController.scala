@@ -33,6 +33,7 @@ import ssttpcalculator.CalculatorService
 import ssttpcalculator.model.{Instalment, PaymentSchedule}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.{EligibilityService, IaService}
+import ssttpeligibility.{routes => eligibilityRoutes}
 import times.ClockProvider
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
 import uk.gov.hmrc.auth.core.NoActiveSession
@@ -96,13 +97,14 @@ class ArrangementController @Inject() (
    */
   val determineEligibility: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     for {
-      tp: model.Taxpayer <- taxPayerConnector.getTaxPayer(request.utr)
+      tp <- taxPayerConnector.getTaxPayer(request.utr)
       maybeJourney <- journeyService.getMaybeJourney()
-      journey = maybeJourney.filterNot(_.isFinished).getOrElse(Journey.newJourney).copy(maybeTaxpayer = Some(tp))
+      journey = maybeJourney.filterNot(_.isFinished).getOrElse(Journey.newJourney).copy(maybeTaxpayer = tp)
       _ <- journeyService.saveJourney(journey)
-      result: Result <- eligibilityCheck(journey)
+      result: Result <- tp.fold(
+        Future.successful(Redirect(eligibilityRoutes.SelfServiceTimeToPayController.callUsCannotSetUpPlan))
+      )(_ => eligibilityCheck(journey))
     } yield result.placeInSession(journey._id)
-
   }
 
   val getCheckPaymentPlan: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
