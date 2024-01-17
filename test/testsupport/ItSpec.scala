@@ -178,4 +178,6 @@ class ItSpec
   lazy val enrolForSaPage: EnrolForSaPage = wire[EnrolForSaPage]
   lazy val notSoleSignatoryPage: NotSoleSignatoryPage = wire[NotSoleSignatoryPage]
   lazy val setUpPlanWithAdviserPage: SetUpPlanWithAdviserPage = wire[SetUpPlanWithAdviserPage]
+
+  lazy val callUsCannotSetUpPlan: CallUsCannotSetUpPlanPage = wire[CallUsCannotSetUpPlanPage]
 }

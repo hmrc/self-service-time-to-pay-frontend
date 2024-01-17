@@ -43,4 +43,8 @@ object TaxpayerStub extends Matchers with Status {
     stubFor(get(url).willReturn(aResponse()
       .withStatus(OK)
       .withBody(prettyPrint(toJson(getIneligibleTaxpayerModel(reason))))))
+
+  def taxpayerNotFound(): StubMapping =
+    stubFor(get(url).willReturn(aResponse().withStatus(NOT_FOUND)))
+
 }

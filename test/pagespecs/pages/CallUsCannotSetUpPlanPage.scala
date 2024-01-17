@@ -16,15 +16,15 @@
 
 package pagespecs.pages
 
-import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
+import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser.pageTitle
-import testsupport.RichMatchers._
+import testsupport.RichMatchers.convertToAnyShouldWrapper
 
-class NotOnIaPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class CallUsCannotSetUpPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
-  override def path: String = "/pay-what-you-owe-in-instalments/eligibility/ia/call-us"
+  override def path: String = "/pay-what-you-owe-in-instalments/call-us-cannot-set-up-plan"
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
@@ -35,8 +35,8 @@ class NotOnIaPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BaseP
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Please call us"
-    case Languages.Welsh   => "Ffoniwch ni"
+    case Languages.English => "Call us about a payment plan"
+    case Languages.Welsh   => "Ffoniwch ni ynghylch cynllun talu"
   }
 
   object Expected {
@@ -48,9 +48,9 @@ class NotOnIaPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BaseP
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
+      private val globalHeaderTextEnglish = "Set up a Self Assessment payment plan"
 
-      private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
+      private val globalHeaderTextWelsh = "Trefnu cynllun talu"
     }
 
     object MainText {
@@ -61,35 +61,41 @@ class NotOnIaPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BaseP
       }
 
       private val mainTextEnglish =
-        """Please call us
-          |You are not eligible to set up a payment plan online.
-          |
-          |For further support, you can contact us on 0300 123 1813 to speak to an adviser.
-          |
+        """Call us about a payment plan
+          |You cannot set up a Self Assessment payment plan online.
+          |Call us on 0300 123 1813 as you may be able to set up a plan over the phone.
+          |Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
+          |If you need extra support
+          |Find out the different ways to deal with HMRC if you need some help.
+          |You can also use Relay UK if you cannot hear or speak on the phone: dial 18001 then 0345 300 3900.
+          |If you are outside the UK: +44 2890 538 192.
           |Before you call, make sure you have:
+          |your 10-digit Unique Taxpayer Reference (UTR) number
           |information on any savings or investments you have
           |your bank details
+          |details of your income and spending
           |We’re likely to ask:
           |what you’ve done to try to pay the bill
           |if you can pay some of the bill now
-          |Our opening times are:
-          |Monday to Friday: 8am to 6pm"""
-          .stripMargin
+        """.stripMargin
 
       private val mainTextWelsh =
-        """Ffoniwch ni
-          |Nid ydych yn gymwys i drefnu cynllun talu ar-lein.
-          |
-          |Am gymorth pellach, gallwch gysylltu â’r Gwasanaeth Cymorth Busnes a siarad ag ymgynghorydd ar 0300 200 1900.
-          |
+        """Ffoniwch ni ynghylch cynllun talu
+          |Ni allwch drefnu cynllun talu Hunanasesiad ar-lein.
+          |Ffoniwch ni ar 0300 200 1900 oherwydd mae’n bosibl y gallwch drefnu cynllun dros y ffôn.
+          |Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
+          |Os oes angen cymorth ychwanegol arnoch chi
+          |Dysgwch am y ffyrdd gwahanol o ddelio â CThEF os oes angen help arnoch chi.
+          |Gallwch hefyd ddefnyddio Relay UK os na allwch glywed na siarad dros y ffôn: deialwch 18001 ac yna 0345 300 3900. Sylwer – dim ond galwadau ffôn Saesneg eu hiaith y mae Relay UK yn gallu ymdrin â nhw.
+          |Os ydych y tu allan i’r DU: +44 300 200 1900.
           |Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
+          |eich Cyfeirnod Unigryw y Trethdalwr (UTR) 10 digid
           |gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
           |eich manylion banc
-          |Rydym yn debygol o ofyn:
+          |manylion eich incwm a’ch gwariant
+          |Rydym yn debygol o ofyn y canlynol:
           |beth rydych wedi’i wneud i geisio talu’r bil
           |a allwch dalu rhywfaint o’r bil nawr
-          |Ein horiau agor yw:
-          |Dydd Llun i ddydd Gwener: 8:00 i 18:00
         """.stripMargin
     }
 
