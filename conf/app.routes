@@ -16,7 +16,6 @@ GET         /arrangement/determine-eligibility                            ssttpa
 
 GET         /eligibility/type-of-tax/call-us                              ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsTypeOfTax
 GET         /eligibility/existing-ttp/call-us                             ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsExistingTTP
-GET         /eligibility/ia/call-us                                       ssttpeligibility.SelfServiceTimeToPayController.getIaCallUse
 GET         /eligibility/sign-in-question/call-us                         ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion
 GET         /call-us-debt-too-old                                         ssttpeligibility.SelfServiceTimeToPayController.getDebtTooOld
 GET         /eligibility/debt-large/call-us                               ssttpeligibility.SelfServiceTimeToPayController.getDebtTooLarge

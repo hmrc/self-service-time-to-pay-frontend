@@ -53,7 +53,6 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
     "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,
     "microservice.services.campaign-manager.port" -> WireMockSupport.port,
-    "microservice.services.ia.port" -> WireMockSupport.port,
     "microservice.services.auth.port" -> WireMockSupport.port,
     "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",
     "microservice.services.auth.login-callback.base-url" -> s"http://localhost:$testPort",

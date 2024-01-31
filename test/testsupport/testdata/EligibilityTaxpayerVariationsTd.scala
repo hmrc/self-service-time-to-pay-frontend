@@ -52,8 +52,7 @@ object EligibilityTaxpayerVariationsTd {
       case TotalDebtIsTooHigh  => taxpayer(Seq(debit(30000.01, dummyCurrentDate)))
       case ReturnNeedsSubmitting =>
         taxpayer(eligibleDebits, Seq(Return(dummyTaxYearEnd, Some(dummy60DaysAgo), Some(dummyCurrentDate), None)))
-      case IsNotOnIa => taxpayer(eligibleDebits)
-      case _         => TdAll.taxpayer
+      case _ => TdAll.taxpayer
     }
   }
 }

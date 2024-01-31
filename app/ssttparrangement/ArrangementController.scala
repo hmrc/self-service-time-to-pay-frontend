@@ -32,7 +32,7 @@ import ssttparrangement.ArrangementSubmissionStatus.{PermanentFailure, QueuedFor
 import ssttpcalculator.CalculatorService
 import ssttpcalculator.model.{Instalment, PaymentSchedule}
 import ssttpdirectdebit.DirectDebitConnector
-import ssttpeligibility.{EligibilityService, IaService}
+import ssttpeligibility.EligibilityService
 import ssttpeligibility.{routes => eligibilityRoutes}
 import times.ClockProvider
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
@@ -65,7 +65,6 @@ class ArrangementController @Inject() (
     requestSupport:        RequestSupport,
     views:                 Views,
     clockProvider:         ClockProvider,
-    iaService:             IaService,
     mongoLockRepository:   MongoLockRepository,
     directDebitConnector:  DirectDebitConnector
 )(
@@ -197,9 +196,8 @@ class ArrangementController @Inject() (
     val utr = taxpayer.selfAssessment.utr
 
     for {
-      onIa <- iaService.checkIaUtr(utr.value)
       directDebits <- directDebitConnector.getBanks(utr)
-      eligibilityStatus = eligibilityService.checkEligibility(clockProvider.nowDate(), taxpayer, directDebits, onIa)
+      eligibilityStatus = eligibilityService.checkEligibility(clockProvider.nowDate(), taxpayer, directDebits)
       _ = auditService.sendEligibilityResultEvent(eligibilityStatus, journey.debits.map(_.amount).sum, utr, request.request.credentials)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
@@ -222,10 +220,6 @@ class ArrangementController @Inject() (
       eligibilityStatus.reasons.contains(NoDueDate)) {
       journeyLogger.info(s"Sending user to call us page [ineligibility reasons: ${eligibilityStatus.reasons}]")(rh, journey)
       ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs
-
-    } else if (eligibilityStatus.reasons.contains(IsNotOnIa)) {
-      ssttpeligibility.routes.SelfServiceTimeToPayController.getIaCallUse
-
     } else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh))
       ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge
 

@@ -61,7 +61,6 @@ class ItSpec
     "microservice.services.date-calculator.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,
-    "microservice.services.ia.port" -> WireMockSupport.port,
     "microservice.services.auth.port" -> WireMockSupport.port,
     "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",
     "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${testPort}",
@@ -168,7 +167,6 @@ class ItSpec
 
   // not eligible pages
   lazy val debtTooLargePage: DebtTooLargePage = wire[DebtTooLargePage]
-  lazy val notOnIaPage: NotOnIaPage = wire[NotOnIaPage]
   lazy val generalCallUsPage: GeneralCallUsPage = wire[GeneralCallUsPage]
   lazy val callUsDebtTooOld: CallUsDebtTooOldPage = wire[CallUsDebtTooOldPage]
   lazy val needToFilePage: FileYourTaxReturnPage = wire[FileYourTaxReturnPage]

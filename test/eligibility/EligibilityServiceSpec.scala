@@ -109,9 +109,6 @@ class EligibilityServiceSpec extends ItSpec with DateSupport {
     }
 
     "return ineligible when" - {
-      "an otherwise eligible user is not on IA" in {
-        eligibility(onIa = false) shouldBe EligibilityStatus(Seq(IsNotOnIa))
-      }
 
       "an otherwise eligible user has direct debits created within the last year" in {
         val ineligible = EligibilityStatus(Seq(DirectDebitCreatedWithinTheLastYear))
@@ -162,17 +159,16 @@ class EligibilityServiceSpec extends ItSpec with DateSupport {
       eligibility(
         debits       = noDebts,
         returns      = missingReturns,
-        directDebits = directDebitInstructions(Seq(directDebitCreatedWithinTheLastYear)),
-        onIa         = false
-      ).reasons.toSet shouldBe Set(ReturnNeedsSubmitting, NoDebt, IsNotOnIa, DirectDebitCreatedWithinTheLastYear)
+        directDebits = directDebitInstructions(Seq(directDebitCreatedWithinTheLastYear))
+      ).reasons.toSet shouldBe Set(ReturnNeedsSubmitting, NoDebt, DirectDebitCreatedWithinTheLastYear)
     }
   }
 
   private def eligibility(debits:       Seq[Debit]              = Seq(eligibleDebit),
                           returns:      Seq[Return]             = filedReturns,
-                          directDebits: DirectDebitInstructions = directDebitInstructions(Seq(eligibleDirectDebitInstruction)),
-                          onIa:         Boolean                 = true) = {
-    eligibilityService.checkEligibility(today, taxpayer(debits, returns), directDebits, onIa)
+                          directDebits: DirectDebitInstructions = directDebitInstructions(Seq(eligibleDirectDebitInstruction))
+  ) = {
+    eligibilityService.checkEligibility(today, taxpayer(debits, returns), directDebits)
   }
 
   private def debit(amount: Double) = Debit(

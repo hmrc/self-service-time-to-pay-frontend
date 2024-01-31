@@ -34,7 +34,6 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
    *
    * Ineligible reasons:
    * - No debits
-   * - Not on IA
    * - No sa enrolment (not enrolled)
    * - Not submitted return (Current year)
    * - Previous Tax Returns Not Submitted

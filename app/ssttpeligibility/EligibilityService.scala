@@ -32,14 +32,12 @@ import uk.gov.hmrc.selfservicetimetopay.models._
 class EligibilityService @Inject() (config: EligibilityServiceConfig) {
   val taxYearEndDay: MonthDay = MonthDay.of(config.taxYearEndMonthOfYear, config.taxYearEndDayOfMonth)
 
-  def checkEligibility(dateOfEligibilityCheck: LocalDate, taxpayer: Taxpayer, directDebits: DirectDebitInstructions, onIa: Boolean): EligibilityStatus = {
+  def checkEligibility(dateOfEligibilityCheck: LocalDate, taxpayer: Taxpayer, directDebits: DirectDebitInstructions): EligibilityStatus = {
     val selfAssessmentDetails: SelfAssessmentDetails = taxpayer.selfAssessment
-    val isOnIa: List[Reason] = if (onIa) Nil else List(IsNotOnIa)
 
     EligibilityStatus(
       checkReturnsUpToDate(selfAssessmentDetails.returns, dateOfEligibilityCheck) ++
         checkDebits(selfAssessmentDetails.debits, dateOfEligibilityCheck) ++
-        isOnIa ++
         hasDirectDebitsCreatedWithinTheLastYear(dateOfEligibilityCheck, directDebits))
   }
 
