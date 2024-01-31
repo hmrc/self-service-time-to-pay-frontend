@@ -58,7 +58,6 @@ class SelfServiceTimeToPayController @Inject() (
   val getTtpCallUsExistingTTP: Action[AnyContent] = getCallUsAboutAPaymentPlan
   val getTtpCallUsCalculatorInstalments: Action[AnyContent] = getCallUsAboutAPaymentPlan
   val getTtpCallUsSignInQuestion: Action[AnyContent] = getCallUsAboutAPaymentPlan
-  val getIaCallUse: Action[AnyContent] = getCallUsAboutAPaymentPlan
   val getNotSaEnrolled: Action[AnyContent] = getCallUsAboutAPaymentPlan
 
   val callUsCannotSetUpPlan: Action[AnyContent] = as.action { implicit request =>

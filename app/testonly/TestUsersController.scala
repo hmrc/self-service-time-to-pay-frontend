@@ -39,7 +39,6 @@ final case class TestUserForm(
     returnsResponseStatusCode:    String,
     hasSAEnrolment:               Boolean,
     nino:                         Option[String],
-    isOnIA:                       Boolean,
     authorityId:                  Option[String],
     affinityGroup:                String,
     hasOverTwoHundred:            Boolean,
@@ -56,7 +55,6 @@ final case class TestUserForm(
     utr                          = utr.map(Utr.apply).getOrElse(Utr.random()),
     hasSAEnrolment               = hasSAEnrolment,
     nino                         = nino.map(Nino.apply),
-    isOnIA                       = isOnIA,
     authorityId                  = authorityId.map(AuthorityId.apply).getOrElse(AuthorityId.random),
     affinityGroup                = AffinityGroup(affinityGroup),
     confidenceLevel              = if (hasOverTwoHundred) L200.level else L50.level,
@@ -80,7 +78,6 @@ object TestUserForm {
     returnsResponseStatusCode    = "200",
     hasSAEnrolment               = true,
     nino                         = None,
-    isOnIA                       = false,
     authorityId                  = None,
     affinityGroup                = AffinityGroup.individual.v,
     hasOverTwoHundred            = true,
@@ -98,7 +95,6 @@ class TestUsersController @Inject() (
     loginService:     LoginService,
     saStubConnector:  SaStubConnector,
     desStubConnector: DesStubConnector,
-    iaConnector:      IaConnector,
     views:            Views,
     cc:               MessagesControllerComponents,
     requestSupport:   RequestSupport)(
@@ -120,7 +116,6 @@ class TestUsersController @Inject() (
       "has-sa-enrolment" -> boolean,
       "nino" -> optional(text)
         .verifying("'nino' value must a legal NINO identifier", x => x.forall(uk.gov.hmrc.domain.Nino.isValid)),
-      "isOnIA" -> boolean,
       "authority-id" -> optional(text),
       "affinity-group" -> text.verifying("'Affinity group' must not be 'Individual', 'Organisation' or 'Agent'",
         x => List("Individual", "Organisation", "Agent").contains(x)),
@@ -164,7 +159,6 @@ class TestUsersController @Inject() (
       _ <- setTaxpayerResponseF
       _ <- setReturnsF
       _ <- setDebitsF
-      _ <- if (tu.isOnIA) iaConnector.uploadUtr(tu.utr.v) else Future.successful(())
       newSession = Session(loginSession.data)
       url = tu.continueUrl.getOrElse(routes.InspectorController.inspect().url)
       maybeFrozenLocalDateTime = tu.frozenDate.map(_.atTime(LocalTime.now()))

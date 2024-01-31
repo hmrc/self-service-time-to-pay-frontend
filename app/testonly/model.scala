@@ -26,7 +26,6 @@ final case class TestUser(
     utr:                          Utr,
     hasSAEnrolment:               Boolean,
     nino:                         Option[Nino],
-    isOnIA:                       Boolean,
     authorityId:                  AuthorityId,
     affinityGroup:                AffinityGroup     = AffinityGroup.individual,
     confidenceLevel:              Int,
@@ -46,7 +45,6 @@ object TestUser {
   def exemplary(): TestUser = TestUser(
     utr                          = Utr.random(),
     hasSAEnrolment               = true,
-    isOnIA                       = true,
     nino                         = Some(Nino.random()),
     authorityId                  = AuthorityId.random,
     affinityGroup                = AffinityGroup.individual,

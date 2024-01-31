@@ -26,7 +26,6 @@ case object DebtIsInsignificant extends Reason("DebtIsInsignificant")
 case object OldDebtIsTooHigh extends Reason("OldDebtIsTooHigh")
 case object TotalDebtIsTooHigh extends Reason("TotalDebtIsTooHigh")
 case object ReturnNeedsSubmitting extends Reason("ReturnNeedsSubmitting")
-case object IsNotOnIa extends Reason("IsNotOnIa")
 case object DirectDebitCreatedWithinTheLastYear extends Reason("DirectDebitCreatedWithinTheLastYear")
 
 //TODO under OPS-4941 the ones below are unused for now and apparently always have been

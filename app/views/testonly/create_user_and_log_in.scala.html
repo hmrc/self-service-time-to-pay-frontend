@@ -99,18 +99,6 @@
 
             </p>
 
-        <h2 class="govuk-heading-m">Put in ia</h2>
-            <span class="flush--ends govuk-radios__hint"></span>
-
-            @radios(Radios(
-                items = List(
-                    RadioItem(content = Text("Yes"), value = Some("true")),
-                    RadioItem(content = Text("No"), value = Some("true"))
-                )
-            ).withFormField(dataForm("isOnIA")))
-
-
-
             <p>
         <h2 class="govuk-heading-m">NINO</h2>
             <span class="flush--ends govuk-hint">legal NINO or leave blank for none</span>
