@@ -32,6 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
  * Bank Account Reputation (Bars) Connector
  */
+@Singleton
 class BarsConnector @Inject() (
     servicesConfig: ServicesConfig,
     httpClient:     HttpClient)(

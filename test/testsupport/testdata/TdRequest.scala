@@ -16,8 +16,8 @@
 
 package testsupport.testdata
 
-import langswitch.Language
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language
+import testsupport.Language.{English, Welsh}
 import play.api.mvc.{AnyContentAsEmpty, Cookie}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.{HeaderNames, SessionKeys}
@@ -44,7 +44,14 @@ object TdRequest {
     .withDeviceId()
 
   implicit class FakeRequestOps[T](r: FakeRequest[T]) {
-    def withLang(lang: Language = English): FakeRequest[T] = r.withCookies(Cookie("PLAY_LANG", lang.code))
+    def withLang(lang: Language = English): FakeRequest[T] = {
+      val code = lang match {
+        case Language.English => "EN"
+        case Language.Welsh   => "CY"
+      }
+
+      r.withCookies(Cookie("PLAY_LANG", code))
+    }
 
     def withLangWelsh(): FakeRequest[T] = r.withLang(Welsh)
     def withLangEnglish(): FakeRequest[T] = r.withLang(English)

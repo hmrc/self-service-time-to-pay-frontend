@@ -31,14 +31,6 @@ final case class ArrangementForm(
 
 object ArrangementForm {
 
-  def apply(dayOfMonth: Option[String], customDaySelected: Option[Boolean]): ArrangementForm = {
-    ArrangementForm(dayOfMonth.map(_.toInt))
-  }
-
-  def unapply(data: ArrangementForm): Option[(Option[String], Option[Boolean])] = Option {
-    (data.dayOfMonthOpt.map(_.toString), data.dayOfMonthOpt.map(day => if (day == 28) { false } else { true }))
-  }
-
   def dayOfMonthForm: Form[ArrangementForm] = Form(
     mapping(
       "dayOfMonth" -> mandatoryIfTrue("other", dayOfMonth),
@@ -46,7 +38,12 @@ object ArrangementForm {
         .verifying("ssttp.arrangement.change_day.payment-day.required", {
           _.isDefined
         })
-    )(ArrangementForm.apply)(ArrangementForm.unapply))
+    ){ case (s, _) => ArrangementForm(s.map(_.toInt)) }{ data =>
+        Option {
+          (data.dayOfMonthOpt.map(_.toString), data.dayOfMonthOpt.map(day => if (day == 28) { false } else { true }))
+        }
+      }
+  )
 
   val dayOfMonth: Mapping[String] = text
     .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i: String => i.nonEmpty })

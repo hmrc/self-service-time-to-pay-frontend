@@ -23,7 +23,6 @@
 
 @this(
         main: views.html.main,
-        viewsHelpers: views.ViewsHelpers,
         formWithCsrf: uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
         input: uk.gov.hmrc.govukfrontend.views.html.components.GovukInput,
         errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
@@ -32,12 +31,10 @@
 
 
 @(
-        dataForm: Form[SpendingInput],
-        loggedIn: Boolean = false
+        dataForm: Form[SpendingInput]
 )(implicit
         messages: play.api.i18n.Messages,
-        request: Request[_],
-        appConfig: config.AppConfig
+        request: Request[_]
 )
 
 @main(

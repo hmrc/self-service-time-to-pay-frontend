@@ -16,12 +16,7 @@
 
 @import ssttpcalculator.model.PaymentSchedule
 
-@(
-        paymentSchedule: PaymentSchedule)(
-        implicit
-        messages: play.api.i18n.Messages,
-        appConfig: config.AppConfig
-)
+@(paymentSchedule: PaymentSchedule)(implicit messages: play.api.i18n.Messages)
 
 <div id="id_payment" class="margin-top-40">
     <dl class="govuk-summary-list govuk-summary-list--long">

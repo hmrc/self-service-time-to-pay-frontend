@@ -16,13 +16,10 @@
 
 package controllers.action
 
-import play.api.libs.json.OFormat
-
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 
-import scala.concurrent.Future
-
+@Singleton
 class Actions @Inject() (
     authenticatedAction:    AuthenticatedAction,
     authorisedSaUserAction: AuthorisedSaUserAction,

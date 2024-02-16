@@ -685,7 +685,6 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
   }
 
   "availablePaymentSchedules with an endDate should" - {
-    implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
     val LastPaymentDelayDays = 7
 
     "return a payment schedule with endDate when" - {

@@ -18,7 +18,6 @@ package ssttpdirectdebit
 
 import com.google.inject._
 import play.api.http.Status
-import play.api.libs.json.Json
 import play.api.mvc.{Request, RequestHeader}
 import ssttparrangement.SubmissionError
 import timetopaytaxpayer.cor.model.SaUtr
@@ -30,6 +29,7 @@ import _root_.util.Logging
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class DirectDebitConnector @Inject() (
     servicesConfig: ServicesConfig,
     httpClient:     HttpClient)(

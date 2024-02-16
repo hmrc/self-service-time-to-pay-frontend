@@ -21,7 +21,6 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Input
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
 @import uk.gov.hmrc.govukfrontend.views.Aliases.PrefixOrSuffix
-@import views.html.helpers.forms.submit
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Hint
 @import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorSummary
 @import partials.currency
@@ -30,7 +29,6 @@
 
 @this(
   main: views.html.main,
-  viewsHelpers: views.ViewsHelpers,
   formWithCsrf: uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
   input: uk.gov.hmrc.govukfrontend.views.html.components.GovukInput,
   errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
@@ -39,11 +37,10 @@
 
 @(
         dataForm: Form[CalculatorPaymentTodayForm],
-        debits: Seq[Debit],
-        loggedIn: Boolean = false)(implicit
+        debits: Seq[Debit]
+)(implicit
         messages: play.api.i18n.Messages,
-        request: Request[_],
-        appConfig: config.AppConfig
+        request: Request[_]
 )
 
 @main(

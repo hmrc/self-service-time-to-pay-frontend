@@ -16,8 +16,7 @@
 
 package pagespecs
 
-import langswitch.Languages
-import testsupport.{FakeAuthConnector, ItSpec}
+import testsupport.{FakeAuthConnector, ItSpec, Language}
 import testsupport.stubs._
 import testsupport.testdata.TdAll
 import timetopaytaxpayer.cor.model.SaUtr
@@ -41,10 +40,7 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     }
   }
 
-  def begin(
-      utr:           Option[SaUtr]          = Some(TdAll.saUtr),
-      allEnrolments: Option[Set[Enrolment]] = Some(Set(TdAll.saEnrolment))
-  ): Unit = {
+  def begin(): Unit = {
     startPage.open()
     startPage.assertInitialPageIsDisplayed()
     ()
@@ -55,11 +51,6 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
       maybeSaUtr:    Option[SaUtr],
       caseName:      String                 = ""
   )
-
-  def begin(): Unit = {
-    val s = requestSaScenarios.head
-    begin(s.maybeSaUtr, s.allEnrolments)
-  }
 
   def startNowAndAssertRequestToSA(): Unit = {
     startPage.clickOnStartNowButton()
@@ -80,17 +71,17 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     begin()
     startNowAndAssertRequestToSA()
     youNeedToRequestAccessToSelfAssessment.clickOnWelshLink()
-    youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed(Languages.Welsh)
+    youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed(Language.Welsh)
     youNeedToRequestAccessToSelfAssessment.clickOnEnglishLink()
-    youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed(Languages.English)
+    youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed(Language.English)
   }
 
   "take the user to request page" in {
-    requestSaScenarios.foreach { s =>
+    requestSaScenarios.foreach { _ =>
       TaxpayerStub.getTaxpayer()
       DirectDebitStub.getBanksIsSuccessful()
 
-      begin(s.maybeSaUtr, s.allEnrolments)
+      begin()
 
       startNowAndAssertRequestToSA()
     }
@@ -109,8 +100,6 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
   }
 
   private implicit def toOption[T](t: T): Option[T] = Some(t)
-
-  private implicit def toSet[T](t: T): Set[T] = Set(t)
 
   private implicit def toOptionSet[T](t: T): Option[Set[T]] = Some(Set(t))
 

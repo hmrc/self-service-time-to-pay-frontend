@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import testsupport.Language.{English, Welsh}
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser.pageTitle
 import testsupport.RichMatchers._
@@ -35,8 +35,8 @@ class SetUpPlanWithAdviserPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Set up a payment plan with an adviser"
-    case Languages.Welsh   => "Trefnu cynllun talu ag ymgynghorydd"
+    case Language.English => "Set up a payment plan with an adviser"
+    case Language.Welsh   => "Trefnu cynllun talu ag ymgynghorydd"
   }
 
   object Expected {

@@ -16,7 +16,7 @@
 
 package ssttparrangement
 
-import akka.util.Timeout
+import org.apache.pekko.util.Timeout
 import journey.Statuses.ApplicationComplete
 import journey.{Journey, JourneyId, JourneyService}
 import model.enumsforforms.TypesOfBankAccount.Personal
@@ -88,7 +88,7 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
 
     val journey = journeyOverride.map(_(journeyId)).getOrElse(TestJourney.createJourney(journeyId))
     val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
-    await(journeyService.saveJourney(journey)(fakeRequest)) mustBe (())
+    await(journeyService.saveJourney(journey)) mustBe (())
 
     val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
   }

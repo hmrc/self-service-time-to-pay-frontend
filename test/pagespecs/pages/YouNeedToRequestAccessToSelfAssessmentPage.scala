@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import testsupport.Language.{English, Welsh}
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import testsupport.RichMatchers._
 
@@ -34,8 +34,8 @@ class YouNeedToRequestAccessToSelfAssessmentPage(baseUrl: BaseUrl)(implicit webD
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "You need to request access to Self Assessment"
-    case Languages.Welsh   => "Mae’n rhaid i chi wneud cais i gael at eich cyfrif Hunanasesiad"
+    case Language.English => "You need to request access to Self Assessment"
+    case Language.Welsh   => "Mae’n rhaid i chi wneud cais i gael at eich cyfrif Hunanasesiad"
   }
 
   def clickTheButton() = {

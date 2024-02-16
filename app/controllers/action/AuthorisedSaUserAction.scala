@@ -17,7 +17,7 @@
 package controllers.action
 
 import audit.AuditService
-import com.google.inject.Inject
+import com.google.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -29,6 +29,7 @@ import util.Logging
 final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A], val utr: SaUtr)
   extends WrappedRequest[A](request)
 
+@Singleton
 class AuthorisedSaUserAction @Inject() (
     auditService: AuditService,
     cc:           MessagesControllerComponents)

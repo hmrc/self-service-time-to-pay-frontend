@@ -16,12 +16,11 @@
 
 package pagespecs
 
-import langswitch.Languages.{English, Welsh}
-import org.scalatestplus.selenium.Chrome.goBack
+import testsupport.Language.{English, Welsh}
 import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs.{AuthStub, GgStub, TaxpayerStub}
+import testsupport.stubs.{GgStub, TaxpayerStub}
 
 class YourMonthlyIncomePageSpec extends ItSpec {
 

@@ -16,12 +16,11 @@
 
 package pagespecs
 
-import langswitch.Language
-import langswitch.Languages.{English, Welsh}
 import ssttpaffordability.model.Expense._
 import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model._
-import testsupport.ItSpec
+import testsupport.{ItSpec, Language}
+import testsupport.Language.{English, Welsh}
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 
@@ -146,7 +145,6 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
   "displays 'Change income' link once income has been filled out" - {
     List(English, Welsh).foreach { lang =>
-      implicit val language: Language = lang
 
       s"in $lang" in {
         beginJourney()
@@ -199,7 +197,6 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
   "displays 'Change spending' link once spending has been filled out" - {
     List(English, Welsh).foreach { lang =>
-      implicit val language: Language = lang
 
       s"in $lang" in {
         beginJourney()

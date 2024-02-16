@@ -21,7 +21,6 @@ import org.scalatest.wordspec.AnyWordSpec
 import ssttpcalculator.model.InterestRate
 import times.ClockProvider
 
-import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, Month}
 
 class InterestRateServiceSpec extends AnyWordSpec with Matchers {

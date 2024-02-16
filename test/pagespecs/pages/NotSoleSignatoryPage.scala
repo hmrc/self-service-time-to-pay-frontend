@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import testsupport.Language.{English, Welsh}
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser.pageTitle
 import testsupport.RichMatchers._
@@ -35,8 +35,8 @@ class NotSoleSignatoryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exte
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "You cannot set up a Direct Debit online"
-    case Languages.Welsh   => "Ni allwch drefnu Debyd Uniongyrchol ar-lein"
+    case Language.English => "You cannot set up a Direct Debit online"
+    case Language.Welsh   => "Ni allwch drefnu Debyd Uniongyrchol ar-lein"
   }
 
   object Expected {

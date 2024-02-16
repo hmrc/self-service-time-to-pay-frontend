@@ -31,9 +31,8 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.CalculatorService
-import ssttpcalculator.model.PaymentSchedule
 import ssttpdirectdebit.DirectDebitForm._
-import times.ClockProvider
+
 import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, BankDetails, TypeOfAccountDetails}
 import util.{Logging, SelectedScheduleHelper}
 import views.Views
@@ -41,6 +40,7 @@ import views.Views
 import javax.inject._
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class DirectDebitController @Inject() (
     mcc:                   MessagesControllerComponents,
     barsService:           BarsService,
@@ -49,8 +49,7 @@ class DirectDebitController @Inject() (
     submissionService:     JourneyService,
     requestSupport:        RequestSupport,
     val calculatorService: CalculatorService,
-    views:                 Views,
-    clockProvider:         ClockProvider
+    views:                 Views
 )(
     implicit
     val appConfig: AppConfig, ec: ExecutionContext)
@@ -58,7 +57,6 @@ class DirectDebitController @Inject() (
   with SelectedScheduleHelper
   with Logging {
 
-  import clockProvider._
   import requestSupport._
 
   implicit val config: ViewConfig = viewConfig
@@ -122,8 +120,7 @@ class DirectDebitController @Inject() (
           else directDebitForm
         case None => directDebitForm
       }
-      val schedule: PaymentSchedule = selectedSchedule(journey)
-      Future.successful(Ok(views.direct_debit_form(journey.taxpayer.selfAssessment.debits, schedule, formData, isSignedIn)))
+      Future.successful(Ok(views.direct_debit_form(formData)))
     }
   }
 
@@ -154,15 +151,15 @@ class DirectDebitController @Inject() (
 
       journey.requireScheduleIsDefined()
       journey.requireDdIsDefined()
-      val schedule: PaymentSchedule = selectedSchedule(journey)
-      val directDebit = journey.arrangementDirectDebit.getOrElse(throw new RuntimeException(s"arrangement direct debit not found on submission [${journey}]"))
-      Future.successful(Ok(views.direct_debit_confirmation(
-        journey.taxpayer.selfAssessment.debits, schedule, directDebit, isSignedIn))
+      val directDebit = journey.arrangementDirectDebit.getOrElse(
+        throw new RuntimeException(s"arrangement direct debit not found on submission for journey ID [${journey._id}]")
+      )
+      Future.successful(Ok(views.direct_debit_confirmation(directDebit))
       )
     }
   }
 
-  val submitDirectDebitConfirmation: Action[AnyContent] = actions.authorisedSaUser { implicit request =>
+  val submitDirectDebitConfirmation: Action[AnyContent] = actions.authorisedSaUser { _ =>
     Redirect(ssttparrangement.routes.ArrangementController.getTermsAndConditions)
   }
 
@@ -172,13 +169,9 @@ class DirectDebitController @Inject() (
 
       journey.requireScheduleIsDefined()
       journey.requireIsAccountHolder()
-      implicit val schedule: PaymentSchedule = selectedSchedule(journey)
+
       directDebitForm.bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(
-          views.direct_debit_form(
-            journey.taxpayer.selfAssessment.debits,
-            schedule,
-            formWithErrors))),
+        formWithErrors => Future.successful(BadRequest(views.direct_debit_form(formWithErrors))),
         (validFormData: ArrangementDirectDebit) =>
           if (ArrangementDirectDebit.to(validFormData) == journey.maybeBankDetails) {
             Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation)
@@ -210,17 +203,11 @@ class DirectDebitController @Inject() (
   private def futureSuccessfulBadRequest(
       validFormData: ArrangementDirectDebit,
       formWithError: Form[ArrangementDirectDebit]
-  )(implicit journey: Journey,
-    schedule: PaymentSchedule,
-    request:  Request[_]
-  ): Future[Result] =
+  )(implicit request: Request[_]): Future[Result] =
     Future.successful(BadRequest(views.direct_debit_form(
-      journey.taxpayer.selfAssessment.debits,
-      schedule,
       formWithError.copy(data = Map(
         "accountName" -> validFormData.accountName,
         "accountNumber" -> validFormData.accountNumber,
         "sortCode" -> validFormData.sortCode)
-      ),
-      isBankError = true)))
+      ))))
 }

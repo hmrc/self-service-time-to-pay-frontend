@@ -50,7 +50,7 @@ class InterestRateService @Inject() (clockProvider: ClockProvider) extends Loggi
     try {
       source.getLines().foldLeft(Seq[InterestRate]())(interestRateConsumer)
     } catch {
-      case e: NullPointerException => throw new FileNotFoundException(s"$source")
+      case _: NullPointerException => throw new FileNotFoundException(s"$source")
       case t: Throwable            => throw t
     }
   }

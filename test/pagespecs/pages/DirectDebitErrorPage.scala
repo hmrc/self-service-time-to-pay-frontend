@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import testsupport.Language.{English, Welsh}
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import testsupport.RichMatchers._
 
@@ -33,8 +33,8 @@ class DirectDebitErrorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exte
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Call us about a payment plan"
-    case Languages.Welsh   => "Ffoniwch ni ynghylch cynllun talu"
+    case Language.English => "Call us about a payment plan"
+    case Language.Welsh   => "Ffoniwch ni ynghylch cynllun talu"
   }
 
   object Expected {

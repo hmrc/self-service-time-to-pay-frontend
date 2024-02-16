@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.{Language, Languages}
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language
+import testsupport.Language.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import testsupport._
 import testsupport.RichMatchers._
@@ -37,8 +37,8 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Set up Direct Debit"
-    case Languages.Welsh   => "Trefnu Debyd Uniongyrchol"
+    case Language.English => "Set up Direct Debit"
+    case Language.Welsh   => "Trefnu Debyd Uniongyrchol"
   }
 
   def assertErrorPageIsDisplayed(field: ErrorCase, language: Language = English): Unit = probing {
@@ -75,7 +75,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
     }
 
     object MainText {
-      def apply(checkState1: String = "unchecked", checkState2: String = "unchecked")(implicit language: Language): String = language match {
+      def apply()(implicit language: Language): String = language match {
         case English => mainTextEnglish
         case Welsh   => mainTextWelsh
       }
@@ -160,7 +160,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Continue
         """.stripMargin
 
-      private def directDebitNotSupportedErrorText(language: Language = English) = language match {
+      private def directDebitNotSupportedErrorText(language: Language) = language match {
         case English => directDebitNotSupportedErrorEnglishText
         case Welsh   => directDebitNotSupportedErrorWelshText
       }

@@ -14,34 +14,19 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
-@import timetopaytaxpayer.cor.model.Debit
+@import config.AppConfig
 @import ssttpcalculator.model.PaymentSchedule
 
-@this(
-        main: views.html.main,
-        viewsHelpers: views.ViewsHelpers
-)
+@this(main: views.html.main)
 
-@(
-        debits: Seq[Debit],
-        transactionId: String,
-        directDebit: ArrangementDirectDebit,
-        schedule: PaymentSchedule,
-        maybeDirectDebitReference: Option[String])(
-        implicit
-        messages: play.api.i18n.Messages,
-        request: Request[_],
-        appConfig: config.AppConfig
+@(schedule: PaymentSchedule, maybeDirectDebitReference: Option[String])(
+  implicit messages: play.api.i18n.Messages, request: Request[_], appConfig: AppConfig
 )
 
 @hasUpfrontPayment = @{schedule.initialPayment > 0}
 
 @main(
       title = messages("ssttp.arrangement.complete.title"),
-      maybeSidebarLinks = None,
-      welshToggleEnabled = false,
-      hasUserPanel = true,
       hasBackLink = false
 ) {
     <div class="govuk-panel govuk-panel--confirmation">

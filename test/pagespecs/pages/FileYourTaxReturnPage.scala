@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.{Language, Languages}
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language
+import testsupport.Language.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser.pageTitle
 import testsupport.RichMatchers._
@@ -35,8 +35,8 @@ class FileYourTaxReturnPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "File your Self Assessment tax return to use this service"
-    case Languages.Welsh   => "Cyflwynwch eich Ffurflen Dreth Hunanasesiad er mwyn defnyddio’r gwasanaeth hwn"
+    case Language.English => "File your Self Assessment tax return to use this service"
+    case Language.Welsh   => "Cyflwynwch eich Ffurflen Dreth Hunanasesiad er mwyn defnyddio’r gwasanaeth hwn"
   }
 
   object Expected {

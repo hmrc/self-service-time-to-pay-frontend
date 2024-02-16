@@ -16,12 +16,12 @@
 
 package pagespecs
 
-import langswitch.Language
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language
+import testsupport.Language.{English, Welsh}
 import play.api.libs.json.{JsObject, Json}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs.{AuditStub, AuthStub, GgStub, TaxpayerStub}
+import testsupport.stubs.{AuditStub, GgStub, TaxpayerStub}
 import testsupport.testdata.TdAll.{address, communicationPreferences, saUtr, toLocalDate, toOptionLocalDate}
 import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails, Taxpayer}
 

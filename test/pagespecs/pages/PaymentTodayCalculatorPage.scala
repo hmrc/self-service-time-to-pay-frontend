@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import testsupport.Language.{English, Welsh}
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import testsupport.RichMatchers._
@@ -29,7 +29,7 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
 
   override def path: String = "/pay-what-you-owe-in-instalments/calculator/payment-today"
 
-  override def assertInitialPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+  override def assertInitialPageIsDisplayed(implicit lang: Language = Language.English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
@@ -38,12 +38,18 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "How much can you pay upfront?"
-    case Languages.Welsh   => "Faint y gallwch ei dalu ymlaen llaw?"
+    case Language.English => "How much can you pay upfront?"
+    case Language.Welsh   => "Faint y gallwch ei dalu ymlaen llaw?"
   }
 
   def assertErrorIsDisplayed: Assertion = probing {
     readPath() shouldBe path
+
+    println("-----------expected-------------")
+    println(Expected.TextError().stripSpaces())
+    println("-----------readMain-------------")
+    println(readMain().stripSpaces())
+
     readMain().stripSpaces() shouldBe Expected.TextError().stripSpaces()
   }
 
@@ -102,8 +108,10 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
         """There is a problem
           |Enter an amount that is at least £1 but no more than £4,898
           |How much can you pay upfront?
-          |Enter an amount between £1 and £4,898
-          |Error: Enter an amount that is at least £1 but no more than £4,898
+          |Enter an amount between £1 and
+          |£4,898
+          |Error:
+          |Enter an amount that is at least £1 but no more than £4,898
           |£
           |Continue
         """.stripMargin
@@ -114,8 +122,10 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
         """There is a problem
           |Upfront payment must be an amount, like £100 or £250.75
           |How much can you pay upfront?
-          |Enter an amount between £1 and £4,898
-          |Error: Upfront payment must be an amount, like £100 or £250.75
+          |Enter an amount between £1 and
+          |£4,898
+          |Error:
+          |Upfront payment must be an amount, like £100 or £250.75
           |£
           |Continue
         """.stripMargin

@@ -16,7 +16,7 @@
 
 package pagespecs.pages
 
-import langswitch.Language
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._

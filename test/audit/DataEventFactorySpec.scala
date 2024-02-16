@@ -18,7 +18,6 @@ package audit
 
 import bars.model.BarsAssessmentType.{No, Yes}
 import bars.model.ValidateBankDetailsResponse
-import config.AppConfig
 import journey.Journey
 import journey.Statuses.ApplicationComplete
 import play.api.libs.json.{JsValue, Json}
@@ -45,7 +44,6 @@ class DataEventFactorySpec extends ItSpec {
   private val tdRequest = TdRequest
   private val directDebitTd = DirectDebitTd
   private implicit val request: FakeRequest[AnyContentAsEmpty.type] = tdRequest.request
-  private implicit val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
   private val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
 
   val journey: Journey = {

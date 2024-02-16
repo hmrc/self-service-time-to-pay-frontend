@@ -22,16 +22,17 @@ import uk.gov.hmrc.auth.core.{NoActiveSession, SessionRecordNotFound}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.play.http.logging.Mdc
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class JourneyService @Inject() (
     journeyRepo: JourneyRepo
 )(implicit ec: ExecutionContext) {
 
   import playsession.PlaySessionSupport._
 
-  def saveJourney(journey: Journey)(implicit request: Request[_]): Future[Unit] = Mdc.preservingMdc {
+  def saveJourney(journey: Journey): Future[Unit] = Mdc.preservingMdc {
     journeyRepo
       .upsert(journey.encrypt)
   }

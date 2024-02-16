@@ -14,20 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
-
 @this(
-  main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
+  main: views.html.main
 )
 
 
-@(
-        loggedIn: Boolean = false)(implicit
-        messages: play.api.i18n.Messages,
-        request: Request[_],
-        appConfig: AppConfig
-)
+@()(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @main(
     title = Messages("ssttp.direct-debit.unauthorized.title")

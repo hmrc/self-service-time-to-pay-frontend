@@ -16,17 +16,9 @@
 
 @import partials.extra_support
 
-@this(
-  main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
-)
+@this(main: views.html.main)
 
-@(
-  signedIn: Boolean = false)(implicit
-  messages: play.api.i18n.Messages,
-  request: Request[_],
-  appConfig: config.AppConfig
-)
+@()(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @main(
     title = messages("ssttp.file-your-tax-return.title"),

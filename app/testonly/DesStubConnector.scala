@@ -17,7 +17,6 @@
 package testonly
 
 import com.google.inject.Singleton
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Request
 import req.RequestSupport

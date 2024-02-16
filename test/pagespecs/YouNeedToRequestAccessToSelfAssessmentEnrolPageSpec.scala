@@ -22,7 +22,7 @@ import testsupport.testdata.TdAll
 import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
-import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,14 +35,11 @@ class YouNeedToRequestAccessToSelfAssessmentEnrolPageSpec extends ItSpec {
       val retrievalResult = Future.successful(
         new ~(new ~(Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "")), "Activated", None))), None), Some(Credentials("authId-999", "")))
       )
-      (retrievalResult.map(_.asInstanceOf[A]))
+      retrievalResult.map(_.asInstanceOf[A])
     }
   }
 
-  def begin(
-      utr:           Option[SaUtr]          = Some(TdAll.saUtr),
-      allEnrolments: Option[Set[Enrolment]] = Some(Set(TdAll.saEnrolment))
-  ): Unit = {
+  def begin(): Unit = {
     startPage.open()
     startPage.assertInitialPageIsDisplayed()
     ()
@@ -53,11 +50,6 @@ class YouNeedToRequestAccessToSelfAssessmentEnrolPageSpec extends ItSpec {
       maybeSaUtr:    Option[SaUtr],
       caseName:      String                 = ""
   )
-
-  def begin(): Unit = {
-    val s = requestSaScenarios.head
-    begin(s.maybeSaUtr, s.allEnrolments)
-  }
 
   def startNowAndAssertRequestToSA(): Unit = {
     startPage.clickOnStartNowButton()
@@ -72,12 +64,12 @@ class YouNeedToRequestAccessToSelfAssessmentEnrolPageSpec extends ItSpec {
   )
 
   "click on the call to action and navigate to PTA" in {
-    requestSaScenarios.foreach { s =>
+    requestSaScenarios.foreach { _ =>
       val s = requestSaScenarios.head
       TaxpayerStub.getTaxpayer()
       DirectDebitStub.getBanksIsSuccessful()
 
-      begin(s.maybeSaUtr, s.allEnrolments)
+      begin()
       startNowAndAssertRequestToSA()
 
       AddTaxesFeStub.enrolForSaStub(s.maybeSaUtr)
@@ -89,8 +81,6 @@ class YouNeedToRequestAccessToSelfAssessmentEnrolPageSpec extends ItSpec {
   }
 
   private implicit def toOption[T](t: T): Option[T] = Some(t)
-
-  private implicit def toSet[T](t: T): Set[T] = Set(t)
 
   private implicit def toOptionSet[T](t: T): Option[Set[T]] = Some(Set(t))
 

@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import testsupport.Language.{English, Welsh}
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
@@ -27,8 +27,8 @@ class StartAffordabilityPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
   override def path: String = "/pay-what-you-owe-in-instalments/start-affordability"
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "We need to check you can afford the payment plan"
-    case Languages.Welsh   => "Mae angen i ni wirio eich bod yn gallu fforddio’r cynllun talu"
+    case Language.English => "We need to check you can afford the payment plan"
+    case Language.Welsh   => "Mae angen i ni wirio eich bod yn gallu fforddio’r cynllun talu"
   }
 
   def clickContinue(): Unit = {

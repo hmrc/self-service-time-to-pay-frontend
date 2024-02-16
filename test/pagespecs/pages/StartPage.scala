@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import testsupport.Language.{English, Welsh}
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
@@ -29,18 +29,18 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
   override val path: String = "/pay-what-you-owe-in-instalments"
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Set up a Self Assessment payment plan"
-    case Languages.Welsh   => "Trefnu cynllun talu"
+    case Language.English => "Set up a Self Assessment payment plan"
+    case Language.Welsh   => "Trefnu cynllun talu"
   }
 
-  def expectedTitleStartPageOnly(heading: String, lang: Language): String = lang match {
-    case Languages.English => s"Set up a Self Assessment payment plan - GOV.UK"
-    case Languages.Welsh   => s"Trefnu cynllun talu - GOV.UK"
+  def expectedTitleStartPageOnly(lang: Language): String = lang match {
+    case Language.English => s"Set up a Self Assessment payment plan - GOV.UK"
+    case Language.Welsh   => s"Trefnu cynllun talu - GOV.UK"
   }
 
-  def assertInitialPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+  def assertInitialPageIsDisplayed(implicit lang: Language = Language.English): Unit = probing {
     readPath() shouldBe path
-    pageTitle shouldBe expectedTitleStartPageOnly(expectedHeadingContent(lang), lang)
+    pageTitle shouldBe expectedTitleStartPageOnly(lang)
     val expectedLines = Expected.MainText().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
   }

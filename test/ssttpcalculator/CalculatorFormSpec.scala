@@ -17,7 +17,7 @@
 package ssttpcalculator
 
 import testsupport.UnitSpec
-import uk.gov.hmrc.selfservicetimetopay.models.{CustomPlanRequest, PlanChoice, PlanSelection}
+import uk.gov.hmrc.selfservicetimetopay.models.{CustomPlanRequest, PlanChoice}
 
 class CalculatorFormSpec extends UnitSpec {
 

@@ -25,7 +25,7 @@ trait JsonSyntax {
   implicit def toJsonOps(s: String): toJsonOps = new toJsonOps {
     def asJson: JsObject = Json.parse(s) match {
       case d: JsObject => d
-      case v           => throw new RuntimeException(s"Cant parse as JsObject: $s ")
+      case _           => throw new RuntimeException(s"Cant parse as JsObject: $s ")
     }
   }
 }

@@ -27,8 +27,6 @@ import testsupport.RichMatchers.convertToClueful
 class ValidateBankDetailsResponseSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks {
 
   val testCases: TableFor4[Boolean, BarsAssessmentType, BarsAssessmentType, Option[BarsAssessmentType]] = {
-      implicit def liftStringToSome(str: String): Some[String] = Some(str) // Just to make the table easier to read
-
     Table[Boolean, BarsAssessmentType, BarsAssessmentType, Option[BarsAssessmentType]](
       ("isValid", "accountNumberIsWellFormatted", "sortCodeIsPresentOnEISCD", "sortCodeSupportsDirectDebit"),
       (true, Yes, Yes, Some(Yes)),

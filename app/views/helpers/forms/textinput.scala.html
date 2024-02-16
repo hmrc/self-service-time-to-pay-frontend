@@ -24,7 +24,7 @@
     input: uk.gov.hmrc.govukfrontend.views.html.components.GovukInput
 )
 
-@(field: Field, args: (Symbol, Any)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
+@(field: Field, args: (Symbol, Any)*)(implicit messages: play.api.i18n.Messages)
 
 @argsMap = @{
     args.toMap
@@ -41,7 +41,7 @@
         content = Text(argsMap.getOrElse(Symbol("label"), "").toString),
         classes = argsMap.getOrElse(Symbol("_labelClass"), "").toString
     ),
-    hint = argsMap.get(Symbol("hint")).map { hintLabel =>
+    hint = argsMap.get(Symbol("hint")).map { _ =>
         Hint(
             content = Text(argsMap.getOrElse(Symbol("hintContent"), "").toString),
             classes = argsMap.getOrElse(Symbol("hintClass"), "").toString

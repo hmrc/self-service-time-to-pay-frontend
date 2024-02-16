@@ -18,17 +18,19 @@
 @import views.html.helper._
 @import scala.collection.mutable.ListBuffer
 
-@(dataForm:Form[_], fieldName: String, args:(Symbol, Any)*)(content: Html)(implicit messages: Messages, lang: Lang = Lang("en"))
-    @argsMap = @{args.toMap}
-    @clss = @{
+@(dataForm:Form[_], fieldName: String, args:(Symbol, Any)*)(content: Html)
+
+@argsMap = @{args.toMap}
+@clss = @{
         val modifierClass = argsMap.get(Symbol("_modifierClass")).fold(Seq.empty[String])(modifierClass => Seq(modifierClass.toString))
         val errors = dataForm.error(fieldName).fold(Seq.empty[String])(_ => Seq("govuk-form-group--error"))
         val classes = Seq("") ++ modifierClass ++ errors
 
         Html(classes.mkString(" class=\"", "", "\""))
-    }
-    <a name="@fieldName"></a>
-    <fieldset @clss @toHtmlArgs(argsMap.filterNot(entry => entry._1.name.startsWith("_")))>
-    @content
-    </fieldset>
+}
+
+<a name="@fieldName"></a>
+<fieldset @clss @toHtmlArgs(argsMap.filterNot(entry => entry._1.name.startsWith("_")))>
+  @content
+</fieldset>
 

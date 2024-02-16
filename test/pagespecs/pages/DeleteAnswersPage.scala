@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.{Language, Languages}
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language
+import testsupport.Language.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
@@ -36,8 +36,8 @@ class DeleteAnswersPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "For your security, we signed you out"
-    case Languages.Welsh   => "Er eich diogelwch, gwnaethom eich allgofnodi"
+    case Language.English => "For your security, we signed you out"
+    case Language.Welsh   => "Er eich diogelwch, gwnaethom eich allgofnodi"
   }
 
   def assertHasSignInButton(language: Language = English): Assertion = probing {

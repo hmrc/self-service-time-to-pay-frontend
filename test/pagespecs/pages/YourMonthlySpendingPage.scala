@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import testsupport.Language.{English, Welsh}
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
@@ -29,8 +29,8 @@ class YourMonthlySpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) e
   override def path: String = "/pay-what-you-owe-in-instalments/monthly-spending"
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Your monthly spending"
-    case Languages.Welsh   => "Eich gwariant misol"
+    case Language.English => "Your monthly spending"
+    case Language.Welsh   => "Eich gwariant misol"
   }
 
   def clickContinue(): Unit = clickOnContinue()

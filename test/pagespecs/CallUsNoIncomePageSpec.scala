@@ -16,9 +16,9 @@
 
 package pagespecs
 
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language.{English, Welsh}
 import testsupport.ItSpec
-import testsupport.stubs.{AuthStub, GgStub, TaxpayerStub}
+import testsupport.stubs.{GgStub, TaxpayerStub}
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 
 class CallUsNoIncomePageSpec extends ItSpec {

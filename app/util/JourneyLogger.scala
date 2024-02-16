@@ -36,11 +36,6 @@ class JourneyLogger(inClass: Class[_])
   def warn(message: => String)(implicit request: RequestHeader, journey: Journey): Unit = logMessage(message, journey, Warn)
   def error(message: => String)(implicit request: RequestHeader, journey: Journey): Unit = logMessage(message, journey, Error)
 
-  def debug(message: => String, ex: Throwable)(implicit request: RequestHeader, journey: Journey): Unit = logMessage(message, ex, Debug)
-  def info(message: => String, ex: Throwable)(implicit request: RequestHeader, journey: Journey): Unit = logMessage(message, ex, Info)
-  def warn(message: => String, ex: Throwable)(implicit request: RequestHeader, journey: Journey): Unit = logMessage(message, ex, Warn)
-  def error(message: => String, ex: Throwable)(implicit request: RequestHeader, journey: Journey): Unit = logMessage(message, ex, Error)
-
   private def journeyId(journey: Journey): String = s"[journeyId: ${journey.id.value}]"
 
   private def journeyStatus(journey: Journey): String = s"[journeyStatus: ${journey.status}]"

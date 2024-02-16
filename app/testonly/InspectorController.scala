@@ -16,27 +16,24 @@
 
 package testonly
 
-import bars.BarsConnector
 import config.AppConfig
 import controllers.FrontendBaseController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import journey.JourneyService
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
 import ssttpcalculator.CalculatorService
-import timetopaytaxpayer.cor.TaxpayerConnector
 import util.SelectedScheduleHelper
 import views.Views
 
 import scala.concurrent.ExecutionContext
 import scala.util.Try
 
+@Singleton
 class InspectorController @Inject() (
-    ddConnector:           BarsConnector,
     val calculatorService: CalculatorService,
-    taxPayerConnector:     TaxpayerConnector,
     cc:                    MessagesControllerComponents,
     journeyService:        JourneyService,
     views:                 Views,
@@ -47,7 +44,7 @@ class InspectorController @Inject() (
 
   import requestSupport._
 
-  def clearPlaySession(): Action[AnyContent] = Action { implicit request =>
+  def clearPlaySession(): Action[AnyContent] = Action { _ =>
     Redirect(routes.InspectorController.inspect()).withSession()
   }
 

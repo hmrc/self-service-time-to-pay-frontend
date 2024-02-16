@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.{Language, Languages}
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language
+import testsupport.Language.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser.pageTitle
 import testsupport.RichMatchers.convertToAnyShouldWrapper
@@ -35,8 +35,8 @@ class AlreadyHaveAPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exte
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "You already have a payment plan with HMRC"
-    case Languages.Welsh   => "Mae eisoes gennych gynllun talu gyda CThEF"
+    case Language.English => "You already have a payment plan with HMRC"
+    case Language.Welsh   => "Mae eisoes gennych gynllun talu gyda CThEF"
   }
 
   object Expected {

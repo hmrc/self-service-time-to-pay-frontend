@@ -16,7 +16,7 @@
 
 package pagespecs
 
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language.{English, Welsh}
 import pagespecs.pages.{CheckYourPaymentPlanPage, HowMuchCanYouPayEachMonthPage}
 import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec

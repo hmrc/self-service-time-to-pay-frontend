@@ -23,9 +23,10 @@ import play.api.mvc.Request
 import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.selfservicetimetopay.models.TypeOfAccountDetails
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class BarsService @Inject() (barsConnector: BarsConnector, auditService: AuditService)(implicit ec: ExecutionContext) extends Logging {
 
   def validateBankDetails(sortCode:                  String,

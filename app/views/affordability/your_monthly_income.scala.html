@@ -27,7 +27,6 @@
 
 @this(
     main: views.html.main,
-    viewsHelpers: views.ViewsHelpers,
     formWithCsrf: uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
     input: uk.gov.hmrc.govukfrontend.views.html.components.GovukInput,
     errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
@@ -36,12 +35,10 @@
 
 @(
     dataForm: Form[IncomeInput],
-    loggedIn: Boolean = false,
     errorMessageOverrides: Seq[FormError] = Seq.empty
 )(implicit
     messages: play.api.i18n.Messages,
-    request: Request[_],
-    appConfig: config.AppConfig
+    request: Request[_]
 )
 
 @optErrorTotal = @{
@@ -92,8 +89,8 @@
             <fieldset class="govuk-fieldset long-word-wrap">
                 <legend class="govuk-label govuk-visually-hidden">@messages("ssttp.affordability.your-monthly-income.hidden")</legend>
 
-                <div id="total-invalid" class="form-field @incomeInputTotalError.map { error => govuk-form-group--error }">
-                    @incomeInputTotalError.map { error =>
+                <div id="total-invalid" class="form-field @incomeInputTotalError.map { _ => govuk-form-group--error }">
+                    @incomeInputTotalError.map { _ =>
                         <span class="govuk-error-message" id="income-invalid-error">
                             <span class="govuk-visually-hidden">@Messages("ssttp.common.title-prefix")</span>
                             @Html(messages("ssttp.affordability.your-monthly-income.error.required"))

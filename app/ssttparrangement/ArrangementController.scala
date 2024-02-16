@@ -35,7 +35,7 @@ import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.EligibilityService
 import ssttpeligibility.{routes => eligibilityRoutes}
 import times.ClockProvider
-import timetopaytaxpayer.cor.{TaxpayerConnector, model}
+import timetopaytaxpayer.cor.TaxpayerConnector
 import uk.gov.hmrc.auth.core.NoActiveSession
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
@@ -52,6 +52,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 import scala.math.BigDecimal.exact
 
+@Singleton
 class ArrangementController @Inject() (
     mcc:                   MessagesControllerComponents,
     ddConnector:           DirectDebitConnector,
@@ -152,7 +153,7 @@ class ArrangementController @Inject() (
       val formWithData: Form[ArrangementForm] = journey.maybePaymentDayOfMonth match {
         case _: Option[PaymentDayOfMonth] =>
           form.fill(ArrangementForm(journey.selectedDay))
-        case _ => form.fill(ArrangementForm(None))
+        case _ => form.fill(ArrangementForm(None: Option[Int]))
       }
       Future.successful(Ok(views.change_day(formWithData)))
     }
@@ -262,20 +263,9 @@ class ArrangementController @Inject() (
     journeyService.getJourney().map { implicit journey =>
       if (journey.status == ApplicationComplete) {
         journeyLogger.info("Application complete")
-
-        // to do a FinishedJourney class without Options would be nice
-        val directDebit =
-          journey.arrangementDirectDebit.getOrElse(
-            throw new RuntimeException(s"arrangementDirectDebit not found for journey [$journey]"))
-
         val schedule = selectedSchedule(journey)
-        Ok(views.application_complete(
-          debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
-          transactionId = journey.taxpayer.selfAssessment.utr.value + clockProvider.now().toString,
-          directDebit,
-          schedule,
-          journey.ddRef
-        ))
+
+        Ok(views.application_complete(schedule, journey.ddRef))
       } else technicalDifficulties(journey)
     } recover {
       case _: NoActiveSession => Redirect(controllers.routes.TimeoutController.killSession)
@@ -291,10 +281,6 @@ class ArrangementController @Inject() (
     } recover {
       case _: NoActiveSession => Redirect(controllers.routes.TimeoutController.killSession)
     }
-  }
-
-  private def applicationSuccessful(journey: Journey, schedule: PaymentSchedule)(implicit request: Request[_]): Future[Result] = {
-    successful(Redirect(ssttparrangement.routes.ArrangementController.applicationComplete))
   }
 
   /**
@@ -344,10 +330,10 @@ class ArrangementController @Inject() (
                   s"[Direct debit reference: ${arrangement.directDebitReference}]"
               )(request, journey)
 
-              applicationSuccessful(journey, paymentSchedule)
+              successful(Redirect(ssttparrangement.routes.ArrangementController.applicationComplete))
             }, _ => {
               journeyLogger.info(s"Arrangement set up outcome: Arrangement submission Succeeded!")(request, journey)
-              applicationSuccessful(journey, paymentSchedule)
+              successful(Redirect(ssttparrangement.routes.ArrangementController.applicationComplete))
             }
             )
           }

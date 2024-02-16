@@ -16,12 +16,11 @@
 
 package ssttpdirectdebit
 
-import akka.util.Timeout
+import org.apache.pekko.util.Timeout
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import journey.Statuses.InProgress
 import journey.{Journey, JourneyId, JourneyService, PaymentToday}
 import model.enumsforforms.TypesOfBankAccount
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
@@ -154,7 +153,7 @@ class DirectDebitControllerSpec extends ItSpec {
     val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
     val controller: DirectDebitController = app.injector.instanceOf[DirectDebitController]
 
-    await(journeyService.saveJourney(journey)(fakeRequest)) mustBe (())
+    await(journeyService.saveJourney(journey)) shouldBe (())
     controller.submitDirectDebit()(fakeRequest)
   }
 

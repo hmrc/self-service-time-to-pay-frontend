@@ -21,8 +21,7 @@
 @import views.html.helper.CSPNonce
 
 @this(
-        main: views.html.main,
-        viewsHelpers: views.ViewsHelpers
+        main: views.html.main
 )
 
 @(
@@ -30,8 +29,7 @@
         ddRef: Option[String]
 )(implicit
         messages: play.api.i18n.Messages,
-        request: Request[_],
-        appConfig: config.AppConfig
+        request: Request[_]
 )
 @main(
     title = messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")

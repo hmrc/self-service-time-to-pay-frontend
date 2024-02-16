@@ -15,8 +15,7 @@
  *@
 
 @this(
-  main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
+  main: views.html.main
 )
 
 @(
@@ -25,8 +24,7 @@
         authority: String,
         hcHeaders: Seq[(String, String)])(implicit
         messages: play.api.i18n.Messages,
-        request: Request[_],
-        appConfig: config.AppConfig
+        request: Request[_]
 )
 
 @pageLinkListItem(call: Call) = {

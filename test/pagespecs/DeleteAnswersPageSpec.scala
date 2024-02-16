@@ -16,9 +16,7 @@
 
 package pagespecs
 
-import langswitch.Languages.Welsh
-import org.openqa.selenium.By.className
-import org.scalatestplus.selenium.WebBrowser
+import testsupport.Language.Welsh
 import testsupport.ItSpec
 
 class DeleteAnswersPageSpec extends ItSpec {

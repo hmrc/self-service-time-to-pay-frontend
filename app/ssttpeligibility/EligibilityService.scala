@@ -17,7 +17,7 @@
 package ssttpeligibility
 
 import java.time.{LocalDate, MonthDay}
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails, Taxpayer}
 import uk.gov.hmrc.selfservicetimetopay.models._
 
@@ -29,6 +29,7 @@ import uk.gov.hmrc.selfservicetimetopay.models._
  * Charge - any money owed that less than 30 days overdue
  * Liability - any money that is not yet due
  */
+@Singleton
 class EligibilityService @Inject() (config: EligibilityServiceConfig) {
   val taxYearEndDay: MonthDay = MonthDay.of(config.taxYearEndMonthOfYear, config.taxYearEndDayOfMonth)
 

@@ -19,8 +19,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     scalaVersion := appScalaVersion,
     majorVersion := 0,
-    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test
   )
   .settings(ScalariformSettings())
   .settings(WartRemoverSettings.wartRemoverError)
@@ -28,7 +27,9 @@ lazy val microservice = Project(appName, file("."))
   .settings(wartremoverExcluded ++=
     (Compile / routes).value ++
       (baseDirectory.value / "test").get ++
-      Seq(sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"))
+        target.value.get ++
+          Seq(sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"))
+
   .settings(ScalariformSettings())
   .settings(
     Test / unmanagedSourceDirectories := Seq(baseDirectory.value / "test", baseDirectory.value / "test-common")
@@ -38,9 +39,6 @@ lazy val microservice = Project(appName, file("."))
   ))
   .settings(PlayKeys.playDefaultPort := 9063)
   .settings(
-    routesImport ++= Seq(
-      "langswitch.Language"
-    ),
     Compile / doc / sources  := Seq.empty,
     packageDoc / publishArtifact  := false
   )
@@ -48,14 +46,22 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions ++= Seq(
       "-Xfatal-warnings",
       "-Xlint:-missing-interpolator,_",
+      "-Xlint:adapted-args",
+      "-Ywarn-unused:implicits",
+      "-Ywarn-unused:imports",
+      "-Ywarn-unused:locals",
+      "-Ywarn-unused:params",
+      "-Ywarn-unused:patvars",
+      "-Ywarn-unused:privates",
       "-Ywarn-value-discard",
       "-Ywarn-dead-code",
       "-deprecation",
       "-feature",
       "-unchecked",
       "-language:implicitConversions",
-      "-language:reflectiveCalls",
-      "-Ywarn-unused:-imports,-patvars,-privates,-locals,-explicits,-implicits,_"
+      // required in place of silencer plugin
+      "-Wconf:cat=unused-imports&src=html/.*:s",
+      "-Wconf:src=routes/.*:s"
     )
   )
   .settings(

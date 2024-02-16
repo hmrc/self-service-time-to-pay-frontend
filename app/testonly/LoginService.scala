@@ -18,7 +18,7 @@ package testonly
 
 import com.google.inject.Inject
 import play.api.http.HeaderNames
-import play.api.libs.json.{JsArray, JsNull, JsNumber, JsObject, JsString, Json, __}
+import play.api.libs.json.{JsArray, JsNull, JsObject, Json}
 import play.api.mvc.{Request, Session}
 import times.ClockProvider
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, SessionKeys}
@@ -86,12 +86,6 @@ class LoginService @Inject() (httpClient: HttpClient, servicesConfig: ServicesCo
       "email" -> "user@test.com",
       "gatewayInformation" -> Json.obj()
     ) ++ maybeNino
-  }
-
-  private implicit class JsonReplaceOp(j: JsObject) {
-    def replace(node: Symbol, newValue: String): JsObject = j.transform((__ \ node).json.put(JsString(newValue))).get
-
-    def replace(node: Symbol, newValue: Int): JsObject = j.transform((__ \ node).json.put(JsNumber(newValue))).get
   }
 
 }

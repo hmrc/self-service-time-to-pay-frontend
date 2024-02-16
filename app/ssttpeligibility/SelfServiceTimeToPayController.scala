@@ -30,6 +30,7 @@ import views.Views
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
+@Singleton
 class SelfServiceTimeToPayController @Inject() (
     mcc:             MessagesControllerComponents,
     as:              Actions,
@@ -42,15 +43,15 @@ class SelfServiceTimeToPayController @Inject() (
   import requestSupport._
 
   val start: Action[AnyContent] = as.action { implicit request =>
-    Ok(views.service_start(isSignedIn, mcc.messagesApi))
+    Ok(views.service_start())
   }
 
-  val doStart: Action[AnyContent] = as.action { implicit request =>
+  val doStart: Action[AnyContent] = as.action { _ =>
     Redirect(ssttparrangement.routes.ArrangementController.determineEligibility)
   }
 
   private val getCallUsAboutAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
-    Ok(views.call_us_about_a_payment_plan(isWelsh, loggedIn = isSignedIn))
+    Ok(views.call_us_about_a_payment_plan())
   }
 
   val getTtpCallUs: Action[AnyContent] = getCallUsAboutAPaymentPlan
@@ -61,31 +62,31 @@ class SelfServiceTimeToPayController @Inject() (
   val getNotSaEnrolled: Action[AnyContent] = getCallUsAboutAPaymentPlan
 
   val callUsCannotSetUpPlan: Action[AnyContent] = as.action { implicit request =>
-    Ok(views.call_us_cannot_set_up_plan(isWelsh, loggedIn = isSignedIn))
+    Ok(views.call_us_cannot_set_up_plan())
   }
 
   val getDebtTooOld: Action[AnyContent] = as.action { implicit request =>
-    Ok(views.call_us_debt_too_old(isWelsh, loggedIn = isSignedIn))
+    Ok(views.call_us_debt_too_old())
   }
 
   val getDebtTooLarge: Action[AnyContent] = as.action { implicit request =>
-    Ok(views.debt_too_large(isSignedIn, isWelsh))
+    Ok(views.debt_too_large())
   }
 
   val getFileYourTaxReturn: Action[AnyContent] = as.action { implicit request =>
-    Ok(views.file_your_tax_return(isSignedIn))
+    Ok(views.file_your_tax_return())
   }
 
   val getYouAlreadyHaveAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
-    Ok(views.you_already_have_a_payment_plan(isSignedIn, isWelsh))
+    Ok(views.you_already_have_a_payment_plan())
   }
 
   val getAccessYouSelfAssessmentOnline: Action[AnyContent] = as.action { implicit request =>
-    Ok(views.you_need_to_request_access_to_self_assessment(isWelsh, isSignedIn))
+    Ok(views.you_need_to_request_access_to_self_assessment())
   }
 
   val getNotSoleSignatory: Action[AnyContent] = as.action { implicit request =>
-    Ok(views.not_sole_signatory(isWelsh, isSignedIn))
+    Ok(views.not_sole_signatory())
   }
 
   val submitAccessYouSelfAssessmentOnline: Action[AnyContent] = as.authenticatedSaUser.async { implicit request =>

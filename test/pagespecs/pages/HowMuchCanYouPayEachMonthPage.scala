@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import testsupport.Language.{English, Welsh}
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
@@ -29,23 +29,23 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
   override def path: String = "/pay-what-you-owe-in-instalments/calculator/instalments"
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Select a payment plan"
-    case Languages.Welsh   => "Dewiswch gynllun talu"
+    case Language.English => "Select a payment plan"
+    case Language.Welsh   => "Dewiswch gynllun talu"
   }
 
   def expectedHeadingCustomContent(language: Language): String = language match {
-    case Languages.English => "Another payment plan option has been added"
-    case Languages.Welsh   => "Mae opsiwn cynllun talu arall wedi’i ychwanegu"
+    case Language.English => "Another payment plan option has been added"
+    case Language.Welsh   => "Mae opsiwn cynllun talu arall wedi’i ychwanegu"
   }
 
   def expectedHeadingCustomContentWithErrorPrefix(language: Language): String = language match {
-    case Languages.English => "Error: " + expectedHeadingCustomContent(English)
-    case Languages.Welsh   => "Gwall: " + expectedHeadingCustomContent(Welsh)
+    case Language.English => "Error: " + expectedHeadingCustomContent(English)
+    case Language.Welsh   => "Gwall: " + expectedHeadingCustomContent(Welsh)
   }
 
   def expectedHeadingContentWithErrorPrefix(language: Language): String = language match {
-    case Languages.English => "Error: " + expectedHeadingContent(English)
-    case Languages.Welsh   => "Gwall: " + expectedHeadingContent(Welsh)
+    case Language.English => "Error: " + expectedHeadingContent(English)
+    case Language.Welsh   => "Gwall: " + expectedHeadingContent(Welsh)
   }
 
   def selectAnOption(): Unit = probing {
@@ -98,7 +98,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
       amount:   String,
       months:   Option[String] = None,
       interest: Option[String] = None
-  )(implicit language: Language = Languages.English): Unit = (months, interest) match {
+  )(implicit language: Language = Language.English): Unit = (months, interest) match {
     case (Some(months), Some(interest)) =>
       val expectedLines = Expected.MainText.DefaultOptionsText(amount, months, interest).splitIntoLines()
       assertContentMatchesExpectedLines(expectedLines)
@@ -111,7 +111,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
       amount:   String,
       months:   Option[String] = None,
       interest: Option[String] = None
-  )(implicit language: Language = Languages.English): Unit = (months, interest) match {
+  )(implicit language: Language = Language.English): Unit = (months, interest) match {
     case (Some(months), Some(interest)) =>
       val expectedLines = Expected.MainText.DefaultOptionsText(amount, months, interest).splitIntoLines()
       assertContentDoesNotContainLines(expectedLines)
@@ -120,13 +120,13 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
       assertContentDoesNotContainLines(expectedLines)
   }
 
-  def customAmountOptionIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+  def customAmountOptionIsDisplayed(implicit lang: Language = Language.English): Unit = probing {
     val expectedLines = Expected.MainText.CustomOption().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
     ()
   }
 
-  def customAmountOptionNotDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+  def customAmountOptionNotDisplayed(implicit lang: Language = Language.English): Unit = probing {
     val expectedLines = Expected.MainText.CustomOption().splitIntoLines()
     assertContentDoesNotContainLines(expectedLines)
     ()
@@ -148,7 +148,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
                                                    months:   Option[String] = None,
                                                    interest: Option[String] = None
   )(implicit lang: Language = English): Unit = probing {
-    val expectedLines = Expected.MainText.CustomAmountDisplayed(amount).splitIntoLines()
+    val expectedLines = Expected.MainText.CustomAmountDisplayed().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
     optionIsDisplayed(amount, months, interest)
     ()
@@ -299,18 +299,18 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
       }
 
       object CustomAmountDisplayed {
-        def apply(amount: String)(implicit language: Language): String = language match {
-          case English => customAmountTextEnglish(amount)
-          case Welsh   => customAmountTextWelsh(amount)
+        def apply()(implicit language: Language): String = language match {
+          case English => customAmountTextEnglish()
+          case Welsh   => customAmountTextWelsh()
         }
 
-        private def customAmountTextEnglish(amount: String) =
+        private def customAmountTextEnglish() =
           s"""Another payment plan option has been added
              |Based on what you entered, we have added another payment plan option.
              |The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
           """.stripMargin
 
-        private def customAmountTextWelsh(amount: String) =
+        private def customAmountTextWelsh() =
           s"""Mae opsiwn cynllun talu arall wedi’i ychwanegu
              |Yn seiliedig ar yr hyn a nodwyd gennych, rydym wedi ychwanegu opsiwn cynllun talu arall.
              |Bydd y taliad misol olaf yn eich cynllun yn fwy oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.

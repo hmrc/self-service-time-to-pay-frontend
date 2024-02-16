@@ -20,8 +20,6 @@
 @import model.forms.TypeOfAccountForm
 @import model.enumsforforms.TypesOfBankAccount
 @import model.enumsforforms.IsSoleSignatory
-@import req.RequestSupport
-@import config.AppConfig
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
 
 @this(
@@ -29,17 +27,14 @@
         viewsHelpers: views.ViewsHelpers,
         govukRadios: GovukRadios,
         formWithCSRF: FormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        requestSupport: RequestSupport
+        govukErrorSummary: GovukErrorSummary
 )
 
 @(
-        form: Form[TypeOfAccountForm],
-        signedIn: Boolean = false
+        form: Form[TypeOfAccountForm]
 )(implicit
         request: Request[_],
-        messages: Messages,
-        appConfig: AppConfig
+        messages: Messages
 )
 
 @typeOfAccountKey = @{"typeOfAccount"}
@@ -112,8 +107,7 @@
 
 @main(
     title = title,
-    hasErrors = form.hasErrors,
-    welshToggleEnabled = true
+    hasErrors = form.hasErrors
 ) {
     @if(form.errors.nonEmpty) {
         @govukErrorSummary(

@@ -39,6 +39,8 @@ import scala.concurrent.ExecutionContext
 import play.api.inject.bind
 import uk.gov.hmrc.mongo.MongoComponent
 
+import scala.annotation.unused
+
 class ItSpec
   extends AnyFreeSpec
   with GuiceOneServerPerSuite
@@ -63,11 +65,11 @@ class ItSpec
     "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,
     "microservice.services.auth.port" -> WireMockSupport.port,
     "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",
-    "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${testPort}",
+    "microservice.services.auth.login-callback.base-url" -> s"http://localhost:$testPort",
     "microservice.services.add-taxes.port" -> WireMockSupport.port,
     "microservice.services.bars.port" -> WireMockSupport.port,
     "microservice.services.identity-verification-frontend.uplift-url" -> s"http://localhost:${WireMockSupport.port}/mdtp/uplift",
-    "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:${testPort}",
+    "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:$testPort",
     "microservice.services.identity-verification-frontend.callback.complete-path" -> "/pay-what-you-owe-in-instalments/arrangement/determine-eligibility",
     "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled",
     "auditing.consumer.baseUri.port" -> WireMockSupport.port,
@@ -93,6 +95,7 @@ class ItSpec
 
     @Provides
     @Singleton
+    @unused
     def clockProvider: ClockProvider = new ClockProvider {
       override val defaultClock: Clock = {
         val fixedInstant = LocalDateTime.parse(frozenTimeString).toInstant(UTC)

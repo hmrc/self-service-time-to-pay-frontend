@@ -16,7 +16,7 @@
 
 package ssttparrangement
 
-import com.google.inject.Inject
+import com.google.inject.{Inject, Singleton}
 import play.api.http.Status
 import play.api.http.Status.CREATED
 import play.api.mvc.{Request, RequestHeader}
@@ -25,14 +25,12 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import util.Logging
-import views.Views
-
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class ArrangementConnector @Inject() (
     servicesConfig: ServicesConfig,
-    httpClient:     HttpClient,
-    views:          Views)(
+    httpClient:     HttpClient)(
     implicit
     ec: ExecutionContext
 ) extends Logging {

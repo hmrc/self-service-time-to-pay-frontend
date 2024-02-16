@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import testsupport.Language.{English, Welsh}
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
@@ -47,8 +47,8 @@ class WeCannotAgreeYourPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: Web
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "We cannot agree your payment plan online"
-    case Languages.Welsh   => "Ni allwn gytuno ar eich cynllun talu ar-lein"
+    case Language.English => "We cannot agree your payment plan online"
+    case Language.Welsh   => "Ni allwn gytuno ar eich cynllun talu ar-lein"
   }
 
   object Expected {
