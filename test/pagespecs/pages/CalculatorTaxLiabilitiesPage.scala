@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import testsupport.Language.{English, Welsh}
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
@@ -28,7 +28,9 @@ class CalculatorTaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriv
 
   override val path: String = "/pay-what-you-owe-in-instalments/calculator/tax-liabilities"
 
-  def assertInitialPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+  def assertInitialPageIsDisplayed(implicit lang: Language = Language.English): Unit = probing {
+    cssSelector("#content > details > summary > span").webElement.click()
+
     readPath() should include (path)
     readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
@@ -37,8 +39,8 @@ class CalculatorTaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriv
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Your Self Assessment tax bill is £4,900"
-    case Languages.Welsh   => "Mae’ch bil treth Hunanasesiad yn dod i gyfanswm o £4,900"
+    case Language.English => "Your Self Assessment tax bill is £4,900"
+    case Language.Welsh   => "Mae’ch bil treth Hunanasesiad yn dod i gyfanswm o £4,900"
   }
 
   def clickOnStartNowButton(): Unit = {

@@ -17,9 +17,8 @@
 package controllers.action
 
 import _root_.controllers.UnhappyPathResponses
-import com.google.inject.Inject
+import com.google.inject.{Inject, Singleton}
 import config.ViewConfig
-import play.api.Logger
 import play.api.mvc.Results._
 import play.api.mvc._
 import timetopaytaxpayer.cor.model.SaUtr
@@ -40,6 +39,7 @@ final class AuthenticatedRequest[A](val request:     Request[A],
 
 }
 
+@Singleton
 class AuthenticatedAction @Inject() (
     af:           AuthorisedFunctions,
     viewConfig:   ViewConfig,

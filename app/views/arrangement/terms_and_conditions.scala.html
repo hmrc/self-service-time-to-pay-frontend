@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import helpers.forms.submit
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
@@ -24,12 +23,9 @@
     govukButton : GovukButton
 )
 
-@(
-        signedIn: Boolean = false
-)(implicit
+@()(implicit
         messages: play.api.i18n.Messages,
-        request: Request[_],
-        appConfig: config.AppConfig
+        request: Request[_]
 )
 
 @main(

@@ -41,8 +41,7 @@
         previousFormSubmission: Option[PlanSelection])(
         implicit
         messages: play.api.i18n.Messages,
-        request: Request[_],
-        appConfig: config.AppConfig
+        request: Request[_]
 )
 
 @scheduleOptionsSequence = @{schedules.toSeq.map ( schedule => {
@@ -68,14 +67,6 @@
 })}
 
 @customAmountHasErrors = @{selectPlanForm("plan-selection").value.contains("customAmountOption")}
-
-@errorFocus(key: String) = @{
-    if(customAmountHasErrors){
-        "custom-amount-option"
-    }else{
-        key
-    }
-}
 
 @enterCustomAmountPanel = {
 <div id="custom-amount-field" class="govuk-form-group @if(customAmountHasErrors){govuk-form-group--error}">
@@ -153,7 +144,7 @@
         @radios(Radios(
             name = "plan-selection",
             attributes = Map("id" -> "selected-plan-amount"),
-            errorMessage = selectPlanForm.error("plan-selection").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages("ssttp.calculator.results.option.error.no-selection")))),
+            errorMessage = selectPlanForm.error("plan-selection").map(_ => errorMessageWithDefaultStringsTranslated(content = Text(messages("ssttp.calculator.results.option.error.no-selection")))),
             items =  Seq(scheduleOptionsSequence.headOption.getOrElse(throw new IllegalArgumentException("Could not find any valid schedule options")),
             RadioItem(
                 divider = Some(Messages("ssttp.calculator.results.or"))

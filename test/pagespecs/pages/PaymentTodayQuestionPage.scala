@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import testsupport.Language.{English, Welsh}
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
@@ -28,7 +28,7 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
   override val path: String = "/pay-what-you-owe-in-instalments/calculator/payment-today-question"
 
-  def assertInitialPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+  def assertInitialPageIsDisplayed(implicit lang: Language = Language.English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
@@ -37,8 +37,8 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Upfront payment"
-    case Languages.Welsh   => "Taliad ymlaen llaw"
+    case Language.English => "Upfront payment"
+    case Language.Welsh   => "Taliad ymlaen llaw"
   }
 
   def selectRadioButton(yesOrNo: Boolean): Unit = {

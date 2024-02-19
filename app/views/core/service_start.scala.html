@@ -14,9 +14,6 @@
  * limitations under the License.
  *@
 
-@import helpers.{alert, message_list}
-@import helpers.forms.submit
-
 @this(
   main: views.html.main_start,
   viewsHelpers: views.ViewsHelpers,
@@ -24,19 +21,13 @@
 )
 
 
-@(
-    loggedIn: Boolean = false,
-    messagesApi: play.api.i18n.MessagesApi)(implicit
+@()(implicit
     messages: play.api.i18n.Messages,
-    request: Request[_],
-    appConfig: config.AppConfig
+    request: Request[_]
 )
 
 
-@main(
-    title = messages("ssttp.landing.title"),
-    hasUserPanel = true
-){
+@main(){
 
 <h1 class="govuk-heading-xl">@messages("ssttp.landing.title")</h1>
 

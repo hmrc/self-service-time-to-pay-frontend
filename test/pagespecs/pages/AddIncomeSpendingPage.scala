@@ -16,14 +16,14 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import ssttpaffordability.model.Expense._
 import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model._
+import testsupport.Language
+import testsupport.Language.{English, Welsh}
 import testsupport.RichMatchers._
 
 import java.text.DecimalFormat
@@ -45,11 +45,11 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     readPath() shouldBe path
   }
 
-  def assertAddIncomeLinkIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+  def assertAddIncomeLinkIsDisplayed(implicit lang: Language = Language.English): Unit = probing {
     assertContentMatchesExpectedLines(Seq(Expected.LinkText.AddIncome()))
   }
 
-  def assertAddSpendingLinkIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+  def assertAddSpendingLinkIsDisplayed(implicit lang: Language = Language.English): Unit = probing {
     assertContentMatchesExpectedLines(Seq(Expected.LinkText.AddSpending()))
   }
 
@@ -103,11 +103,11 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     }
   }
 
-  def assertChangeIncomeLinkIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+  def assertChangeIncomeLinkIsDisplayed(implicit lang: Language = Language.English): Unit = probing {
     assertContentMatchesExpectedLines(Seq(Expected.LinkText.ChangeIncome()))
   }
 
-  def assertChangeSpendingLinkIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+  def assertChangeSpendingLinkIsDisplayed(implicit lang: Language = Language.English): Unit = probing {
     assertContentMatchesExpectedLines(Seq(Expected.LinkText.ChangeSpending()))
   }
 
@@ -118,8 +118,8 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Add your income and spending"
-    case Languages.Welsh   => "Ychwanegu eich incwm a’ch gwariant"
+    case Language.English => "Add your income and spending"
+    case Language.Welsh   => "Ychwanegu eich incwm a’ch gwariant"
   }
 
   def enterIncome(amount: String): Unit = {
@@ -146,17 +146,14 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     enter(value)
   }
 
-  def clickContinue(): Unit = {
+  def clickContinue(): Unit =
     clickOnContinue()
-  }
 
-  def clickOnAddChangeIncome(): Unit = {
+  def clickOnAddChangeIncome(): Unit =
     click on id("monthly-income")
-  }
 
-  def clickOnAddChangeSpending(): Unit = {
+  def clickOnAddChangeSpending(): Unit =
     click on id("monthly-spending")
-  }
 
   object Expected {
 
@@ -249,7 +246,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
       def categoryAmounts(
           categoryAmounts: Seq[IncomeBudgetLine] = Seq()
-      )(implicit lang: Language): Seq[String] = {
+      ): Seq[String] = {
         categoryAmounts
           .filterNot(_.amount == 0)
           .map(category => s"£${commaFormat(category.amount)}")
@@ -260,7 +257,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
         case Welsh   => "Cyfanswm eich incwm"
       }
 
-      def totalIncomeAmount(categoryAmounts: Seq[IncomeBudgetLine] = Seq())(implicit lang: Language): String = {
+      def totalIncomeAmount(categoryAmounts: Seq[IncomeBudgetLine] = Seq()): String = {
         commaFormat(categoryAmounts.map(_.amount).sum)
       }
 
@@ -306,9 +303,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
         }.filterNot(_ == "nothing")
       }
 
-      def categoryAmounts(
-          categoryAmounts: Seq[Expenses] = Seq()
-      )(implicit lang: Language): Seq[String] = {
+      def categoryAmounts(categoryAmounts: Seq[Expenses] = Seq()): Seq[String] = {
         categoryAmounts
           .filterNot(_.amount == 0)
           .map(category => s"£${commaFormat(category.amount)}")
@@ -319,7 +314,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
         case Welsh   => "Cyfanswm y gwariant"
       }
 
-      def totalSpendingAmount(categoryAmounts: Seq[Expenses] = Seq())(implicit lang: Language): String = {
+      def totalSpendingAmount(categoryAmounts: Seq[Expenses] = Seq()): String = {
         commaFormat(categoryAmounts.map(_.amount).sum)
       }
 

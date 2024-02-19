@@ -32,29 +32,9 @@
   viewsHelpers: views.ViewsHelpers
 )
 
-@(
-  dayForm: Form[ArrangementForm])(
-  implicit
-  messages: play.api.i18n.Messages,
-  request: Request[_],
-  appConfig: config.AppConfig
-)
+@(dayForm: Form[ArrangementForm])(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @customDateHasErrors = @{dayForm("other").value.contains("true") && dayForm("dayOfMonth").hasErrors}
-
-@customDaySelected() = @{
-    if(customDateHasErrors){
-        "checked"
-    }
-}
-
-@errorFocus(key :String) = @{
-    if(customDateHasErrors){
-       "customDate"
-    }else{
-        key
-    }
-}
 
 @enterCustomDayPanel = {
     <div id="customDate" class="govuk-form-group @if(customDateHasErrors){govuk-form-group--error}">

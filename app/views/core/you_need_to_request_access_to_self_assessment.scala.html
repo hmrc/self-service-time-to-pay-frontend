@@ -21,13 +21,7 @@
   viewsHelpers: views.ViewsHelpers
 )
 
-@(
-        isWelsh: Boolean,
-        loggedIn: Boolean)(implicit
-        messages: play.api.i18n.Messages,
-        request: Request[_],
-        appConfig: config.AppConfig
-)
+@()(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @main(
     title = messages("ssttp.you-need-to-request-access-to-self-assessment.title")

@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import testsupport.Language.{English, Welsh}
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser.{goBack, pageTitle}
 import testsupport.RichMatchers._
@@ -35,8 +35,8 @@ class CallUsCannotAffordPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Call us about a payment plan"
-    case Languages.Welsh   => "Ffoniwch ni ynghylch cynllun talu"
+    case Language.English => "Call us about a payment plan"
+    case Language.Welsh   => "Ffoniwch ni ynghylch cynllun talu"
   }
 
   def clickOnBackLink(): Unit = goBack()

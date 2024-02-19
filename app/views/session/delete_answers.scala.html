@@ -18,7 +18,6 @@
 
 @this(
     mainTemplate: views.html.main,
-    viewsHelpers: views.ViewsHelpers,
     implicit val viewConf: ViewConfig
 )
 
@@ -27,7 +26,6 @@
 @mainTemplate(
     title = Messages("delete-answers.heading"),
     allowTimeoutDialog = false,
-    welshToggleEnabled = true,
     hasBackLink = false
 ) {
 <h1 class="govuk-heading-xl">@Messages("delete-answers.heading")</h1>

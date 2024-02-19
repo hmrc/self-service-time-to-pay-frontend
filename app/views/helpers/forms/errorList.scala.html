@@ -14,9 +14,12 @@
  * limitations under the License.
  *@
 
-@(errors:Seq[(String, String)], args:(Symbol, Any)*)(implicit messages: play.api.i18n.Messages)
+@(errors:Seq[(String, String)], args:(Symbol, Any)*)
+
 @import helpers.forms.errorInline
+
 @argsMap = @{args.toMap}
+
 @Html(errors.map { e => {
   val id = argsMap.getOrElse(Symbol("_fieldId"), "").toString
   val key = e._1 + (if(errors.length>1) "-" + errors.indexOf(e) else "")

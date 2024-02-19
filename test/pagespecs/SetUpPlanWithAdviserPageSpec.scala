@@ -16,12 +16,12 @@
 
 package pagespecs
 
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language.{English, Welsh}
 import pagespecs.pages.{HowMuchCanYouPayEachMonthPage, SetUpPlanWithAdviserPage}
 import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs.{AuthStub, DateCalculatorStub, GgStub, TaxpayerStub}
+import testsupport.stubs.{DateCalculatorStub, GgStub, TaxpayerStub}
 
 import java.time.LocalDate
 

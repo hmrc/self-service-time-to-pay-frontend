@@ -18,7 +18,7 @@ package pagespecs.pages
 
 import java.io.{FileInputStream, FileOutputStream}
 
-import org.openqa.selenium.{By, OutputType, TakesScreenshot, WebDriver}
+import org.openqa.selenium.{OutputType, TakesScreenshot, WebDriver}
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import play.api.Logger

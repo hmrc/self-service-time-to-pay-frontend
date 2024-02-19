@@ -17,9 +17,10 @@
 package ssttpaffordability
 
 import audit.AuditService
+import com.google.inject.Singleton
 import config.AppConfig
 import controllers.FrontendBaseController
-import controllers.action.{Actions, AuthorisedSaUserRequest}
+import controllers.action.Actions
 import journey.{Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
@@ -27,21 +28,20 @@ import ssttpaffordability.AffordabilityForm.{incomeForm, spendingForm}
 import ssttpaffordability.model.Expense._
 import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model._
-import ssttpdirectdebit.DirectDebitConnector
 import util.Logging
 import views.Views
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AffordabilityController @Inject() (
-    mcc:                  MessagesControllerComponents,
-    auditService:         AuditService,
-    journeyService:       JourneyService,
-    as:                   Actions,
-    requestSupport:       RequestSupport,
-    views:                Views,
-    directDebitConnector: DirectDebitConnector)(
+    mcc:            MessagesControllerComponents,
+    auditService:   AuditService,
+    journeyService: JourneyService,
+    as:             Actions,
+    requestSupport: RequestSupport,
+    views:          Views)(
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext) extends FrontendBaseController(mcc) with Logging {
@@ -113,7 +113,7 @@ class AffordabilityController @Inject() (
           otherIncome   = income.amount(OtherIncome)
         ))
       ).getOrElse(emptyForm)
-      Future.successful(Ok(views.your_monthly_income(formWithData, isSignedIn)))
+      Future.successful(Ok(views.your_monthly_income(formWithData)))
     }
   }
 
@@ -123,7 +123,7 @@ class AffordabilityController @Inject() (
 
       incomeForm.bindFromRequest().fold(
         formWithErrors => {
-          Future.successful(BadRequest(views.your_monthly_income(formWithErrors, isSignedIn)))
+          Future.successful(BadRequest(views.your_monthly_income(formWithErrors)))
         },
         { (input: IncomeInput) =>
           if (input.hasPositiveTotal) {
@@ -144,14 +144,14 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info(s"Get 'Call us no income'")
 
-      Ok(views.call_us_no_income(isSignedIn, isWelsh))
+      Ok(views.call_us_no_income())
     }
   }
 
   private def storeIncomeInputToJourney(
       input:   IncomeInput,
       journey: Journey
-  )(implicit request: AuthorisedSaUserRequest[AnyContent]) = {
+  ) = {
     val newJourney = journey.copy(
       maybeIncome        = Some(Income(
         IncomeBudgetLine(MonthlyIncome, input.monthlyIncome),
@@ -181,7 +181,7 @@ class AffordabilityController @Inject() (
           health               = expense.amount(HealthExp),
         ))
       ).getOrElse(spendingForm)
-      Future.successful(Ok(views.your_monthly_spending(formWithData, isSignedIn)))
+      Future.successful(Ok(views.your_monthly_spending(formWithData)))
     }
   }
 
@@ -190,7 +190,7 @@ class AffordabilityController @Inject() (
       journeyLogger.info(s"Submit 'Your monthly spending'")
 
       spendingForm.bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(views.your_monthly_spending(formWithErrors, isSignedIn))),
+        formWithErrors => Future.successful(BadRequest(views.your_monthly_spending(formWithErrors))),
         (form: SpendingInput) => {
           val newJourney = journey.copy(
             maybeSpending      = Some(Spending(
@@ -218,7 +218,7 @@ class AffordabilityController @Inject() (
       journeyLogger.info("Get 'We cannot agree your payment plan'")
 
       auditService.sendPlanNotAffordableEvent(journey)
-      Ok(views.we_cannot_agree_your_pp(isSignedIn, isWelsh))
+      Ok(views.we_cannot_agree_your_pp())
     }
   }
 
@@ -235,7 +235,7 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'We cannot agree your payment plan'")
 
-      Ok(views.call_us_about_a_payment_plan(isSignedIn, isWelsh, cannotAfford = true))
+      Ok(views.call_us_about_a_payment_plan(cannotAfford = true))
     }
   }
 }

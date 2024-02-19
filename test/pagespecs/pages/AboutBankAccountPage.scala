@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.{Language, Languages}
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language
+import testsupport.Language.{English, Welsh}
 import model.enumsforforms.{IsSoleSignatory, TypeOfBankAccount, TypesOfBankAccount}
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
@@ -38,8 +38,8 @@ class AboutBankAccountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exte
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "About your bank account"
-    case Languages.Welsh   => "Ynglŷn â’ch cyfrif banc"
+    case Language.English => "About your bank account"
+    case Language.Welsh   => "Ynglŷn â’ch cyfrif banc"
   }
 
   def selectTypeOfAccountRadioButton(businessOrPersonal: TypeOfBankAccount): Unit = {

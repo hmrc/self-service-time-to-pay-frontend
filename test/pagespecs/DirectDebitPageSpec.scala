@@ -16,7 +16,7 @@
 
 package pagespecs
 
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language.{English, Welsh}
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
 import ssttpcalculator.model.PaymentPlanOption

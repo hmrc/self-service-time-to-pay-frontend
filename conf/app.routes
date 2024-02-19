@@ -70,9 +70,6 @@ GET         /arrangement/summary                                          ssttpa
 
 GET         /sign-out                                                     ssttpeligibility.SelfServiceTimeToPayController.signOut
 
-GET         /language/:language                                           langswitch.LanguageSwitchController.switchToLanguage(language: Language)
-
-
 GET         /session/keep-alive                                           controllers.TimeoutController.keepAliveSession
 GET         /delete-answers                                               controllers.TimeoutController.killSession
 GET         /sign-in-again                                                controllers.TimeoutController.signInAgain

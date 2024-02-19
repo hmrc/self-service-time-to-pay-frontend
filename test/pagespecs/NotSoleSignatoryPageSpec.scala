@@ -16,7 +16,7 @@
 
 package pagespecs
 
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language.{English, Welsh}
 import testsupport.ItSpec
 
 class NotSoleSignatoryPageSpec extends ItSpec {

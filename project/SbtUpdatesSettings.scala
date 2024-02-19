@@ -10,7 +10,7 @@ object SbtUpdatesSettings {
     dependencyUpdatesFailBuild := true,
     (Compile / compile) := ((Compile / compile) dependsOn dependencyUpdates).value,
     dependencyUpdatesFilter -= moduleFilter("org.scala-lang"),
-    dependencyUpdatesFilter -= moduleFilter("com.typesafe.play"),
+    dependencyUpdatesFilter -= moduleFilter("org.playframework"),
     // I have had to add enumeratum to the ignore list, due to:
     // java.lang.NoSuchMethodError: 'scala.Option play.api.libs.json.JsBoolean$.unapply(play.api.libs.json.JsBoolean)'
     // error on 1.7.1

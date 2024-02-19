@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
-@(field:Field, args:(Symbol, String)*)(implicit messages: play.api.i18n.Messages)
+@(field:Field)(implicit messages: play.api.i18n.Messages)
+
 @import helpers.forms.errorList
+
 @errorList(field.errors.map { m => (m.key,  Messages(m.message)) }, Symbol("_fieldId") -> field.id)

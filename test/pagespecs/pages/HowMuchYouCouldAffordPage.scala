@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import testsupport.Language.{English, Welsh}
+import testsupport.Language
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
@@ -57,8 +57,8 @@ class HowMuchYouCouldAffordPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "How much you could afford"
-    case Languages.Welsh   => "Faint y gallech ei fforddio"
+    case Language.English => "How much you could afford"
+    case Language.Welsh   => "Faint y gallech ei fforddio"
   }
 
   def clickContinue(): Unit = {

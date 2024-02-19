@@ -18,7 +18,6 @@ package audit
 
 import audit.model.{AuditIncome, AuditPaymentSchedule, AuditSpending}
 import bars.model.ValidateBankDetailsResponse
-import config.AppConfig
 import journey.Journey
 import play.api.libs.json.{JsObject, Json, Writes}
 import play.api.mvc.Request
@@ -108,7 +107,7 @@ object DataEventFactory {
   def planSetUpEvent(journey:           Journey,
                      schedule:          PaymentSchedule,
                      calculatorService: CalculatorService
-  )(implicit request: Request[_], appConfig: AppConfig): ExtendedDataEvent = {
+  )(implicit request: Request[_]): ExtendedDataEvent = {
     val detail = Json.obj(
       "bankDetails" -> bankDetails(journey),
       "halfDisposableIncome" -> formatToCurrencyStringWithTrailingZeros((journey.remainingIncomeAfterSpending / 2).setScale(2, HALF_UP)),
@@ -207,7 +206,7 @@ object DataEventFactory {
 
   private def typeOfPlan(journey:           Journey,
                          calculatorService: CalculatorService
-  )(implicit request: Request[_], appConfig: AppConfig): String = {
+  )(implicit request: Request[_]): String = {
     val maybeSelectedPlanAmount = journey.maybeSelectedPlanAmount
     val sa = journey.taxpayer.selfAssessment
 

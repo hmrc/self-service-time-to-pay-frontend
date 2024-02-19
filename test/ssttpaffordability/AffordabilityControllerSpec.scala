@@ -17,7 +17,7 @@
 package ssttpaffordability
 
 import _root_.model.enumsforforms.TypesOfBankAccount
-import akka.util.Timeout
+import org.apache.pekko.util.Timeout
 import journey.Statuses.InProgress
 import journey.{Journey, JourneyId, JourneyService, PaymentToday}
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
@@ -70,7 +70,7 @@ class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
         val sessionId = UUID.randomUUID().toString
         val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
         val journeyService = app.injector.instanceOf[JourneyService]
-        journeyService.saveJourney(journey)(fakeRequest).futureValue shouldBe (())
+        journeyService.saveJourney(journey).futureValue shouldBe (())
 
         val controller: AffordabilityController = app.injector.instanceOf[AffordabilityController]
 
@@ -121,7 +121,7 @@ class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
       val sessionId = UUID.randomUUID().toString
       val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
       val journeyService = app.injector.instanceOf[JourneyService]
-      journeyService.saveJourney(journey)(fakeRequest).futureValue shouldBe (())
+      journeyService.saveJourney(journey).futureValue shouldBe (())
 
       val controller: AffordabilityController = app.injector.instanceOf[AffordabilityController]
 

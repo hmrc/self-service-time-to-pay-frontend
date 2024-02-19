@@ -17,7 +17,6 @@
 package testonly
 
 import java.time.{LocalDate, LocalTime}
-import config.AppConfig
 import controllers.FrontendBaseController
 
 import javax.inject._
@@ -27,7 +26,7 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
-import uk.gov.hmrc.auth.core.ConfidenceLevel.{L50, L200}
+import uk.gov.hmrc.auth.core.ConfidenceLevel.{L200, L50}
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -91,17 +90,14 @@ object TestUserForm {
   )
 }
 
+@Singleton
 class TestUsersController @Inject() (
     loginService:     LoginService,
     saStubConnector:  SaStubConnector,
     desStubConnector: DesStubConnector,
     views:            Views,
     cc:               MessagesControllerComponents,
-    requestSupport:   RequestSupport)(
-    implicit
-    appConfig: AppConfig,
-    ec:        ExecutionContext
-) extends FrontendBaseController(cc) {
+    requestSupport:   RequestSupport)(implicit ec: ExecutionContext) extends FrontendBaseController(cc) {
 
   import requestSupport._
 

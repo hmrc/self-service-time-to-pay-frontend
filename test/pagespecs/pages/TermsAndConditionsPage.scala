@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.{Language, Languages}
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language
+import testsupport.Language.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
@@ -37,8 +37,8 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Terms and conditions"
-    case Languages.Welsh   => "Telerau ac amodau"
+    case Language.English => "Terms and conditions"
+    case Language.Welsh   => "Telerau ac amodau"
   }
 
   def clickContinue(): Unit = {

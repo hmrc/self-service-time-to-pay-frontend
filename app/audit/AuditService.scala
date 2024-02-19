@@ -17,7 +17,6 @@
 package audit
 
 import bars.model.ValidateBankDetailsResponse
-import config.AppConfig
 import journey.Journey
 import play.api.mvc.Request
 import req.RequestSupport._
@@ -37,9 +36,7 @@ import scala.util.control.NonFatal
 import scala.util.{Failure, Success}
 
 @Singleton()
-class AuditService @Inject() (
-    auditConnector: AuditConnector
-)(implicit ec: ExecutionContext) extends Logging {
+class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: ExecutionContext) extends Logging {
 
   def sendDirectDebitSubmissionFailedEvent(
       journey:         Journey,
@@ -70,7 +67,7 @@ class AuditService @Inject() (
       journey:           Journey,
       schedule:          PaymentSchedule,
       calculatorService: CalculatorService
-  )(implicit request: Request[_], appConfig: AppConfig): Unit = {
+  )(implicit request: Request[_]): Unit = {
     val event = DataEventFactory.planSetUpEvent(journey, schedule, calculatorService)
     sendEvent(event)
   }

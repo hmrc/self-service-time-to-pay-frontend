@@ -19,8 +19,7 @@
 @import ssttpaffordability.model.Expenses
 
 @this(
-  main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
+  main: views.html.main
 )
 
 @(
@@ -28,8 +27,7 @@
     spending: Seq[Expenses]
 )(implicit
     messages: play.api.i18n.Messages,
-    request: Request[_],
-    appConfig: config.AppConfig
+    request: Request[_]
 )
 
 

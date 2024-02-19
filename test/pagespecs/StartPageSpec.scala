@@ -16,10 +16,10 @@
 
 package pagespecs
 
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs.{AuthStub, GgStub, TaxpayerStub}
+import testsupport.stubs.{GgStub, TaxpayerStub}
 import uk.gov.hmrc.selfservicetimetopay.models.TotalDebtIsTooHigh
 
 class StartPageSpec extends ItSpec {

@@ -26,13 +26,11 @@
   radios: uk.gov.hmrc.govukfrontend.views.html.components.GovukRadios,
   formWithCsrf: uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
   errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
-  viewsHelpers: views.ViewsHelpers,
   continue: views.html.helpers.forms.ssttpContinue
 )
 
 @(
-        dataForm: Form[PayTodayQuestion],
-        loggedIn: Boolean = false)(implicit
+        dataForm: Form[PayTodayQuestion])(implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
         appConfig: config.AppConfig

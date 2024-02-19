@@ -18,18 +18,10 @@
 
 @this(
   main: views.html.main,
-  viewsHelpers: views.ViewsHelpers,
   eligibilityConfig: ssttpeligibility.EligibilityServiceConfig
 )
 
-@(
-        signedIn: Boolean = false,
-        isWelsh: Boolean)(implicit
-        messages: play.api.i18n.Messages,
-        request: Request[_],
-        appConfig: config.AppConfig
-)
-
+@()(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @main(
     title = messages("ssttp.debt-too-large.h1"),

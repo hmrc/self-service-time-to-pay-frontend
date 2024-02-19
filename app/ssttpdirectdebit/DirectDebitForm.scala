@@ -18,7 +18,6 @@ package ssttpdirectdebit
 
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
-import ssttpaffordability.model.forms.helper.FormErrorWithFieldMessageOverrides
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit.{cleanAccountNumber, cleanSortCode}
 

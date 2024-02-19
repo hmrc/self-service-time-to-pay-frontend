@@ -16,7 +16,7 @@
 
 package pagespecs
 
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language.{English, Welsh}
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
 import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec

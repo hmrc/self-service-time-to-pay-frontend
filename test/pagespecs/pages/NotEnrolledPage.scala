@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.{Language, Languages}
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language
+import testsupport.Language.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import testsupport.RichMatchers._
 
@@ -33,8 +33,8 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Call us about a payment plan"
-    case Languages.Welsh   => "Ffoniwch ni ynghylch cynllun talu"
+    case Language.English => "Call us about a payment plan"
+    case Language.Welsh   => "Ffoniwch ni ynghylch cynllun talu"
   }
 
   object Expected {

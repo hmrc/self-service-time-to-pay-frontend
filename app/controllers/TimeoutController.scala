@@ -17,18 +17,18 @@
 package controllers
 
 import config.ViewConfig
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import util.Logging
 import views.Views
 
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
+@Singleton
 class TimeoutController @Inject() (views:      Views,
                                    mcc:        MessagesControllerComponents,
-                                   viewConfig: ViewConfig)
-  (implicit ec: ExecutionContext) extends FrontendController(mcc) with Logging {
+                                   viewConfig: ViewConfig) extends FrontendController(mcc) with Logging {
   implicit def toFuture(r: Result): Future[Result] = Future.successful(r)
 
   val keepAliveSession: Action[AnyContent] = Action(NoContent)
@@ -39,7 +39,7 @@ class TimeoutController @Inject() (views:      Views,
     Ok(views.delete_answers(controllers.routes.TimeoutController.signInAgain)).withNewSession
   }
 
-  val signInAgain: Action[AnyContent] = Action { implicit request =>
+  val signInAgain: Action[AnyContent] = Action { _ =>
     Redirect(
       viewConfig.loginUrl,
       Map(

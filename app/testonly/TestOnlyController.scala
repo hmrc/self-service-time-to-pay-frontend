@@ -24,19 +24,17 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import timetopaytaxpayer.cor.TaxpayerConnector
 import timetopaytaxpayer.cor.model.SaUtr
-import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.ExecutionContext
 import req.RequestSupport._
 
+@Singleton
 class TestOnlyController @Inject() (
     taxpayerConnector: TaxpayerConnector,
     as:                Actions,
-    httpClient:        HttpClient,
     cc:                MessagesControllerComponents)(implicit ec: ExecutionContext) extends FrontendBaseController(cc) {
 
-  def config(): Action[AnyContent] = Action { r =>
+  def config(): Action[AnyContent] = Action { _ =>
     val result: JsValue = Json.parse(
       ConfigFactory.load().root().render(ConfigRenderOptions.concise())
     )

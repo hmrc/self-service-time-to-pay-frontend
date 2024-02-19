@@ -16,7 +16,7 @@
 
 package ssttpcalculator
 
-import akka.util.Timeout
+import org.apache.pekko.util.Timeout
 import journey.Statuses.InProgress
 import journey.{Journey, JourneyId, JourneyService}
 import play.api.Application
@@ -162,7 +162,7 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
     val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
 
     val journey = createJourney(journeyId)
-    val saveJourneyResult = journeyService.saveJourney(journey)(fakeRequest)
+    val saveJourneyResult = journeyService.saveJourney(journey)
 
     saveJourneyResult.futureValue shouldBe (())
     journey -> fakeRequest

@@ -36,11 +36,9 @@ object Dates {
   }
 
   /**
-   * @param useOrdinals If true the day of month will be formatted as an ordinal, i.e. "12th"
-   *                    If false, the day of month will be formatted as a cardinal, i.e. "12"
    * @return the formatted date in either english or welsh, such as "31st January 2021" or "31ain Ionawr 2021"
    */
-  def wholeDate(localDate: LocalDate, useOrdinals: Boolean = true)
+  def wholeDate(localDate: LocalDate)
     (implicit messages: Messages): String = {
     val day = getDayOfMonthOrdinal(localDate)
     val month = getMonthFormatted(localDate)

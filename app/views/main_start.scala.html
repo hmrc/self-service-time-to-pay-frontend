@@ -16,50 +16,28 @@
 
 @import req.RequestSupport.isLoggedIn
 @import uk.gov.hmrc.govukfrontend.views.Aliases.BackLink
-@import uk.gov.hmrc.hmrcfrontend.views.Aliases.{Footer, FooterItem, Header, Meta}
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.Header
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En}
 
 @this(
         govukLayout: uk.gov.hmrc.govukfrontend.views.html.components.GovukLayout,
-        twoThirdsMainContent: uk.gov.hmrc.govukfrontend.views.html.components.TwoThirdsMainContent,
         govukBackLink: uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink,
         hmrcHeader: uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcHeader,
-        hmrcFooter: uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcFooter,
-        languageSelect: uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcLanguageSelect,
         hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
-
         timeoutDialogue: views.html.partials.timeout_dialog_script,
-
-        reportTechnicalIssues: uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcReportTechnicalIssue,
         hmrcTrackingConsentSnippet: uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet,
         hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
-        standardBetaBanner: uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner,
-
         hmrcStandardFooter: HmrcStandardFooter,
-
-        mainScripts: views.html.scripts,
-
-        viewsHelpers: views.ViewsHelpers,
-        appConfig: config.AppConfig
+        mainScripts: views.html.scripts
 )(implicit viewConfig: config.ViewConfig)
 
-@(title: String,
+@(
         hasErrors: Boolean = false,
-        maybeSidebarLinks: Option[Html] = None,
         contentHeader: Option[Html] = None,
-        bodyClasses: Option[String] = None,
-        mainClass: Option[String] = None,
         scriptElem: Option[Html] = None,
-        linksElem:  Option[Html] = None,
-        googleAnalyticsCalls: Seq[String] = Seq.empty,
-        noGetHelp:Boolean = false,
-        allowTimeoutDialog: Boolean = true,
-        welshToggleEnabled:Boolean = true,
-        hasUserPanel: Boolean = false,
-        navTitle: String = "ssttp.common.title"
-)(
-        mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
+        allowTimeoutDialog: Boolean = true
+)(mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @head = {
     @if(allowTimeoutDialog) {

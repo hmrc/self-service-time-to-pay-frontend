@@ -18,7 +18,7 @@ package liveissues
 
 import java.time.LocalDate
 
-import play.api.libs.json.{JsLookupResult, JsValue, Json, OFormat, Reads}
+import play.api.libs.json.{JsValue, Json, OFormat}
 import timetopaytaxpayer.cor.model.{Debit, Interest}
 
 /**

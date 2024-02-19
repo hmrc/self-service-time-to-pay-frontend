@@ -16,10 +16,9 @@
 
 package playsession
 
-import java.time.{Clock, LocalDate, LocalDateTime, LocalTime, ZoneId, ZoneOffset}
+import java.time.{Clock, LocalDateTime, ZoneId, ZoneOffset}
 
 import journey.JourneyId
-import play.api.libs.json.Format
 import play.api.mvc.{Request, RequestHeader, Result}
 
 object PlaySessionSupport {

@@ -24,7 +24,7 @@ import javax.inject._
 import journey.{Journey, JourneyService, PaymentToday, PaymentTodayAmount}
 import play.api.mvc._
 import req.RequestSupport
-import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, customAmountInputMapping, payTodayForm, selectPlanForm}
+import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, payTodayForm, selectPlanForm}
 import model.{AddWorkingDaysResult, PaymentPlanOption, PaymentSchedule}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
@@ -36,6 +36,7 @@ import util.Logging
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
+@Singleton
 class CalculatorController @Inject() (
     mcc:                   MessagesControllerComponents,
     calculatorService:     CalculatorService,
@@ -55,7 +56,7 @@ class CalculatorController @Inject() (
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'Tax liabilities'")
 
-      Ok(views.tax_liabilities(journey.debits, isSignedIn))
+      Ok(views.tax_liabilities(journey.debits))
     }
   }
 
@@ -69,7 +70,7 @@ class CalculatorController @Inject() (
 
       val formData = PayTodayQuestion(journey.maybePaymentToday.map(_.value))
       val form = payTodayForm.fill(formData)
-      Ok(views.payment_today_question(form, isSignedIn))
+      Ok(views.payment_today_question(form))
     }
   }
 
@@ -82,7 +83,7 @@ class CalculatorController @Inject() (
       journeyLogger.info("Submit 'Pay today question'")
 
       payTodayForm.bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(views.payment_today_question(formWithErrors, isSignedIn))), {
+        formWithErrors => Future.successful(BadRequest(views.payment_today_question(formWithErrors))), {
           case PayTodayQuestion(Some(true)) =>
             val newJourney = journey.copy(
               maybePaymentToday = Some(PaymentToday(true))
@@ -116,7 +117,7 @@ class CalculatorController @Inject() (
       val emptyForm = createPaymentTodayForm(debits.map(_.amount).sum)
       val formWithData = journey.maybePaymentTodayAmount.map(paymentTodayAmount =>
         emptyForm.fill(CalculatorPaymentTodayForm(paymentTodayAmount.value))).getOrElse(emptyForm)
-      Ok(views.payment_today_form(formWithData, debits, isSignedIn))
+      Ok(views.payment_today_form(formWithData, debits))
     }
   }
 
@@ -126,7 +127,7 @@ class CalculatorController @Inject() (
 
       val debits = journey.debits
       createPaymentTodayForm(journey.taxpayer.selfAssessment.debits.map(_.amount).sum).bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(views.payment_today_form(formWithErrors, debits, isSignedIn))),
+        formWithErrors => Future.successful(BadRequest(views.payment_today_form(formWithErrors, debits))),
         (form: CalculatorPaymentTodayForm) => {
           val newJourney = journey.copy(
             maybePaymentTodayAmount = Some(PaymentTodayAmount(form.amount))
@@ -270,24 +271,24 @@ class CalculatorController @Inject() (
       }
   }
 
-  private def validPlanSelectionFormRedirect(journey: Journey)(implicit request: Request[_]): PlanSelectionRdBtnChoice => Future[Result] = {
+  private def validPlanSelectionFormRedirect(journey: Journey): PlanSelectionRdBtnChoice => Future[Result] = {
     (validFormData: PlanSelectionRdBtnChoice) =>
       validFormData.selection match {
         case CannotAfford =>
           Redirect(ssttpaffordability.routes.AffordabilityController.getCannotAffordPlan)
         case PlanChoice(planSelection) => planSelection match {
-          case Right(CustomPlanRequest(customAmount)) => {
+          case Right(CustomPlanRequest(customAmount)) =>
             val planSelection = PlanSelection(Right(CustomPlanRequest(customAmount)))
             journeyService.saveJourney(journey.copy(maybePlanSelection = Some(planSelection.mongoSafe))).map { _ =>
               Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments)
             }
-          }
-          case Left(SelectedPlan(instalmentAmount)) => {
+
+          case Left(SelectedPlan(instalmentAmount)) =>
             val planSelection = PlanSelection(Left(SelectedPlan(instalmentAmount)))
             journeyService.saveJourney(journey.copy(maybePlanSelection = Some(planSelection.mongoSafe))).map { _ =>
               Redirect(ssttparrangement.routes.ArrangementController.getCheckPaymentPlan)
             }
-          }
+
         }
       }
   }

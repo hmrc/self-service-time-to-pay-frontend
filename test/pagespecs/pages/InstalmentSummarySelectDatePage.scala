@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.{Language, Languages}
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language
+import testsupport.Language.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
@@ -37,8 +37,8 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Which day do you want to pay each month?"
-    case Languages.Welsh   => "Ar ba ddiwrnod a ydych eisiau talu bob mis?"
+    case Language.English => "Which day do you want to pay each month?"
+    case Language.Welsh   => "Ar ba ddiwrnod a ydych eisiau talu bob mis?"
   }
 
   def assertErrorPageInvalidNumberIsDisplayed(): Unit = probing {

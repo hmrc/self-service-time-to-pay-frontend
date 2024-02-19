@@ -17,13 +17,10 @@
 @import partials.extra_support
 
 @this(
-  main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
+  main: views.html.main
 )
 
-@(
-        isWelsh: Boolean,
-        loggedIn: Boolean = false)(implicit
+@()(implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
         appConfig: config.AppConfig

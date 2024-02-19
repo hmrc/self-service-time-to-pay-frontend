@@ -14,9 +14,7 @@
  * limitations under the License.
  *@
 
-@import timetopaytaxpayer.cor.model.Debit
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
-@import ssttpcalculator.model.PaymentSchedule
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -26,21 +24,11 @@
 @this(
   main: views.html.main,
   viewsHelpers: views.ViewsHelpers,
-        textinput: views.html.helpers.forms.textinput,
-        input: uk.gov.hmrc.govukfrontend.views.html.components.GovukInput,
-        errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
+  textinput: views.html.helpers.forms.textinput,
+  errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
 )
 
-@(
-        debits: Seq[Debit],
-        schedule: PaymentSchedule,
-        ddForm: Form[ArrangementDirectDebit],
-        isBankError: Boolean = false,
-        loggedIn: Boolean = true)(implicit
-        messages: play.api.i18n.Messages,
-        request: Request[_],
-        appConfig: config.AppConfig
-)
+@(ddForm: Form[ArrangementDirectDebit])(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @comboError= @{
     ddForm.errors.find(_.key == "combo-error")
@@ -48,8 +36,7 @@
 
 @main(
     title = Messages("ssttp.arrangement.direct-debit.form.title"),
-    hasErrors = ddForm.hasErrors,
-    maybeSidebarLinks =  None
+    hasErrors = ddForm.hasErrors
 ) {
     @if(ddForm.hasErrors) {
         @errorSummary(ErrorSummary(
@@ -75,8 +62,8 @@
                 )
 
                 @defining(comboError) { comboSortCodeAccountNumber =>
-                <div id="combo-invalid" class="form-field @comboSortCodeAccountNumber.map { error => govuk-form-group--error }">
-                    @comboSortCodeAccountNumber.map { error =>
+                <div id="combo-invalid" class="form-field @comboSortCodeAccountNumber.map { _ => govuk-form-group--error }">
+                    @comboSortCodeAccountNumber.map { _ =>
                         <span class="govuk-error-message" id="combo-invalid">
                             <span class="govuk-visually-hidden">@Messages("ssttp.common.title-prefix")</span>
                             @Html(messages("ssttp.direct-debit.form.invalid.combo"))

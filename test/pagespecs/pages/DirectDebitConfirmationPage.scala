@@ -16,8 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.{Language, Languages}
-import langswitch.Languages.{English, Welsh}
+import testsupport.Language
+import testsupport.Language.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
@@ -37,8 +37,8 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Check your Direct Debit details"
-    case Languages.Welsh   => "Gwiriwch fanylion eich Debyd Uniongyrchol"
+    case Language.English => "Check your Direct Debit details"
+    case Language.Welsh   => "Gwiriwch fanylion eich Debyd Uniongyrchol"
   }
 
   def clickChangeButton(): Unit = {
@@ -65,7 +65,7 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
     }
 
     object MainText {
-      def apply(increase: Int = 0)(implicit language: Language): String = language match {
+      def apply()(implicit language: Language): String = language match {
         case English => mainTextEnglish
         case Welsh   => mainTextWelsh
       }

@@ -20,7 +20,7 @@ import java.io.{File, FileInputStream, FileOutputStream}
 import java.time.LocalDateTime.now
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 import java.util.concurrent.atomic.AtomicInteger
-import langswitch.{Language, Languages}
+import testsupport.Language
 import org.openqa.selenium.OutputType.FILE
 import org.openqa.selenium.{By, TakesScreenshot, WebDriver}
 import org.scalatest.Assertion
@@ -56,11 +56,11 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
 
   def path: String
 
-  def assertInitialPageIsDisplayed(implicit lang: Language = Languages.English): Unit
+  def assertInitialPageIsDisplayed(implicit lang: Language = Language.English): Unit
 
   def assertContentMatchesExpectedLines(expectedLines: Seq[String]): Unit = probing {
     //we replace `\n` with spaces so the tests can run both in intellij and in sbt.
-    //for some reasons webDeriver's `getText` returns text with extra new lines if you run it from intellij.
+    //for some reasons webDriver's `getText` returns text with extra new lines if you run it from intellij.
     val content = readMain().stripSpaces().replaceAll("\n", " ")
     expectedLines.foreach { expectedLine =>
       withClue(s"\nThe page content should include '$expectedLine'"){
@@ -81,14 +81,14 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
   def open(): Unit = WebBrowser.goTo(s"${baseUrl.value}$path")
 
   def expectedTitle(heading: String, lang: Language): String = lang match {
-    case Languages.English => s"$heading - Set up a Self Assessment payment plan - GOV.UK"
-    case Languages.Welsh   => s"$heading - Trefnu cynllun talu - GOV.UK"
+    case Language.English => s"$heading - Set up a Self Assessment payment plan - GOV.UK"
+    case Language.Welsh   => s"$heading - Trefnu cynllun talu - GOV.UK"
   }
 
   /**
    * Reads the main content of the page
    */
-  def readMain(): String = xpath("""//*[@id="content"]""").element.text
+  def readMain(): String = xpath("""//*[@id="content"]""").webElement.getAttribute("textContent")
 
   def readGlobalHeaderText(): String = className("hmrc-header__service-name").element.text
 

@@ -16,21 +16,16 @@
 
 package pagespecs
 
-import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor4}
-import pagespecs.pages.BasePage
+import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.libs.json.{JsObject, Json}
 import testsupport.{FakeAuthConnector, ItSpec}
-import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.TdAll.{aYearAgo, almostAYearAgo}
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
-import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.concurrent.{ExecutionContext, Future}
-import testsupport.testdata.TdAll.unactivatedSaEnrolment
 
 class IneligiblePagesInactiveEnrollSpec extends ItSpec with TableDrivenPropertyChecks {
 

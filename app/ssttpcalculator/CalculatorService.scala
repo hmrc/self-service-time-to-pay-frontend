@@ -31,16 +31,17 @@ import uk.gov.hmrc.selfservicetimetopay.models.PaymentDayOfMonth
 import java.time.LocalDate.now
 import java.time.temporal.ChronoUnit.DAYS
 import java.time.{Clock, LocalDate, Year}
-import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import javax.inject.{Inject, Singleton}
+
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
+@Singleton
 class CalculatorService @Inject() (
     clockProvider:   ClockProvider,
     durationService: DurationService,
     interestService: InterestRateService
 )
-  (implicit ec: ExecutionContext, appConfig: AppConfig) {
+  (implicit appConfig: AppConfig) {
 
   import clockProvider._
 

@@ -14,8 +14,10 @@
  * limitations under the License.
  *@
 
-@(theForm: Form[_], args:(Symbol, String)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
+@(theForm: Form[_], args:(Symbol, String)*)(implicit messages: play.api.i18n.Messages)
+
 @import helpers.forms.errorList
+
 @{
     val argsMap = args.toMap
     val theField = argsMap.getOrElse(Symbol("_field"), "")

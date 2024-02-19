@@ -23,7 +23,7 @@ import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.testdata.TdAll.saUtr
-import uk.gov.hmrc.http.{NotFoundException, UpstreamErrorResponse}
+import uk.gov.hmrc.http.UpstreamErrorResponse
 import uk.gov.hmrc.selfservicetimetopay.models.{DirectDebitInstruction, DirectDebitInstructions}
 
 class DirectDebitConnectorSpec extends ItSpec {

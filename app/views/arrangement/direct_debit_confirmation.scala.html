@@ -15,10 +15,7 @@
  *@
 
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
-@import helpers.forms.submit
 @import partials.direct_debit_details
-@import timetopaytaxpayer.cor.model._
-@import ssttpcalculator.model.PaymentSchedule
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
@@ -27,15 +24,10 @@
   govukButton : GovukButton
 )
 
-@(
-  debits: Seq[Debit],
-  schedule: PaymentSchedule,
-  directDebit: ArrangementDirectDebit,
-  loggedIn: Boolean = false)(
+@(directDebit: ArrangementDirectDebit)(
   implicit
   messages: play.api.i18n.Messages,
-  request: Request[_],
-  appConfig: config.AppConfig
+  request: Request[_]
 )
 
 

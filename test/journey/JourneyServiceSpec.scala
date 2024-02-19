@@ -69,7 +69,7 @@ class JourneyServiceSpec extends ItSpec {
           val fakeRequest = FakeRequest().withSession("ssttp.journeyId" -> journeyIdString)
 
           for {
-            _ <- service.saveJourney(journey)(fakeRequest)
+            _ <- service.saveJourney(journey)
             fetchedJourney <- service.getJourney()(fakeRequest)
           } yield fetchedJourney shouldBe journey
         }
