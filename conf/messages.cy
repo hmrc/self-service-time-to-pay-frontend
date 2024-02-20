@@ -386,6 +386,11 @@ ssttp.extra-support.p3= Os ydych y tu allan i’r DU: <strong>+44 300 200 1900</
 ssttp.call-us-cannot-set-up-plan.title = Ffoniwch ni ynghylch cynllun talu
 ssttp.call-us-cannot-set-up-plan.p1 = Ni allwch drefnu cynllun talu Hunanasesiad ar-lein.
 
+ssttp.debt-too-small.h1 = Talu’ch bil treth Hunanasesiad yn llawn
+ssttp.debt-too-small.p1 = Ni allwch drefnu cynllun talu Hunanasesiad ar-lein oherwydd bod eich bil yn rhy fach.
+ssttp.debt-too-small.p2 = <a class="govuk-link" href="https://www.gov.uk/pay-self-assessment-tax-bill">Gwnewch daliad ar-lein</a> i dalu’ch bil Hunanasesiad yn llawn.
+ssttp.debt-too-small.call-us = 	Ffoniwch ni ar <strong>0300 200 1900</strong> os oes angen i chi siarad ag ymgynghorydd.
+
 ssttp.arrangement.type_of_account.title = Ynglŷn â’ch cyfrif banc
 ssttp.arrangement.type_of_account.details = Pa fath o fanylion cyfrif yr ydych yn eu rhoi?
 ssttp.arrangement.type_of_account.business = Cyfrif banc busnes
