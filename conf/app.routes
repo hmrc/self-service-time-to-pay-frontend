@@ -25,6 +25,8 @@ GET         /already-have-a-plan                                          ssttpe
 GET         /eligibility/call-us                                          ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUs
 GET         /eligibility/not-enrolled                                     ssttpeligibility.SelfServiceTimeToPayController.getNotSaEnrolled
 GET         /eligibility/not-sole-signatory                               ssttpeligibility.SelfServiceTimeToPayController.getNotSoleSignatory
+GET         /eligibility/pay-self-assessment-tax-bill-in-full             ssttpeligibility.SelfServiceTimeToPayController.getDebtTooSmall
+
 
 
 GET         /call-us-cannot-set-up-plan                                   ssttpeligibility.SelfServiceTimeToPayController.callUsCannotSetUpPlan

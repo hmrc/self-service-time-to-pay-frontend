@@ -224,8 +224,11 @@ class ArrangementController @Inject() (
     } else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh))
       ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge
 
-    else if (eligibilityStatus.reasons.contains(ReturnNeedsSubmitting) || eligibilityStatus.reasons.contains(DebtIsInsignificant))
+    else if (eligibilityStatus.reasons.contains(ReturnNeedsSubmitting))
       ssttpeligibility.routes.SelfServiceTimeToPayController.getFileYourTaxReturn
+
+    else if (eligibilityStatus.reasons.contains(DebtIsInsignificant))
+      ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooSmall
 
     else if (eligibilityStatus.reasons.contains(DirectDebitCreatedWithinTheLastYear))
       ssttpeligibility.routes.SelfServiceTimeToPayController.getYouAlreadyHaveAPaymentPlan

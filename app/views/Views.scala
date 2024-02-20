@@ -53,6 +53,7 @@ class Views @Inject() (
     val file_your_tax_return:                          views.html.core.file_your_tax_return,
     val you_already_have_a_payment_plan:               views.html.core.you_already_have_a_payment_plan,
     val call_us_cannot_set_up_plan:                    views.html.core.call_us_cannot_set_up_plan,
+    val debt_too_small_pay_in_full:                    views.html.core.debt_too_small_pay_in_full,
     //    val print_payment_schedule:       views.html.partials.print_payment_schedule,
     val delete_answers: views.html.session.delete_answers
 )

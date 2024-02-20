@@ -437,6 +437,11 @@ ssttp.file-your-tax-return.p3 = Our opening times are Monday to Friday, 8am to 6
 ssttp.call-us-cannot-set-up-plan.title = Call us about a payment plan
 ssttp.call-us-cannot-set-up-plan.p1 = You cannot set up a Self Assessment payment plan online.
 
+ssttp.debt-too-small.h1 = Pay your Self Assessment tax bill in full
+ssttp.debt-too-small.p1 = You cannot set up a Self Assessment payment plan online because your bill is too small.
+ssttp.debt-too-small.p2 = <a class="govuk-link" href="https://www.gov.uk/pay-self-assessment-tax-bill">Make a payment online</a> to cover your Self Assessment tax bill in full.
+ssttp.debt-too-small.call-us = Call us on <strong>0300 123 1813</strong> if you are having difficulty making a payment online.
+
 ssttp.arrangement.type_of_account.title = About your bank account
 ssttp.arrangement.type_of_account.details = What type of account details are you providing?
 ssttp.arrangement.type_of_account.business = Business bank account

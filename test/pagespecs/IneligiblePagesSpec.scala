@@ -46,7 +46,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     ("no debts", NoDebt, "general call us page", generalCallUsPage, "0.00"),
     ("current year return not submitted", ReturnNeedsSubmitting, "you need to file", needToFilePage, "33.00"),
     ("debt more than £10k", TotalDebtIsTooHigh, "debt too large", debtTooLargePage, "30000.01"),
-    ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage, "31.00"),
+    ("debt less than £32", DebtIsInsignificant, "debt too small", debtTooSmallPage, "31.00"),
     ("debt older than 60 days", OldDebtIsTooHigh, "debt too old", callUsDebtTooOld, "33.00"),
     ("direct debit(s) created within the last 12 months", DirectDebitCreatedWithinTheLastYear, "already have a plan", alreadyHaveAPlanPage, "4900.00")
   )

@@ -89,6 +89,10 @@ class SelfServiceTimeToPayController @Inject() (
     Ok(views.not_sole_signatory())
   }
 
+  val getDebtTooSmall: Action[AnyContent] = as.action { implicit request =>
+    Ok(views.debt_too_small_pay_in_full())
+  }
+
   val submitAccessYouSelfAssessmentOnline: Action[AnyContent] = as.authenticatedSaUser.async { implicit request =>
     val logMessagePrefix = "Submit 'Access your self assessment online': "
     val logMessage = logMessagePrefix + "Sending user to PTA (add-taxes-frontend) to enroll for SA" +
