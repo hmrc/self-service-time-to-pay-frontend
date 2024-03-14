@@ -19,8 +19,10 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     scalaVersion := appScalaVersion,
     majorVersion := 0,
-    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
+    Test / parallelExecution := false
   )
+  .settings(ScoverageSettings())
   .settings(ScalariformSettings())
   .settings(WartRemoverSettings.wartRemoverError)
   .settings(WartRemoverSettings.wartRemoverWarning)
@@ -29,7 +31,6 @@ lazy val microservice = Project(appName, file("."))
       (baseDirectory.value / "test").get ++
         target.value.get ++
           Seq(sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"))
-
   .settings(ScalariformSettings())
   .settings(
     Test / unmanagedSourceDirectories := Seq(baseDirectory.value / "test", baseDirectory.value / "test-common")
