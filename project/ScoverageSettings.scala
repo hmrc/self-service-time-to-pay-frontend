@@ -4,13 +4,13 @@ import scoverage.ScoverageKeys
 
 object ScoverageSettings {
   def apply() = Seq( // Semicolon-separated list of regexes matching classes to exclude
-    ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;.*(config|views.*);.*(AuthService|BuildInfo|Routes).*",
+    ScoverageKeys.coverageExcludedPackages := "<empty>;.*(config|views|javascript|testonly).*;.*(AuthService|BuildInfo|Routes|Reverse).*",
     ScoverageKeys.coverageExcludedFiles := Seq(
-      "" +
-        "<empty>",
+      "<empty>",
       "Reverse.*",
       ".*models.*",
       ".*repositories.*",
+      ".*templates.*",
       ".*BuildInfo.*",
       ".*javascript.*",
       ".*Routes.*",
@@ -20,7 +20,6 @@ object ScoverageSettings {
     ).mkString(";"),
     ScoverageKeys.coverageMinimumStmtTotal := 80,  //should be a lot higher but we are where we are
     ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting := true,
-    parallelExecution in Test := false
+    ScoverageKeys.coverageHighlighting := true
   )
 }
