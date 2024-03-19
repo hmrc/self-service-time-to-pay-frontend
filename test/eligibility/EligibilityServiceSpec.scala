@@ -28,8 +28,8 @@ class EligibilityServiceSpec extends ItSpec with DateSupport {
   private val today = LocalDate.parse("2020-03-30")
   private val yesterday = today.minusDays(1)
   private val tomorrow = today.plusDays(1)
-  private val aYearAgo = today.minusYears(1)
-  private val almostAYearAgo = aYearAgo.plusDays(1)
+  private val twoYearsAgo = today.minusYears(2)
+  private val almostTwoYearsAgo = twoYearsAgo.plusDays(1)
 
   private val origin = "IN1"
 
@@ -53,9 +53,9 @@ class EligibilityServiceSpec extends ItSpec with DateSupport {
     sortCode      = Some("sortCode"),
     accountNumber = Some("accountNumber"),
     accountName   = Some("accountName"),
-    creationDate  = Some(aYearAgo))
+    creationDate  = Some(twoYearsAgo))
 
-  private val directDebitCreatedWithinTheLastYear = eligibleDirectDebitInstruction.copy(creationDate = Some(almostAYearAgo))
+  private val directDebitCreatedWithinTheLastYear = eligibleDirectDebitInstruction.copy(creationDate = Some(almostTwoYearsAgo))
 
   private val acceptableOldDebt = eligibleDebit.copy(amount  = significantDebtAmount, dueDate = oldDebtDate)
   private val oldDebtThatIsTooHigh = acceptableOldDebt.copy(amount = significantDebtAmount + onePence)

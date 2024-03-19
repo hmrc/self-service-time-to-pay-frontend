@@ -32,7 +32,7 @@ object TdAll {
   val saUtr: SaUtr = SaUtr(utr)
 
   val frozenDateString: String = "2019-11-25"
-  val aYearAgo: String = "2018-11-25"
+  val aYearAgo: String = "2017-11-25"
   val almostAYearAgo: String = "2018-11-26"
 
   val frozenDateStringLong: String = "2019-11-25T13:41:01.666"
