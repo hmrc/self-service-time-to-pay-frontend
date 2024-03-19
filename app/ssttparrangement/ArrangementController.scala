@@ -230,7 +230,7 @@ class ArrangementController @Inject() (
     else if (eligibilityStatus.reasons.contains(DebtIsInsignificant))
       ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooSmall
 
-    else if (eligibilityStatus.reasons.contains(DirectDebitCreatedWithinTheLastYear))
+    else if (eligibilityStatus.reasons.contains(DirectDebitCreatedWithinTheLastTwoYears))
       ssttpeligibility.routes.SelfServiceTimeToPayController.getYouAlreadyHaveAPaymentPlan
 
     else {

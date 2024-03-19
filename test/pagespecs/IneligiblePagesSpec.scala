@@ -48,14 +48,14 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     ("debt more than £10k", TotalDebtIsTooHigh, "debt too large", debtTooLargePage, "30000.01"),
     ("debt less than £32", DebtIsInsignificant, "debt too small", debtTooSmallPage, "31.00"),
     ("debt older than 60 days", OldDebtIsTooHigh, "debt too old", callUsDebtTooOld, "33.00"),
-    ("direct debit(s) created within the last 12 months", DirectDebitCreatedWithinTheLastYear, "already have a plan", alreadyHaveAPlanPage, "4900.00")
+    ("direct debit(s) created within the last 24 months", DirectDebitCreatedWithinTheLastTwoYears, "already have a plan", alreadyHaveAPlanPage, "4900.00")
   )
 
   def beginJourney(ineligibleReason: Reason): Unit = {
     AuditStub.audit()
     TaxpayerStub.getTaxpayer(ineligibleReason)
     GgStub.signInPage(port)
-    getBanksIsSuccessful(if (ineligibleReason == DirectDebitCreatedWithinTheLastYear) almostAYearAgo else aYearAgo)
+    getBanksIsSuccessful(if (ineligibleReason == DirectDebitCreatedWithinTheLastTwoYears) almostAYearAgo else aYearAgo)
 
     startPage.open()
     startPage.clickOnStartNowButton()

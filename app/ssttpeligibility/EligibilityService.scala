@@ -43,11 +43,11 @@ class EligibilityService @Inject() (config: EligibilityServiceConfig) {
   }
 
   private def hasDirectDebitsCreatedWithinTheLastTwoYears(date: LocalDate, directDebits: DirectDebitInstructions): Seq[Reason] = {
-    val directDebitsCreatedWithinTheLastYear: Boolean =
+    val directDebitsCreatedWithinTheLastTwoYears: Boolean =
       directDebits.directDebitInstruction.exists(ddi =>
         ddi.creationDate.getOrElse(date).isAfter(date.minusYears(2)))
 
-    if (directDebitsCreatedWithinTheLastYear) Seq(DirectDebitCreatedWithinTheLastYear) else Seq.empty
+    if (directDebitsCreatedWithinTheLastTwoYears) Seq(DirectDebitCreatedWithinTheLastTwoYears) else Seq.empty
   }
 
   private def checkReturnsUpToDate(returns: Seq[Return], today: LocalDate): List[Reason] = {
