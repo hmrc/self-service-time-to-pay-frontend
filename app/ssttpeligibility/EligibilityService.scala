@@ -39,15 +39,15 @@ class EligibilityService @Inject() (config: EligibilityServiceConfig) {
     EligibilityStatus(
       checkReturnsUpToDate(selfAssessmentDetails.returns, dateOfEligibilityCheck) ++
         checkDebits(selfAssessmentDetails.debits, dateOfEligibilityCheck) ++
-        hasDirectDebitsCreatedWithinTheLastTwoYears(dateOfEligibilityCheck, directDebits))
+        hasDirectDebitsAlreadyCreated(dateOfEligibilityCheck, directDebits))
   }
 
-  private def hasDirectDebitsCreatedWithinTheLastTwoYears(date: LocalDate, directDebits: DirectDebitInstructions): Seq[Reason] = {
-    val directDebitsCreatedWithinTheLastTwoYears: Boolean =
+  private def hasDirectDebitsAlreadyCreated(date: LocalDate, directDebits: DirectDebitInstructions): Seq[Reason] = {
+    val directDebitsAlreadyCreated: Boolean =
       directDebits.directDebitInstruction.exists(ddi =>
         ddi.creationDate.getOrElse(date).isAfter(date.minusYears(2)))
 
-    if (directDebitsCreatedWithinTheLastTwoYears) Seq(DirectDebitCreatedWithinTheLastTwoYears) else Seq.empty
+    if (directDebitsAlreadyCreated) Seq(DirectDebitAlreadyCreated) else Seq.empty
   }
 
   private def checkReturnsUpToDate(returns: Seq[Return], today: LocalDate): List[Reason] = {

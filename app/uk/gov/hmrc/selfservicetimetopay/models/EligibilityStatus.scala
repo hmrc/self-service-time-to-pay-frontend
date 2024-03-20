@@ -26,13 +26,7 @@ case object DebtIsInsignificant extends Reason("DebtIsInsignificant")
 case object OldDebtIsTooHigh extends Reason("OldDebtIsTooHigh")
 case object TotalDebtIsTooHigh extends Reason("TotalDebtIsTooHigh")
 case object ReturnNeedsSubmitting extends Reason("ReturnNeedsSubmitting")
-case object DirectDebitCreatedWithinTheLastTwoYears extends Reason("DirectDebitCreatedWithinTheLastTwoYears")
-
-//TODO under OPS-4941 the ones below are unused for now and apparently always have been
-case object TTPIsLessThenTwoMonths extends Reason("TTPIsLessThenTwoMonths")
-case object NotSaEnrolled extends Reason("NotEnrolled")
-case object DebtTooOld extends Reason("DebtTooOld")
-case object NoDueDate extends Reason("NoDueDate")
+case object DirectDebitAlreadyCreated extends Reason("DirectDebitAlreadyCreated")
 
 object Reason {
   implicit val formatEligibilityReasons: Format[Reason] = new Format[Reason] {
