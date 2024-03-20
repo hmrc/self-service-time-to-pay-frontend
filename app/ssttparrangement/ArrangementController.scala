@@ -212,13 +212,10 @@ class ArrangementController @Inject() (
 
   //TODO improve this under OPS-4941
   private def ineligibleStatusRedirect(eligibilityStatus: EligibilityStatus, journey: Journey)(implicit rh: RequestHeader) = {
-    if (eligibilityStatus.reasons.contains(DebtTooOld) ||
-      eligibilityStatus.reasons.contains(OldDebtIsTooHigh)) {
+    if (eligibilityStatus.reasons.contains(OldDebtIsTooHigh)) {
       ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooOld
 
-    } else if (eligibilityStatus.reasons.contains(NoDebt) ||
-      eligibilityStatus.reasons.contains(TTPIsLessThenTwoMonths) ||
-      eligibilityStatus.reasons.contains(NoDueDate)) {
+    } else if (eligibilityStatus.reasons.contains(NoDebt)) {
       journeyLogger.info(s"Sending user to call us page [ineligibility reasons: ${eligibilityStatus.reasons}]")(rh, journey)
       ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs
     } else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh))
@@ -230,7 +227,7 @@ class ArrangementController @Inject() (
     else if (eligibilityStatus.reasons.contains(DebtIsInsignificant))
       ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooSmall
 
-    else if (eligibilityStatus.reasons.contains(DirectDebitCreatedWithinTheLastYear))
+    else if (eligibilityStatus.reasons.contains(DirectDebitAlreadyCreated))
       ssttpeligibility.routes.SelfServiceTimeToPayController.getYouAlreadyHaveAPaymentPlan
 
     else {

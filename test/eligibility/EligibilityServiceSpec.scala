@@ -28,8 +28,8 @@ class EligibilityServiceSpec extends ItSpec with DateSupport {
   private val today = LocalDate.parse("2020-03-30")
   private val yesterday = today.minusDays(1)
   private val tomorrow = today.plusDays(1)
-  private val aYearAgo = today.minusYears(1)
-  private val almostAYearAgo = aYearAgo.plusDays(1)
+  private val twoYearsAgo = today.minusYears(2)
+  private val almostTwoYearsAgo = twoYearsAgo.plusDays(1)
 
   private val origin = "IN1"
 
@@ -53,9 +53,9 @@ class EligibilityServiceSpec extends ItSpec with DateSupport {
     sortCode      = Some("sortCode"),
     accountNumber = Some("accountNumber"),
     accountName   = Some("accountName"),
-    creationDate  = Some(aYearAgo))
+    creationDate  = Some(twoYearsAgo))
 
-  private val directDebitCreatedWithinTheLastYear = eligibleDirectDebitInstruction.copy(creationDate = Some(almostAYearAgo))
+  private val directDebitAlreadyCreated = eligibleDirectDebitInstruction.copy(creationDate = Some(almostTwoYearsAgo))
 
   private val acceptableOldDebt = eligibleDebit.copy(amount  = significantDebtAmount, dueDate = oldDebtDate)
   private val oldDebtThatIsTooHigh = acceptableOldDebt.copy(amount = significantDebtAmount + onePence)
@@ -110,18 +110,18 @@ class EligibilityServiceSpec extends ItSpec with DateSupport {
 
     "return ineligible when" - {
 
-      "an otherwise eligible user has direct debits created within the last year" in {
-        val ineligible = EligibilityStatus(Seq(DirectDebitCreatedWithinTheLastYear))
+      "an otherwise eligible user has direct debits created within the last two years" in {
+        val ineligible = EligibilityStatus(Seq(DirectDebitAlreadyCreated))
 
-        eligibility(directDebits = directDebitInstructions(Seq(directDebitCreatedWithinTheLastYear))) shouldBe ineligible
+        eligibility(directDebits = directDebitInstructions(Seq(directDebitAlreadyCreated))) shouldBe ineligible
 
         eligibility(directDebits =
-          directDebitInstructions(Seq(eligibleDirectDebitInstruction, directDebitCreatedWithinTheLastYear))) shouldBe ineligible
+          directDebitInstructions(Seq(eligibleDirectDebitInstruction, directDebitAlreadyCreated))) shouldBe ineligible
 
         eligibility(directDebits =
           directDebitInstructions(Seq(
-            directDebitCreatedWithinTheLastYear,
-            directDebitCreatedWithinTheLastYear.copy(sortCode = Some("sortCode2"))))) shouldBe ineligible
+            directDebitAlreadyCreated,
+            directDebitAlreadyCreated.copy(sortCode = Some("sortCode2"))))) shouldBe ineligible
       }
 
       "an otherwise eligible user has no debt" in {
@@ -159,8 +159,8 @@ class EligibilityServiceSpec extends ItSpec with DateSupport {
       eligibility(
         debits       = noDebts,
         returns      = missingReturns,
-        directDebits = directDebitInstructions(Seq(directDebitCreatedWithinTheLastYear))
-      ).reasons.toSet shouldBe Set(ReturnNeedsSubmitting, NoDebt, DirectDebitCreatedWithinTheLastYear)
+        directDebits = directDebitInstructions(Seq(directDebitAlreadyCreated))
+      ).reasons.toSet shouldBe Set(ReturnNeedsSubmitting, NoDebt, DirectDebitAlreadyCreated)
     }
   }
 

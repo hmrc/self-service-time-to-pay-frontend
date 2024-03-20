@@ -51,7 +51,7 @@ package object modelsFormat {
     case "olddebtistoohigh"                       => Some(OldDebtIsTooHigh)
     case "totaldebtistoohigh"                     => Some(TotalDebtIsTooHigh)
     case "ttpislessthentwomonths"                 => Some(TotalDebtIsTooHigh)
-    case "directdebitcreatedwithinthelastyear"    => Some(DirectDebitCreatedWithinTheLastYear)
+    case "directdebitalreadycreated"              => Some(DirectDebitAlreadyCreated)
     case x if x.contains("returnneedssubmitting") => Some(ReturnNeedsSubmitting)
     case _ =>
       None

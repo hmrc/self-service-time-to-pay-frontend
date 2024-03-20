@@ -41,7 +41,7 @@ class DirectDebitConnectorSpec extends ItSpec {
           accountNumber = Some("12345678"),
           accountName   = Some("Mr John Campbell"),
           Some("123456789"),
-          Some(LocalDate.of(2018, 11, 25)),
+          Some(LocalDate.of(2017, 11, 25)),
           Some(true), Some("123ABC123"),
           Some("123ABC123"))))
   }
