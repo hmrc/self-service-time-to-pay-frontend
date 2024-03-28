@@ -90,7 +90,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
    */
   def readMain(): String = xpath("""//*[@id="content"]""").webElement.getAttribute("textContent")
 
-  def readGlobalHeaderText(): String = className("hmrc-header__service-name").element.text
+  def readGlobalHeaderText(): String = className("govuk-header__service-name").element.text
 
   def href(id: String): Option[String] = find(IdQuery(id)).fold(Option.empty[String])(e => e.attribute("href"))
 
