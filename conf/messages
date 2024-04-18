@@ -301,6 +301,7 @@ ssttp.calculator.results.p3 = If the plan you choose runs into the next tax year
 ssttp.calculator.results.amount.option =  <strong>{0} per month</strong> over {1} months
 ssttp.calculator.results.amount.option.interest-hint = Includes total interest estimated at {0}
 ssttp.calculator.results.option.other.label = <strong>Pay more per month</strong>
+ssttp.calculator.results.option.other.inset.label = Enter an amount to pay per month
 ssttp.calculator.results.option.other.enter.amount = Enter an amount between {0} and {1} to pay over fewer months. We will suggest a plan that is closest to the amount you enter.
 ssttp.calculator.results.or = or
 ssttp.calculator.results.section.cannot-afford.title = <strong>I cannot afford these payments</strong>

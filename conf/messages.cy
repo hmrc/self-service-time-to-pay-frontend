@@ -305,6 +305,7 @@ ssttp.calculator.results.p3 = Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg 
 ssttp.calculator.results.amount.option =  <strong>{0} y mis</strong>, am {1} mis
 ssttp.calculator.results.amount.option.interest-hint = Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef  {0}
 ssttp.calculator.results.option.other.label = <strong>Talu mwy bob mis</strong>
+ssttp.calculator.results.option.other.inset.label = Nodwch swm i’w dalu y mis
 ssttp.calculator.results.option.other.enter.amount = Nodwch swm sydd rhwng {0} a {1} i’w dalu dros lai o fisoedd. Byddwn yn awgrymu cynllun sydd agosaf at y swm y byddwch yn ei nodi.
 ssttp.calculator.results.or = neu
 ssttp.calculator.results.section.cannot-afford.title = <strong>Nid wyf yn gallu fforddio’r taliadau hyn</strong>
