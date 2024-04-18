@@ -23,7 +23,7 @@ object AppDependencies {
 
   val test = Seq(
     "org.scalatest"               %% "scalatest"                  % "3.2.18",
-    "org.wiremock"                % "wiremock-standalone"         % "3.5.2",
+    "org.wiremock"                % "wiremock-standalone"         % "3.5.3",
     "org.scalatestplus.play"      %% "scalatestplus-play"         % "7.0.1",
     "org.scalatestplus"           %% "scalacheck-1-15"            % "3.2.11.0",
     "com.softwaremill.macwire"    %% "macros"                     % "2.5.9",

@@ -254,11 +254,13 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val customtOptionTextEnglish =
           s"""Pay more per month
+             |Enter an amount to pay per month
              |Enter an amount between £612.50 and £2,450 to pay over fewer months. We will suggest a plan that is closest to the amount you enter.
           """.stripMargin
 
         private val customOptionTextWelsh =
           s"""Talu mwy bob mis
+             |Nodwch swm i’w dalu y mis
              |Nodwch swm sydd rhwng £612.50 a £2,450 i’w dalu dros lai o fisoedd. Byddwn yn awgrymu cynllun sydd agosaf at y swm y byddwch yn ei nodi.
           """.stripMargin
       }
