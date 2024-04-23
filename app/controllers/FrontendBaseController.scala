@@ -24,16 +24,11 @@ import scala.concurrent.Future
 abstract class FrontendBaseController(cc: ControllerComponents)
   extends BaseControllerHelpers {
 
-  import req.RequestSupport._
-
   override val controllerComponents: ControllerComponents = cc
 
   val Action = controllerComponents.actionBuilder
 
   implicit def toFutureResult(result: Result): Future[Result] = Future.successful(result)
-
-  //TODO: move it to some auth service
-  def isSignedIn(implicit request: Request[_]): Boolean = hc.authorization.isDefined
 
   def technicalDifficulties(journey: Journey)(implicit request: Request[_]): Result = ErrorHandler.technicalDifficulties(journey)
 

@@ -37,15 +37,9 @@ final case class ViewConfig(
     authUrl                = servicesConfig.baseUrl("auth"),
     companyAuthUrl         = servicesConfig.getString("microservice.services.company-auth.url"),
     signInPath             = servicesConfig.getString("microservice.services.company-auth.sign-in-path"),
-    frontendBaseUrl        = servicesConfig.getString("microservice.services.auth.login-callback.base-url"), //TODO: migrate this config,
+    frontendBaseUrl        = servicesConfig.getString("microservice.services.auth.login-callback.base-url"),
     timeoutDialogTimeout   = servicesConfig.getInt("timeout-dialog.timeout"),
     timeoutDialogCountdown = servicesConfig.getInt("timeout-dialog.countdown")
   )
-
-  // footer links
-  val cookiesUrl: String = "https://www.tax.service.gov.uk/help/cookies"
-  val privacyNoticeUrl: String = "https://www.tax.service.gov.uk/help/privacy"
-  val termsAndConditionsUrl: String = "https://www.tax.service.gov.uk/help/terms-and-conditions"
-  val helpUsingGovUkUrl: String = "https://www.gov.uk/help"
 
 }

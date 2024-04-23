@@ -210,7 +210,6 @@ class ArrangementController @Inject() (
     }
   }
 
-  //TODO improve this under OPS-4941
   private def ineligibleStatusRedirect(eligibilityStatus: EligibilityStatus, journey: Journey)(implicit rh: RequestHeader) = {
     if (eligibilityStatus.reasons.contains(OldDebtIsTooHigh)) {
       ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooOld

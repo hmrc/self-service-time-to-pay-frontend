@@ -44,13 +44,11 @@ package object modelsFormat {
     Format(eitherReads[BankDetails, DirectDebitInstructions], eitherWrites[BankDetails, DirectDebitInstructions])
 
   //Eligibility formatters
-  //TODO make sure that function returns the correct Reason when case is ttpislessthentwomonths
   def parseFromString(jsonString: String): Option[Reason] = jsonString.trim.toLowerCase match {
     case "nodebt"                                 => Some(NoDebt)
     case "debtisinsignificant"                    => Some(DebtIsInsignificant)
     case "olddebtistoohigh"                       => Some(OldDebtIsTooHigh)
     case "totaldebtistoohigh"                     => Some(TotalDebtIsTooHigh)
-    case "ttpislessthentwomonths"                 => Some(TotalDebtIsTooHigh)
     case "directdebitalreadycreated"              => Some(DirectDebitAlreadyCreated)
     case x if x.contains("returnneedssubmitting") => Some(ReturnNeedsSubmitting)
     case _ =>
