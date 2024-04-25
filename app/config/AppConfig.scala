@@ -19,45 +19,20 @@ package config
 import javax.inject.Inject
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-//TODO: merge it into ViewConfig.
 class AppConfig @Inject() (servicesConfig: ServicesConfig) {
-  private val contactFrontendBaseUrl = servicesConfig.getConfString("contact-frontend.url", "")
-  private val contactFormServiceIdentifier = "self-service-time-to-pay"
 
   private val feedbackSurveyUrl =
     servicesConfig.getConfString(
       "feedback-survey.url",
       throw new RuntimeException("Feedback survey url required")) + "/feedback/PWYOII/personal"
 
-  lazy val reportAProblemPartialUrl: String = s"$contactFrontendBaseUrl/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  lazy val reportAProblemNonJSUrl: String = s"$contactFrontendBaseUrl/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  lazy val reportAccessibilityProblemUrl: String = s"$contactFrontendBaseUrl/contact/accessibility?service=$contactFormServiceIdentifier"
-
   private lazy val companyAuthFrontend = servicesConfig.getConfString("company-auth.url", throw new RuntimeException("Company auth url required"))
   private lazy val companyAuthSignInPath = servicesConfig.getConfString("company-auth.sign-in-path", "")
 
   lazy val loginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
-  lazy val loginCallbackBaseUrl: String = servicesConfig.getConfString("auth.login-callback.base-url", "")
-  lazy val loginCallbackPath: String = servicesConfig.getConfString("auth.login-callback.path", "")
-  lazy val loginCallBackFullPath = s"$loginCallbackBaseUrl$loginCallbackPath"
   lazy val logoutUrl: String = s"$feedbackSurveyUrl"
   lazy val backToTaxAccountUrl: String = servicesConfig.getString("urls.back-to-tax-account")
   lazy val webchatUrl: String = servicesConfig.getString("urls.webchat")
-
-  lazy val mdtpUpliftUrl: String = servicesConfig.getConfString("identity-verification-frontend.uplift-url",
-    throw new RuntimeException("MDTP uplift url required"))
-
-  lazy val (mdtpUpliftCompleteUrl, mdtpUpliftFailureUrl) = {
-    val baseUrl = servicesConfig.getConfString("identity-verification-frontend.callback.base-url", "")
-
-    val completePath = servicesConfig.getConfString("identity-verification-frontend.callback.complete-path",
-      throw new RuntimeException("uplift continue path required"))
-
-    val failurePath = servicesConfig.getConfString("identity-verification-frontend.callback.failure-path",
-      throw new RuntimeException("uplift failure path required"))
-
-    (s"$baseUrl$completePath", s"$baseUrl$failurePath")
-  }
 
   lazy val maxLengthOfPaymentPlan: Int = servicesConfig.getInt("calculatorConfig.maximumLengthOfPaymentPlan")
 

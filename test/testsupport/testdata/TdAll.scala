@@ -66,7 +66,6 @@ object TdAll {
           "taxYearEnd": "2023-04-01"
         }""".asJson
 
-  //TODO: consult with analytics if this data is correct
   val debit2: Debit = Debit(originCode = "IN2", amount = debit2Amount, dueDate, interest = None, taxYearEnd)
 
   val debit2Json: JsObject =

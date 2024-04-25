@@ -17,12 +17,11 @@
 @import views.html.helper.CSPNonce
 
 @this(
-        hmrcScripts: uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcScripts,
+        hmrcScripts: uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcScripts
 )
 
 @()(implicit request: play.api.mvc.Request[_])
 
     @hmrcScripts()
 
-    <script @{CSPNonce.attr} src='@routes.Assets.versioned("javascripts/jquery-3.6.0.js")' rel="stylesheet"></script>
-    <script @{CSPNonce.attr} src="@routes.Assets.versioned("javascripts/self-service-time-to-pay.js")"></script>
+ <script @{CSPNonce.attr} src="@routes.Assets.versioned("javascripts/self-service-time-to-pay.js")"></script>

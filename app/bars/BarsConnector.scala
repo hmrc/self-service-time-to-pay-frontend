@@ -26,6 +26,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.selfservicetimetopay.models._
 import _root_.util.Logging
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -74,11 +75,6 @@ class BarsConnector @Inject() (
           }
 
       }
-  }
-
-  //TODO this will be gone once we migrate to newer HttpVerbs
-  implicit val httpResponseReads: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {
-    def read(method: String, url: String, response: HttpResponse) = response
   }
 
 }
