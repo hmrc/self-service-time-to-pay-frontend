@@ -66,7 +66,7 @@
     @schedule.instalments.map {instalment =>
         <tr class="govuk-table__row">
             <th class="govuk-table__header">
-            <div><strong class="bold">@wholeDate(instalment.paymentDate)</strong></div>
+            <div><strong class="bold">@wholeDateWithOrdinalSuffix(instalment.paymentDate)</strong></div>
                 <p class="govuk-body-s govuk-!-margin-bottom-0"></p>
             </th>
             <td class="govuk-table__cell">
