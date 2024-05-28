@@ -38,12 +38,21 @@ object Dates {
   /**
    * @return the formatted date in either english or welsh, such as "31st January 2021" or "31ain Ionawr 2021"
    */
-  def wholeDate(localDate: LocalDate)
+  def wholeDateWithOrdinalSuffix(localDate: LocalDate)
     (implicit messages: Messages): String = {
     val day = getDayOfMonthOrdinal(localDate)
     val month = getMonthFormatted(localDate)
     val year = localDate.getYear
     s"$day $month $year"
+  }
+
+  /**
+   * @return the formatted date in either english or welsh, such as "31 January 2021" or "31 Ionawr 2021"
+   */
+  def wholeDateWithoutOrdinalSuffix(localDate: LocalDate)
+    (implicit messages: Messages): String = {
+    val month = getMonthFormatted(localDate)
+    s"${localDate.getDayOfMonth.toString} $month ${localDate.getYear.toString}"
   }
 
   def monthYear(localDate: LocalDate)

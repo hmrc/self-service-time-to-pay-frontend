@@ -45,7 +45,7 @@
                 @{ if (hasUpfrontPayment) messages("ssttp.arrangement.complete.upfront-payment", appConfig.numberOfWorkingDaysToAdd)
                     else ""
                 }
-                    <span>@messages("ssttp.arrangement.complete.next-payment", language.Dates.wholeDate(schedule.initialPaymentScheduleDate))</span>
+                    <span>@messages("ssttp.arrangement.complete.next-payment", language.Dates.wholeDateWithoutOrdinalSuffix(schedule.initialPaymentScheduleDate))</span>
                 </p>
                 <p class="govuk-body">@messages("ssttp.arrangement.complete.24h")</p>
                 <p class="govuk-body">

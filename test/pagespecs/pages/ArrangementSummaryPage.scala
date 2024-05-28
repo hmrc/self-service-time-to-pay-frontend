@@ -74,7 +74,7 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |What happens next
           |We will send a letter by post confirming the set up of your Direct Debit instruction within 10 working days.
           |
-          |Your next payment will be taken on 28th December 2019 or the next working day.
+          |Your next payment will be taken on 28 December 2019 or the next working day.
           |
           |Your tax account will be updated with your payment plan within 24 hours.
           |
@@ -92,7 +92,7 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |Yr hyn sy’n digwydd nesaf
           |Byddwn yn anfon llythyr atoch drwy’r post i gadarnhau bod eich cyfarwyddyd Debyd Uniongyrchol wedi’i sefydlu cyn pen 10 diwrnod gwaith.
           |
-          |Caiff eich taliad nesaf ei gymryd ar 28ain Rhagfyr 2019 neu ar y diwrnod gwaith nesaf.
+          |Caiff eich taliad nesaf ei gymryd ar 28 Rhagfyr 2019 neu ar y diwrnod gwaith nesaf.
           |
           |Bydd eich cyfrif treth yn cael ei ddiweddaru gyda’ch cynllun talu cyn pen 24 awr.
           |

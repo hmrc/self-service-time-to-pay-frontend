@@ -138,15 +138,28 @@ class DatesSpec extends ItSpec {
     }
   }
 
-  "wholeDate should give formatted i18n'd day month and year like '5th November 2021'" - {
+  "wholeDateWithOrdinalSuffix should give formatted i18n'd day month and year like '5th November 2021'" - {
     "when language is English" in {
       implicit val english = app.injector.instanceOf[MessagesApi].preferred(Seq(Lang("en")))
-      wholeDate(LocalDate.parse("2021-11-05")) shouldBe "5th November 2021"
+      wholeDateWithOrdinalSuffix(LocalDate.parse("2021-11-05")) shouldBe "5th November 2021"
     }
 
     "when language is Welsh" in {
       implicit val welsh = app.injector.instanceOf[MessagesApi].preferred(Seq(Lang("cy")))
-      wholeDate(LocalDate.parse("2021-11-05")) shouldBe "5ed Tachwedd 2021"
+      wholeDateWithOrdinalSuffix(LocalDate.parse("2021-11-05")) shouldBe "5ed Tachwedd 2021"
     }
   }
+
+  "wholeDateWithoutOrdinalSuffix should give formatted i18n'd day month and year like '5 November 2021'" - {
+    "when language is English" in {
+      implicit val english = app.injector.instanceOf[MessagesApi].preferred(Seq(Lang("en")))
+      wholeDateWithoutOrdinalSuffix(LocalDate.parse("2021-11-05")) shouldBe "5 November 2021"
+    }
+
+    "when language is Welsh" in {
+      implicit val welsh = app.injector.instanceOf[MessagesApi].preferred(Seq(Lang("cy")))
+      wholeDateWithoutOrdinalSuffix(LocalDate.parse("2021-11-05")) shouldBe "5 Tachwedd 2021"
+    }
+  }
+
 }

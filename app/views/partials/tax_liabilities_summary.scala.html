@@ -23,7 +23,7 @@
   @debits.map { debit =>
     <div class="govuk-summary-list__row govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
-            @(messages("ssttp.calculator.self-assessment-account-summary-page.due")) @{language.Dates.wholeDate(debit.dueDate)}
+            @(messages("ssttp.calculator.self-assessment-account-summary-page.due")) @{language.Dates.wholeDateWithOrdinalSuffix(debit.dueDate)}
             <p class="govuk-body-s govuk-!-margin-top-1 govuk-!-margin-bottom-1">
                 @partials.charge_code(debit.originCode, debit.taxYearEnd) @messages("ssttp.calculator.self-assessment-account-summary-page.for-tax-year", debit.startTaxYear.toString, debit.endTaxYear.toString)
             </p>
