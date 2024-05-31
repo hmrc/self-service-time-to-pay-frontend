@@ -23,6 +23,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import pagespecs.pages._
+import play.api.inject.bind
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
@@ -31,15 +32,13 @@ import testsupport.testdata.TdAll.frozenDateString
 import times.ClockProvider
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HttpReadsInstances
+import uk.gov.hmrc.mongo.MongoComponent
 
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDateTime, ZoneId}
 import javax.inject.Singleton
-import scala.concurrent.ExecutionContext
-import play.api.inject.bind
-import uk.gov.hmrc.mongo.MongoComponent
-
 import scala.annotation.unused
+import scala.concurrent.ExecutionContext
 
 class ItSpec
   extends AnyFreeSpec
@@ -68,7 +67,6 @@ class ItSpec
     "microservice.services.auth.login-callback.base-url" -> s"http://localhost:$testPort",
     "microservice.services.add-taxes.port" -> WireMockSupport.port,
     "microservice.services.bars.port" -> WireMockSupport.port,
-    "microservice.services.identity-verification-frontend.uplift-url" -> s"http://localhost:${WireMockSupport.port}/mdtp/uplift",
     "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:$testPort",
     "microservice.services.identity-verification-frontend.callback.complete-path" -> "/pay-what-you-owe-in-instalments/arrangement/determine-eligibility",
     "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled",

@@ -16,10 +16,10 @@
 
 package ssttparrangement
 
-import org.apache.pekko.util.Timeout
 import journey.Statuses.ApplicationComplete
 import journey.{Journey, JourneyId, JourneyService}
 import model.enumsforforms.TypesOfBankAccount.Personal
+import org.apache.pekko.util.Timeout
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
@@ -29,7 +29,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, status, redirectLocation}
+import play.api.test.Helpers.{await, redirectLocation, status}
 import testsupport.stubs.{ArrangementStub, AuditStub, DirectDebitStub, TaxpayerStub}
 import testsupport.testdata.{TdRequest, TestJourney}
 import testsupport.{FakeAuthConnector, WireMockSupport}
@@ -58,7 +58,6 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
     "microservice.services.auth.login-callback.base-url" -> s"http://localhost:$testPort",
     "microservice.services.add-taxes.port" -> WireMockSupport.port,
     "microservice.services.bars.port" -> WireMockSupport.port,
-    "microservice.services.identity-verification-frontend.uplift-url" -> s"http://localhost:${WireMockSupport.port}/mdtp/uplift",
     "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:$testPort",
     "microservice.services.identity-verification-frontend.callback.complete-path" -> "/pay-what-you-owe-in-instalments/arrangement/determine-eligibility",
     "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled",
