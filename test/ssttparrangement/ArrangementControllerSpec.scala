@@ -58,9 +58,6 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
     "microservice.services.auth.login-callback.base-url" -> s"http://localhost:$testPort",
     "microservice.services.add-taxes.port" -> WireMockSupport.port,
     "microservice.services.bars.port" -> WireMockSupport.port,
-    "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:$testPort",
-    "microservice.services.identity-verification-frontend.callback.complete-path" -> "/pay-what-you-owe-in-instalments/arrangement/determine-eligibility",
-    "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled",
     "auditing.consumer.baseUri.port" -> WireMockSupport.port,
     "auditing.enabled" -> true,
     "logger.root" -> "WARN"
