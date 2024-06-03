@@ -18,7 +18,7 @@ object AppDependencies {
     "uk.gov.hmrc"         %% "crypto-json-play-30"                   % cryptoVersion,
     "com.beachape"        %% "enumeratum-play"                       % "1.8.0",
     "org.julienrf"        %% "play-json-derived-codecs"              % "11.0.0",
-    "org.typelevel"       %% "cats-core"                             % "2.10.0"
+    "org.typelevel"       %% "cats-core"                             % "2.12.0"
   )
 
   val test = Seq(
