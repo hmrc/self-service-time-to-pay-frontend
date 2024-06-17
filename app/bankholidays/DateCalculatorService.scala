@@ -19,6 +19,7 @@ package bankholidays
 import bankholidays.model.{AddWorkingDaysRequest, AddWorkingDaysResponse, Region}
 import com.google.inject.{Inject, Singleton}
 import play.api.libs.json.{JsError, JsSuccess}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
@@ -26,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DateCalculatorService @Inject() (connector: DateCalculatorConnector)(implicit ec: ExecutionContext) {
 
-  def addWorkingDays(date: LocalDate, numberOfWorkingDays: Int): Future[LocalDate] =
+  def addWorkingDays(date: LocalDate, numberOfWorkingDays: Int)(implicit headerCarrier: HeaderCarrier): Future[LocalDate] =
     connector
       .addWorkingDays(AddWorkingDaysRequest(date, numberOfWorkingDays, Set(Region.EnglandAndWales)))
       .map{ response =>

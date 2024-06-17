@@ -16,11 +16,12 @@
 
 package req
 
-import javax.inject.{Inject, Singleton}
 import play.api.i18n._
-import play.api.mvc.Request
+import play.api.mvc.{Request, RequestHeader}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
+
+import javax.inject.{Inject, Singleton}
 
 /**
  * Repeating the pattern which was brought originally by play-framework
@@ -39,7 +40,7 @@ object RequestSupport {
 
   implicit def hc[A](implicit request: Request[A]): HeaderCarrier = HcProvider.headerCarrier
 
-  def isLoggedIn(implicit request: Request[_]): Boolean = request.session.get(SessionKeys.authToken).isDefined
+  def isLoggedIn(implicit request: RequestHeader): Boolean = request.session.get(SessionKeys.authToken).isDefined
 
   /**
    * This is because we want to give responsibility of creation of [[HeaderCarrier]] to the platform code.

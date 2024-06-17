@@ -18,20 +18,25 @@ package bankholidays
 
 import bankholidays.model.AddWorkingDaysRequest
 import com.google.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DateCalculatorConnector @Inject() (httpClient:     HttpClient,
+class DateCalculatorConnector @Inject() (httpClient:     HttpClientV2,
                                          servicesConfig: ServicesConfig
 )(implicit ec: ExecutionContext) {
 
   private val dateCalculatorAddWorkingDaysUrl: String =
     s"${servicesConfig.baseUrl("date-calculator")}/date-calculator/add-working-days"
 
-  def addWorkingDays(request: AddWorkingDaysRequest): Future[HttpResponse] =
-    httpClient.doPost(dateCalculatorAddWorkingDaysUrl, request)
+  def addWorkingDays(request: AddWorkingDaysRequest)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] =
+    httpClient.post(url"$dateCalculatorAddWorkingDaysUrl")
+      .withBody(Json.toJson(request))
+      .execute[HttpResponse]
 
 }

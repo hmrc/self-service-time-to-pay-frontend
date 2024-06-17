@@ -17,19 +17,20 @@
 package enrolforsa
 
 import com.google.inject.Inject
-import play.api.libs.json.{JsObject, Json, OFormat}
+import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.Request
 import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.StringContextOps
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddTaxesConnector @Inject() (
     servicesConfig: ServicesConfig,
-    httpClient:     HttpClient)(
+    httpClient:     HttpClientV2)(
     implicit
     ec: ExecutionContext
 ) {
@@ -45,7 +46,9 @@ class AddTaxesConnector @Inject() (
       "providerId" -> credentials.providerId
     ) ++ maybeSaUtr.fold(Json.obj())(utr => Json.obj("utr" -> utr))
 
-    httpClient.POST[JsObject, StartEnrolForSaJourneyResult](url, body)
+    httpClient.post(url"$url")
+      .withBody(Json.toJson(body))
+      .execute[StartEnrolForSaJourneyResult]
   }
 }
 

@@ -19,19 +19,22 @@ package controllers
 import com.google.inject.Inject
 import play.api.i18n.Messages
 import play.api.mvc.Results.Unauthorized
-import play.api.mvc.Request
+import play.api.mvc.{RequestHeader, Result}
 import req.RequestSupport
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class UnhappyPathResponses @Inject() (
     errorHandler:   ErrorHandler,
-    requestSupport: RequestSupport) {
+    requestSupport: RequestSupport)(implicit val ec: ExecutionContext) {
 
   import requestSupport._
 
-  def unauthorised(implicit request: Request[_]) = Unauthorized(
+  def unauthorised(implicit request: RequestHeader): Future[Result] =
     errorHandler.standardErrorTemplate(
       Messages("unauthorised.title"),
       Messages("unauthorised.heading"),
-      ""))
+      "")
+      .map(html => Unauthorized(html))
 
 }

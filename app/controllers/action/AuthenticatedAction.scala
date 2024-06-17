@@ -22,9 +22,9 @@ import config.ViewConfig
 import play.api.mvc.Results._
 import play.api.mvc._
 import timetopaytaxpayer.cor.model.SaUtr
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.{Enrolments, _}
 import util.Logging
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -62,12 +62,12 @@ class AuthenticatedAction @Inject() (
             Right(new AuthenticatedRequest[A](request, enrolments, utr.map(SaUtr.apply), credentials))
           )
       }
-      .recover {
+      .recoverWith {
         case _: NoActiveSession =>
-          Left(Redirect(viewConfig.loginUrl, Map("continue" -> Seq(viewConfig.frontendBaseUrl + request.uri), "origin" -> Seq("pay-online"))))
+          Future.successful(Left(Redirect(viewConfig.loginUrl, Map("continue" -> Seq(viewConfig.frontendBaseUrl + request.uri), "origin" -> Seq("pay-online")))))
         case e: AuthorisationException =>
           appLogger.info(s"Authentication outcome: Failed. Unauthorised because of ${e.reason}, $e")
-          Left(badResponses.unauthorised)
+          badResponses.unauthorised.map(Left(_))
       }
   }
 

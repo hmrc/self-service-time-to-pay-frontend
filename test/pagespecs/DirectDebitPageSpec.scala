@@ -16,14 +16,14 @@
 
 package pagespecs
 
-import testsupport.Language.{English, Welsh}
-import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
 import ssttpcalculator.model.PaymentPlanOption
+import testsupport.Language.{English, Welsh}
+import testsupport._
+import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.{DirectDebitTd, TdAll}
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, saUtr}
-import testsupport.{AccountName, ItSpec, _}
+import testsupport.testdata.{DirectDebitTd, TdAll}
 
 class DirectDebitPageSpec extends ItSpec {
 

@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import play.api.mvc.RequestHeader
+
 @this(main: views.html.main)
 
 @(
@@ -21,7 +23,7 @@
         heading: String,
         message: String)(
         implicit
-        request: Request[_],
+        request: RequestHeader,
         messages: Messages
 )
 

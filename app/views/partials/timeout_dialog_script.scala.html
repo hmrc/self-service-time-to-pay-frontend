@@ -15,12 +15,13 @@
  *@
 
 @import config.ViewConfig
+@import play.api.mvc.RequestHeader
 
 @this(
         timeoutDialogue: uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTimeoutDialogHelper,
 )
 
-@(isLoggedIn: Boolean)(implicit r: Request[_], m: Messages, viewConf: ViewConfig)
+@(isLoggedIn: Boolean)(implicit r: RequestHeader, m: Messages, viewConf: ViewConfig)
 
 
 
