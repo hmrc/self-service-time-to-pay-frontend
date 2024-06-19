@@ -1,7 +1,6 @@
 # self-service-time-to-pay-frontend
 
-
-Tip: Connect to VPN in order to build it.  
+---
 
 ### About 
 Self Service Time To Pay Frontend is the frontend microservice for Pay What You Owe In Instalments, used for self-assessment tax liabilities.
@@ -15,23 +14,18 @@ The following diagram shows the overview of the SSTTP architecture.
     </p>
 </a>
 
-### Quickstart in local
+### Run locally
 
-#### Running
-From source use ```sbt runTestOnly```
+Start up supporting services with ```sm2 --start SSTTP```service manager profile
 
-From service manager profile use ```sm2 --start SSTTP```
+To run with test endpoints enabled: `sbt runTestOnly`
 
 If the dependent services for the webchat link on "Set up a payment plan with an adviser" page are required
-run ```sm2 --start DIGITAL_ENGAGEMENT_PLATFORM_ALL```
+run ```sm2 --start DIGITAL_ENGAGEMENT_PLATFORM_ALL``` as well
 
-#### For session debug purposes and test journey helpers
-http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector 
+Navigate to http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector
 
-#### For first page (logged out)
-http://localhost:9063/pay-what-you-owe-in-instalments
-
-#### For starting with a logged in eligible user  
+For all other enviroments see: https://confluence.tools.tax.service.gov.uk/display/SSTTP/Service+Links
 
 - First go to http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector
 - Choose 'create user and log in' link
@@ -39,6 +33,10 @@ http://localhost:9063/pay-what-you-owe-in-instalments
 - Click 'create user and log in' button
 - Go to the first page at http://localhost:9063/pay-what-you-owe-in-instalments 
 - Clicking the 'Start now' button will now take you to http://localhost:9063/pay-what-you-owe-in-instalments/calculator/tax-liabilities as if you were an eligible taxpayer
+
+For all other enviroments see: https://confluence.tools.tax.service.gov.uk/display/SSTTP/Service+Links
+
+---
 
 #### Note about integration tests
 

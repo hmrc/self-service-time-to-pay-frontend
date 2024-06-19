@@ -21,7 +21,8 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Request
 import req.RequestSupport
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HttpResponse, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import util.Logging
 
@@ -30,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DesStubConnector @Inject() (
-    httpClient:     HttpClient,
+    httpClient:     HttpClientV2,
     servicesConfig: ServicesConfig,
     requestSupport: RequestSupport
 )(implicit ec: ExecutionContext) extends Logging {
@@ -47,7 +48,9 @@ class DesStubConnector @Inject() (
     val setReturnsUrl = s"$baseUrl/sa/taxpayer/${tu.utr.v}/returns"
 
     httpClient
-      .PATCH[JsValue, HttpResponse](setReturnsUrl, predefinedResponse)
+      .patch(url"$setReturnsUrl")
+      .withBody(Json.toJson(predefinedResponse))
+      .execute[HttpResponse]
       .map{
         r =>
           if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's return in DES-STUB: $tu")
@@ -65,7 +68,9 @@ class DesStubConnector @Inject() (
     val setReturnsUrl = s"$baseUrl/sa/taxpayer/${tu.utr.v}/debits"
 
     httpClient
-      .PATCH[JsValue, HttpResponse](setReturnsUrl, predefinedResponse)
+      .patch(url"$setReturnsUrl")
+      .withBody(Json.toJson(predefinedResponse))
+      .execute[HttpResponse]
       .map{
         r =>
           if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's debit in DES-STUB: $tu")

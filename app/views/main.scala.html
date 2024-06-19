@@ -41,7 +41,7 @@
         hasBackLink: Boolean = true,
         navTitle: String = "ssttp.common.title"
 )(
-        mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
+        mainContent: Html)(implicit messages: play.api.i18n.Messages, request: RequestHeader)
 
 @head = {
     @if(allowTimeoutDialog) {

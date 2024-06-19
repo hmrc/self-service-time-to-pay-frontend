@@ -16,30 +16,33 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
 import journey.Journey
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Request, Result}
+import play.api.mvc.{Request, RequestHeader, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import util.JourneyLogger
 
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
+
 @Singleton
 class ErrorHandler @Inject() (
-
     errorTemplate:            views.html.error_template,
-    override val messagesApi: MessagesApi) extends FrontendErrorHandler {
+    override val messagesApi: MessagesApi)
+  (implicit val ec: ExecutionContext) extends FrontendErrorHandler {
 
   override def standardErrorTemplate(
       pageTitle: String,
       heading:   String,
       message:   String)(
       implicit
-      request: Request[_]
-  ): Html =
-    errorTemplate(
+      request: RequestHeader
+  ): Future[Html] =
+    Future.successful(errorTemplate(
       pageTitle,
       heading, message
+    )
     )
 }
 

@@ -19,18 +19,21 @@ package ssttparrangement
 import com.google.inject.{Inject, Singleton}
 import play.api.http.Status
 import play.api.http.Status.CREATED
+import play.api.libs.json.Json
 import play.api.mvc.{Request, RequestHeader}
-import uk.gov.hmrc.http.{HttpClient, HttpException, HttpResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HttpException, HttpResponse, StringContextOps, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import util.Logging
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ArrangementConnector @Inject() (
     servicesConfig: ServicesConfig,
-    httpClient:     HttpClient)(
+    httpClient:     HttpClientV2)(
     implicit
     ec: ExecutionContext
 ) extends Logging {
@@ -44,31 +47,34 @@ class ArrangementConnector @Inject() (
   def submitArrangement(ttpArrangement: TTPArrangement)(implicit request: Request[_]): Future[SubmissionResult] = {
     connectionsLogger.info(s"Submit arrangement to time-to-pay-arrangement service")
 
-    httpClient.POST[TTPArrangement, HttpResponse](s"$arrangementURL/ttparrangements", ttpArrangement).map { response =>
-      response.status match {
-        case CREATED =>
-          connectionsLogger.info("Submit arrangement to time-to-pay-arrangement service - outcome: Success")
-          Right(SubmissionSuccess())
-        case otherCode: Int =>
-          val submissionError = SubmissionError(otherCode, response.body)
+    httpClient.post(url"$arrangementURL/ttparrangements")
+      .withBody(Json.toJson(ttpArrangement))
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case CREATED =>
+            connectionsLogger.info("Submit arrangement to time-to-pay-arrangement service - outcome: Success")
+            Right(SubmissionSuccess())
+          case otherCode: Int =>
+            val submissionError = SubmissionError(otherCode, response.body)
+            connectionsLogger.warn(
+              s"Submit arrangement to time-to-pay-arrangement service - outcome: Error" +
+                s"[Direct debit reference: ${ttpArrangement.directDebitReference}]",
+              submissionError
+            )
+
+            Left(submissionError)
+        }
+      }.recover {
+        case e: Throwable =>
           connectionsLogger.warn(
-            s"Submit arrangement to time-to-pay-arrangement service - outcome: Error" +
+            s"Submit arrangement to time-to-pay-arrangement - outcome: Error" +
               s"[Direct debit reference: ${ttpArrangement.directDebitReference}]",
-            submissionError
+            e
           )
 
-          Left(submissionError)
+          onError(e)
       }
-    }.recover {
-      case e: Throwable =>
-        connectionsLogger.warn(
-          s"Submit arrangement to time-to-pay-arrangement - outcome: Error" +
-            s"[Direct debit reference: ${ttpArrangement.directDebitReference}]",
-          e
-        )
-
-        onError(e)
-    }
   }
 
   private def onError(ex: Throwable)(implicit rh: RequestHeader) = {

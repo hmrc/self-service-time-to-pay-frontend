@@ -16,14 +16,14 @@
 
 package pagespecs
 
-import testsupport.Language.{English, Welsh}
-import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
 import ssttpcalculator.model.PaymentPlanOption
+import testsupport.Language.{English, Welsh}
+import testsupport._
+import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.{DirectDebitTd, TdAll}
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, saUtr}
-import testsupport.{AccountName, ItSpec, _}
+import testsupport.testdata.{DirectDebitTd, TdAll}
 
 class DirectDebitPageSpec extends ItSpec {
 
@@ -122,7 +122,7 @@ class DirectDebitPageSpec extends ItSpec {
 
   "enter invalid Sort Code - SortCodeOnDenyList " in {
     beginJourney()
-    directDebitPage.fillOutForm("Mr John Campbell", "201147", "12345678")
+    directDebitPage.fillOutForm("Mr John Campbell", "123456", "12345678")
     BarsStub.validateBankFailSortCodeOnDenyList(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     directDebitPage.clickContinue()
     directDebitPage.assertErrorPageIsDisplayed(SortCodeOnDenyList())

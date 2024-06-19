@@ -16,11 +16,10 @@
 
 package pagespecs.pages
 
-import testsupport.Language
-import testsupport.Language.{English, Welsh}
 import org.openqa.selenium.WebDriver
-import testsupport._
+import testsupport.Language.{English, Welsh}
 import testsupport.RichMatchers._
+import testsupport._
 
 class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
@@ -107,7 +106,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
         case SortCode()                => sortCodeErrorText
         case AccountNumber()           => accountNumberErrorText
         case InvalidBankDetails()      => invalidBankDetailsErrorText
-        case SortCodeOnDenyList()      => sortCodeOnDenyListErrorText
+        case SortCodeOnDenyList()      => invalidBankDetailsErrorText
         case DirectDebitNotSupported() => directDebitNotSupportedErrorText(language)
       }
 
@@ -187,10 +186,6 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Yn eich blaen
         """.stripMargin
 
-      private val sortCodeOnDenyListErrorText =
-        """Sorry, we’re experiencing technical difficulties
-          |Please try again in a few minutes.
-        """.stripMargin
     }
 
   }

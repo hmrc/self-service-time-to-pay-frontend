@@ -21,16 +21,17 @@ import play.api.http.HeaderNames
 import play.api.libs.json.{JsArray, JsNull, JsObject, Json}
 import play.api.mvc.{Request, Session}
 import times.ClockProvider
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, SessionKeys}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, SessionKeys, StringContextOps}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.util.UUID.randomUUID
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class LoginService @Inject() (httpClient: HttpClient, servicesConfig: ServicesConfig, clockProvider: ClockProvider)
+class LoginService @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig, clockProvider: ClockProvider)
   (implicit ec: ExecutionContext) {
 
   def logIn(tu: TestUser)(implicit request: Request[_]): Future[Session] = for {
@@ -50,11 +51,14 @@ class LoginService @Inject() (httpClient: HttpClient, servicesConfig: ServicesCo
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
     val requestBody = loginJson(tu)
-    httpClient.POST[JsObject, HttpResponse](s"$authLoginApiUrl/government-gateway/session/login", requestBody).map(r =>
-      AuthToken(
-        r.header(HeaderNames.AUTHORIZATION).getOrElse(throw new RuntimeException(s"missing 'AUTHORIZATION' header: $r"))
+    httpClient.post(url"$authLoginApiUrl/government-gateway/session/login")
+      .withBody(Json.toJson(requestBody))
+      .execute[HttpResponse]
+      .map(r =>
+        AuthToken(
+          r.header(HeaderNames.AUTHORIZATION).getOrElse(throw new RuntimeException(s"missing 'AUTHORIZATION' header: $r"))
+        )
       )
-    )
   }
 
   private def loginJson(tu: TestUser): JsObject = {
