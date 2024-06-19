@@ -176,7 +176,6 @@ class DirectDebitController @Inject() (
             Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation)
           } else {
             barsService.validateBankDetails(validFormData.sortCode, validFormData.accountNumber, validFormData.accountName, journey.maybeTypeOfAccountDetails, request.utr).flatMap {
-              //above returns InvalidBankDetails(barsResponse)
               case ValidBankDetails(obfuscatedBarsResponse) =>
                 journeyLogger.info(s"Bank details are valid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}")
                 submissionService.saveJourney(
