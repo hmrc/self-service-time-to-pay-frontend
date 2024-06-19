@@ -32,7 +32,6 @@ import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.CalculatorService
 import ssttpdirectdebit.DirectDebitForm._
-
 import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, BankDetails, TypeOfAccountDetails}
 import util.{Logging, SelectedScheduleHelper}
 import views.Views
@@ -177,7 +176,7 @@ class DirectDebitController @Inject() (
             Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation)
           } else {
             barsService.validateBankDetails(validFormData.sortCode, validFormData.accountNumber, validFormData.accountName, journey.maybeTypeOfAccountDetails, request.utr).flatMap {
-
+              //above returns InvalidBankDetails(barsResponse)
               case ValidBankDetails(obfuscatedBarsResponse) =>
                 journeyLogger.info(s"Bank details are valid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}")
                 submissionService.saveJourney(

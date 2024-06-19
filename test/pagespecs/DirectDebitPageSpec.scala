@@ -122,7 +122,7 @@ class DirectDebitPageSpec extends ItSpec {
 
   "enter invalid Sort Code - SortCodeOnDenyList " in {
     beginJourney()
-    directDebitPage.fillOutForm("Mr John Campbell", "201147", "12345678")
+    directDebitPage.fillOutForm("Mr John Campbell", "123456", "12345678")
     BarsStub.validateBankFailSortCodeOnDenyList(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     directDebitPage.clickContinue()
     directDebitPage.assertErrorPageIsDisplayed(SortCodeOnDenyList())

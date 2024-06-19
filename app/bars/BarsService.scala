@@ -42,7 +42,7 @@ class BarsService @Inject() (barsConnector: BarsConnector, auditService: AuditSe
     ))
 
     for {
-      barsResponse <- barsConnector.validateBank(validateBankDetailsRequest)
+      barsResponse <- barsConnector.validateBank(validateBankDetailsRequest) //<-- returns BarsResponseSortCodeOnDenyList(barsError)
       barsValidationResult = barsResponse match {
         case barsResponse @ BarsResponseOk(validateBankDetailsResponse) =>
           auditService.sendBarsValidateEvent(sortCode, accountNumber, accountName, maybeTypeOfAccountDetails, saUtr, validateBankDetailsResponse)
@@ -53,7 +53,7 @@ class BarsService @Inject() (barsConnector: BarsConnector, auditService: AuditSe
           logger.debug(s"BARs response: $barsResponse")
           InvalidBankDetails(barsResponse)
       }
-    } yield barsValidationResult
+    } yield barsValidationResult //<-- this will be InvalidBankDetails(BarsResponseSortCodeOnDenyList(barsError))
   }
 
 }

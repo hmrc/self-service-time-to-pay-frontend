@@ -31,8 +31,7 @@ import play.core.server.ServerConfig
 import testsupport.testdata.TdAll.frozenDateString
 import times.ClockProvider
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReadsInstances}
+import uk.gov.hmrc.http.HttpReadsInstances
 import uk.gov.hmrc.mongo.MongoComponent
 
 import java.time.ZoneOffset.UTC
@@ -54,10 +53,6 @@ class ItSpec
 
   implicit override val patienceConfig: PatienceConfig =
     PatienceConfig(timeout  = scaled(Span(300, Millis)), interval = scaled(Span(2, Seconds)))
-
-  lazy val httpClient: HttpClientV2 = app.injector.instanceOf[HttpClientV2]
-
-  lazy val hc: HeaderCarrier = app.injector.instanceOf[HeaderCarrier]
 
   protected val overrideConfig: Map[String, Any] = Map.empty
 
