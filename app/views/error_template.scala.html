@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import play.api.mvc.RequestHeader
 
 @this(main: views.html.main)
@@ -24,7 +25,8 @@
         message: String)(
         implicit
         request: RequestHeader,
-        messages: Messages
+        messages: Messages,
+        appConfig: AppConfig
 )
 
 @main(

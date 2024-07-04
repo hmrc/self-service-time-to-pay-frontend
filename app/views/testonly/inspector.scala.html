@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
+
 @this(
   main: views.html.main
 )
@@ -24,7 +26,7 @@
         authority: String,
         hcHeaders: Seq[(String, String)])(implicit
         messages: play.api.i18n.Messages,
-        request: Request[_]
+        request: Request[_], appConfig: AppConfig
 )
 
 @pageLinkListItem(call: Call) = {

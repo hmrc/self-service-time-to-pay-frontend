@@ -14,9 +14,9 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import partials.{income_list, spending_list}
-@import ssttpaffordability.model.IncomeBudgetLine
-@import ssttpaffordability.model.Expenses
+@import ssttpaffordability.model.{Expenses, IncomeBudgetLine}
 
 @this(
   main: views.html.main,
@@ -29,7 +29,7 @@
     total: BigDecimal
 )(implicit
     messages: play.api.i18n.Messages,
-    request: Request[_]
+    request: Request[_], appConfig: AppConfig
 )
 
 @continueButtonId = @{

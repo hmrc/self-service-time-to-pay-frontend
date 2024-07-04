@@ -14,18 +14,14 @@
  * limitations under the License.
  *@
 
-@import ssttpcalculator.CalculatorPaymentTodayForm
-@import timetopaytaxpayer.cor.model.Debit
-@import uk.gov.hmrc.govukfrontend.views.Implicits._
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Input
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
-@import uk.gov.hmrc.govukfrontend.views.Aliases.PrefixOrSuffix
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Hint
-@import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorSummary
+@import config.AppConfig
 @import partials.currency
+@import ssttpcalculator.{CalculatorForm, CalculatorPaymentTodayForm}
+@import timetopaytaxpayer.cor.model.Debit
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{ErrorSummary, Hint, Input, PrefixOrSuffix, Text}
+@import uk.gov.hmrc.govukfrontend.views.Implicits._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
-@import ssttpcalculator.CalculatorForm
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
 
 @this(
   main: views.html.main,
@@ -40,7 +36,7 @@
         debits: Seq[Debit]
 )(implicit
         messages: play.api.i18n.Messages,
-        request: Request[_]
+        request: Request[_], appConfig: AppConfig
 )
 
 @main(

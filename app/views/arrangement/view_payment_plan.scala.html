@@ -14,10 +14,11 @@
  * limitations under the License.
  *@
 
-@import ssttpcalculator.model.PaymentSchedule
+@import config.AppConfig
+@import language.Dates._
 @import model._
 @import partials._
-@import language.Dates._
+@import ssttpcalculator.model.PaymentSchedule
 @import views.html.helper.CSPNonce
 
 @this(
@@ -29,7 +30,7 @@
         ddRef: Option[String]
 )(implicit
         messages: play.api.i18n.Messages,
-        request: Request[_]
+        request: Request[_], appConfig: AppConfig
 )
 @main(
     title = messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")

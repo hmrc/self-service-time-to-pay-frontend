@@ -14,16 +14,13 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import ssttpaffordability.IncomeInput
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{Hint, Input, PrefixOrSuffix, Text}
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Input
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
-@import uk.gov.hmrc.govukfrontend.views.Aliases.PrefixOrSuffix
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Hint
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
-
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
 
 @this(
     main: views.html.main,
@@ -38,7 +35,7 @@
     errorMessageOverrides: Seq[FormError] = Seq.empty
 )(implicit
     messages: play.api.i18n.Messages,
-    request: Request[_]
+    request: Request[_], appConfig: AppConfig
 )
 
 @optErrorTotal = @{

@@ -16,10 +16,8 @@
 
 package testonly
 
-import java.time.{LocalDate, LocalTime}
+import config.AppConfig
 import controllers.FrontendBaseController
-
-import javax.inject._
 import play.api.data.Forms._
 import play.api.data._
 import play.api.libs.json.Json
@@ -29,6 +27,8 @@ import req.RequestSupport
 import uk.gov.hmrc.auth.core.ConfidenceLevel.{L200, L50}
 import views.Views
 
+import java.time.{LocalDate, LocalTime}
+import javax.inject._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
@@ -97,7 +97,7 @@ class TestUsersController @Inject() (
     desStubConnector: DesStubConnector,
     views:            Views,
     cc:               MessagesControllerComponents,
-    requestSupport:   RequestSupport)(implicit ec: ExecutionContext) extends FrontendBaseController(cc) {
+    requestSupport:   RequestSupport)(implicit ec: ExecutionContext, appConfig: AppConfig) extends FrontendBaseController(cc) {
 
   import requestSupport._
 

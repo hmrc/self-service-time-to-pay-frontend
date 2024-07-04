@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import partials.extra_support
 
 @this(
@@ -23,7 +24,7 @@
 @()(
   implicit
   messages: play.api.i18n.Messages,
-  request: Request[_]
+  request: Request[_], appConfig: AppConfig
 )
 
 @main(

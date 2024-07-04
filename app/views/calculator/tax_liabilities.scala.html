@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import partials._
 @import timetopaytaxpayer.cor.model.Debit
 
@@ -24,7 +25,7 @@
 
 @(debits: Seq[Debit])(implicit
   messages: play.api.i18n.Messages,
-  request: Request[_]
+  request: Request[_], appConfig: AppConfig
 )
 
 @main(

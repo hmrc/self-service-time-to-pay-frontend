@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.ViewConfig
+import config.{AppConfig, ViewConfig}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import util.Logging
@@ -28,7 +28,7 @@ import scala.concurrent.Future
 @Singleton
 class TimeoutController @Inject() (views:      Views,
                                    mcc:        MessagesControllerComponents,
-                                   viewConfig: ViewConfig) extends FrontendController(mcc) with Logging {
+                                   viewConfig: ViewConfig)(implicit appConfig: AppConfig) extends FrontendController(mcc) with Logging {
   implicit def toFuture(r: Result): Future[Result] = Future.successful(r)
 
   val keepAliveSession: Action[AnyContent] = Action(NoContent)

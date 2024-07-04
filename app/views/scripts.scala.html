@@ -14,14 +14,17 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import views.html.helper.CSPNonce
 
 @this(
         hmrcScripts: uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcScripts
 )
 
-@()(implicit request: play.api.mvc.RequestHeader)
+@()(implicit request: play.api.mvc.RequestHeader, appConfig: AppConfig)
 
     @hmrcScripts()
 
  <script @{CSPNonce.attr} src="@routes.Assets.versioned("javascripts/self-service-time-to-pay.js")"></script>
+
+ <script @{CSPNonce.attr} src="@(s"https://cdn.optimizely.com/js/${appConfig.optimizelyProjectId}.js")"></script>

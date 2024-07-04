@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import model._
 @import partials.currency
 @import ssttpcalculator.model._
@@ -41,7 +42,7 @@
         previousFormSubmission: Option[PlanSelection])(
         implicit
         messages: play.api.i18n.Messages,
-        request: Request[_]
+        request: Request[_], appConfig: AppConfig
 )
 
 @scheduleOptionsSequence = @{schedules.toSeq.map ( schedule => {
