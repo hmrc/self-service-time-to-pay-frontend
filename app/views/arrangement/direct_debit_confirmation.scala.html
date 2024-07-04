@@ -14,9 +14,10 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
+@import config.AppConfig
 @import partials.direct_debit_details
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 
 @this(
   viewsHelpers: views.ViewsHelpers,
@@ -27,7 +28,7 @@
 @(directDebit: ArrangementDirectDebit)(
   implicit
   messages: play.api.i18n.Messages,
-  request: Request[_]
+  request: Request[_], appConfig: AppConfig
 )
 
 

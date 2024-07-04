@@ -14,15 +14,12 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import ssttparrangement.ArrangementForm
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Radios
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Fieldset
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{ErrorSummary, Fieldset, Legend, Radios, Text}
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
-@import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorSummary
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Legend
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
 @this(
   main: views.html.main,
@@ -32,7 +29,7 @@
   viewsHelpers: views.ViewsHelpers
 )
 
-@(dayForm: Form[ArrangementForm])(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(dayForm: Form[ArrangementForm])(implicit messages: play.api.i18n.Messages, request: Request[_], appConfig: AppConfig)
 
 @customDateHasErrors = @{dayForm("other").value.contains("true") && dayForm("dayOfMonth").hasErrors}
 

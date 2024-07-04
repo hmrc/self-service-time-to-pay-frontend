@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import req.RequestSupport.isLoggedIn
 @import uk.gov.hmrc.govukfrontend.views.Aliases.BackLink
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.Header
@@ -32,12 +33,13 @@
         mainScripts: views.html.scripts
 )(implicit viewConfig: config.ViewConfig)
 
+
 @(
         hasErrors: Boolean = false,
         contentHeader: Option[Html] = None,
         scriptElem: Option[Html] = None,
         allowTimeoutDialog: Boolean = true
-)(mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
+)(mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_], appConfig: AppConfig)
 
 @head = {
     @if(allowTimeoutDialog) {

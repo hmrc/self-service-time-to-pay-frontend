@@ -16,8 +16,9 @@
 
 package config
 
-import javax.inject.Inject
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.Inject
 
 class AppConfig @Inject() (servicesConfig: ServicesConfig) {
 
@@ -37,4 +38,5 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
   lazy val maxLengthOfPaymentPlan: Int = servicesConfig.getInt("calculatorConfig.maximumLengthOfPaymentPlan")
 
   lazy val numberOfWorkingDaysToAdd = servicesConfig.getInt("calculatorConfig.firstPaymentTakenInNumberOfWorkingDays")
+  lazy val optimizelyProjectId = servicesConfig.getString("optimizely.projectId")
 }

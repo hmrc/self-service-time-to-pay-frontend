@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
-
 
 
 @this(
@@ -28,7 +28,7 @@
   errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary
 )
 
-@(ddForm: Form[ArrangementDirectDebit])(implicit messages: Messages, request: Request[_])
+@(ddForm: Form[ArrangementDirectDebit])(implicit messages: Messages, request: Request[_], appConfig: AppConfig)
 
 @comboError= @{
     ddForm.errors.find(_.key == "combo-error")

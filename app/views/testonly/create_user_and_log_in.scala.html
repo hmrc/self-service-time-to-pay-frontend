@@ -15,14 +15,16 @@
  *@
 
 @import _root_.testonly.TestUserForm
-@import views.html.helpers.forms._
-@import scala.language.postfixOps
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.{Radios, RadioItem}
-@import uk.gov.hmrc.govukfrontend.views.Implicits._
+@import config.AppConfig
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import uk.gov.hmrc.govukfrontend.views.Implicits._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Fieldset
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.{RadioItem, Radios}
+@import views.html.helpers.forms._
+
+@import scala.language.postfixOps
 
 @this(
         main: views.html.main,
@@ -35,7 +37,7 @@
 @(
         dataForm: Form[TestUserForm])(implicit
         messages: play.api.i18n.Messages,
-        request: Request[_]
+        request: Request[_], appConfig: AppConfig
 )
 
 
