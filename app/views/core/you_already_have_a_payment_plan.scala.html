@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import partials.{before_you_call, call_us_generic, extra_support, we_are_likely_to_ask}
 
 @this(
@@ -22,7 +21,7 @@
 )
 
 
-@()(implicit messages: play.api.i18n.Messages, request: Request[_], appConfig: AppConfig)
+@()(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @main(
     title = messages("ssttp.call-us.already-have-a-plan.h1"),

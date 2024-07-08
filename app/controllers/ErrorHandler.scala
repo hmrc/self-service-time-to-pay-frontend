@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.AppConfig
 import journey.Journey
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Request, RequestHeader, Result}
@@ -31,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ErrorHandler @Inject() (
     errorTemplate:            views.html.error_template,
     override val messagesApi: MessagesApi)
-  (implicit val ec: ExecutionContext, appConfig: AppConfig) extends FrontendErrorHandler {
+  (implicit val ec: ExecutionContext) extends FrontendErrorHandler {
 
   override def standardErrorTemplate(
       pageTitle: String,

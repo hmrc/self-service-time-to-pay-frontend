@@ -16,7 +16,6 @@
 
 package testonly
 
-import config.AppConfig
 import controllers.FrontendBaseController
 import play.api.data.Forms._
 import play.api.data._
@@ -97,7 +96,7 @@ class TestUsersController @Inject() (
     desStubConnector: DesStubConnector,
     views:            Views,
     cc:               MessagesControllerComponents,
-    requestSupport:   RequestSupport)(implicit ec: ExecutionContext, appConfig: AppConfig) extends FrontendBaseController(cc) {
+    requestSupport:   RequestSupport)(implicit ec: ExecutionContext) extends FrontendBaseController(cc) {
 
   import requestSupport._
 
@@ -107,7 +106,7 @@ class TestUsersController @Inject() (
       "returns-response-body" -> text
         .verifying("'returns' response body must be valid json value", x => Try(Json.parse(x)).isSuccess),
       "returns-status-code" -> text
-        .verifying("'returns' status code must not be empty", !_.isEmpty)
+        .verifying("'returns' status code must not be empty", _.nonEmpty)
         .verifying("'returns' status code must be valid http status code", x => Try(x.toInt).isSuccess && x.toInt < 599 && x.toInt > 100),
       "has-sa-enrolment" -> boolean,
       "nino" -> optional(text)
@@ -119,12 +118,12 @@ class TestUsersController @Inject() (
       "debits-response-body" -> text
         .verifying("'debits' response body must be valid json value", x => Try(Json.parse(x)).isSuccess),
       "debits-status-code" -> text
-        .verifying("'debits' status code must not be empty", !_.isEmpty)
+        .verifying("'debits' status code must not be empty", _.nonEmpty)
         .verifying("'debits' status code must be valid http status code", x => Try(x.toInt).isSuccess && x.toInt < 599 && x.toInt > 100),
       "sa-taxpayer-response-body" -> text
         .verifying("'sa-taxpayer-response-body' response body must be valid json value", x => Try(Json.parse(x)).isSuccess),
       "sa-taxpayer-status-code" -> text
-        .verifying("'sa-taxpayer-status-code' status code must not be empty", !_.isEmpty)
+        .verifying("'sa-taxpayer-status-code' status code must not be empty", _.nonEmpty)
         .verifying("'sa-taxpayer-status-code' status code must be valid http status code", x => Try(x.toInt).isSuccess && x.toInt < 599 && x.toInt > 100),
       "continue-url" -> optional(text),
       "todays-date" ->

@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import ssttpaffordability.IncomeInput
 @import uk.gov.hmrc.govukfrontend.views.Aliases.{Hint, Input, PrefixOrSuffix, Text}
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
@@ -35,7 +34,7 @@
     errorMessageOverrides: Seq[FormError] = Seq.empty
 )(implicit
     messages: play.api.i18n.Messages,
-    request: Request[_], appConfig: AppConfig
+    request: Request[_]
 )
 
 @optErrorTotal = @{

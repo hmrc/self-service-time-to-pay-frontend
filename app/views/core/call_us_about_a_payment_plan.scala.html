@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import partials.{before_you_call, call_us_generic, extra_support, we_are_likely_to_ask}
 
 @this(
@@ -23,7 +22,7 @@
 
 @(cannotAfford: Boolean = false)(implicit
         messages: play.api.i18n.Messages,
-        request: Request[_], appConfig: AppConfig
+        request: Request[_]
 )
 
 @main(

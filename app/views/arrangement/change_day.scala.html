@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import ssttparrangement.ArrangementForm
 @import uk.gov.hmrc.govukfrontend.views.Aliases.{ErrorSummary, Fieldset, Legend, Radios, Text}
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
@@ -29,7 +28,7 @@
   viewsHelpers: views.ViewsHelpers
 )
 
-@(dayForm: Form[ArrangementForm])(implicit messages: play.api.i18n.Messages, request: Request[_], appConfig: AppConfig)
+@(dayForm: Form[ArrangementForm])(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @customDateHasErrors = @{dayForm("other").value.contains("true") && dayForm("dayOfMonth").hasErrors}
 
