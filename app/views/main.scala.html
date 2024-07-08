@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import req.RequestSupport.isLoggedIn
 @import uk.gov.hmrc.govukfrontend.views.Aliases.BackLink
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.Header
@@ -42,7 +41,7 @@
         hasBackLink: Boolean = true,
         navTitle: String = "ssttp.common.title"
 )(
-        mainContent: Html)(implicit messages: play.api.i18n.Messages, request: RequestHeader, appConfig: AppConfig)
+        mainContent: Html)(implicit messages: play.api.i18n.Messages, request: RequestHeader)
 
 @head = {
     @if(allowTimeoutDialog) {

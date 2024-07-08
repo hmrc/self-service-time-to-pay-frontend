@@ -15,7 +15,6 @@
  *@
 
 @import _root_.testonly.TestUserForm
-@import config.AppConfig
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -37,7 +36,7 @@
 @(
         dataForm: Form[TestUserForm])(implicit
         messages: play.api.i18n.Messages,
-        request: Request[_], appConfig: AppConfig
+        request: Request[_]
 )
 
 

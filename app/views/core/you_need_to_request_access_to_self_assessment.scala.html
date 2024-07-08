@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import helpers.forms.submit
 
 @this(
@@ -22,7 +21,7 @@
   viewsHelpers: views.ViewsHelpers
 )
 
-@()(implicit messages: play.api.i18n.Messages, request: Request[_], appConfig: AppConfig)
+@()(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @main(
     title = messages("ssttp.you-need-to-request-access-to-self-assessment.title")

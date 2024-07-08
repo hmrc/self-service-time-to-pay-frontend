@@ -14,14 +14,14 @@
  * limitations under the License.
  *@
 
-@import config.{AppConfig, ViewConfig}
+@import config.ViewConfig
 
 @this(
     mainTemplate: views.html.main,
     implicit val viewConf: ViewConfig
 )
 
-@(signInAgain: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(signInAgain: Call)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = Messages("delete-answers.heading"),

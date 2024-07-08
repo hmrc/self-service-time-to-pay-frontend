@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import partials.{income_list, spending_list}
 @import ssttpaffordability.model.{Expenses, IncomeBudgetLine}
 
@@ -27,7 +26,7 @@
     spending: Seq[Expenses]
 )(implicit
     messages: play.api.i18n.Messages,
-    request: Request[_], appConfig: AppConfig
+    request: Request[_]
 )
 
 

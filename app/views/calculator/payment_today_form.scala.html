@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import partials.currency
 @import ssttpcalculator.{CalculatorForm, CalculatorPaymentTodayForm}
 @import timetopaytaxpayer.cor.model.Debit
@@ -36,7 +35,7 @@
         debits: Seq[Debit]
 )(implicit
         messages: play.api.i18n.Messages,
-        request: Request[_], appConfig: AppConfig
+        request: Request[_]
 )
 
 @main(

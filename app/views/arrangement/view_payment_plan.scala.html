@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import language.Dates._
 @import model._
 @import partials._
@@ -30,7 +29,7 @@
         ddRef: Option[String]
 )(implicit
         messages: play.api.i18n.Messages,
-        request: Request[_], appConfig: AppConfig
+        request: Request[_]
 )
 @main(
     title = messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")
