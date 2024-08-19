@@ -4,16 +4,16 @@ import sbt.*
 
 object AppDependencies {
 
-  val boostrapVersion = "9.0.0"
+  val boostrapVersion = "9.3.0"
   val cryptoVersion = "8.0.0"
 
   val compile: Seq[ModuleID] = Seq(
     ws,
     "uk.gov.hmrc"         %% "time-to-pay-taxpayer-cor"              % "0.63.0",
-    "uk.gov.hmrc"         %% "play-frontend-hmrc-play-30"            % "10.3.0",
+    "uk.gov.hmrc"         %% "play-frontend-hmrc-play-30"            % "10.8.0",
     "uk.gov.hmrc"         %% "bootstrap-frontend-play-30"            % boostrapVersion,
-    "uk.gov.hmrc.mongo"   %% "hmrc-mongo-play-30"                    % "2.1.0",
-    "uk.gov.hmrc"         %% "play-conditional-form-mapping-play-30" % "3.0.0",
+    "uk.gov.hmrc.mongo"   %% "hmrc-mongo-play-30"                    % "2.2.0",
+    "uk.gov.hmrc"         %% "play-conditional-form-mapping-play-30" % "3.1.0",
     "uk.gov.hmrc"         %% "domain-play-30"                        % "10.0.0",
     "uk.gov.hmrc"         %% "crypto-json-play-30"                   % cryptoVersion,
     "com.beachape"        %% "enumeratum-play"                       % "1.8.0",
@@ -23,7 +23,7 @@ object AppDependencies {
 
   val test = Seq(
     "org.scalatest"               %% "scalatest"                  % "3.2.19",
-    "org.wiremock"                % "wiremock-standalone"         % "3.8.0",
+    "org.wiremock"                % "wiremock-standalone"         % "3.9.1",
     "org.scalatestplus.play"      %% "scalatestplus-play"         % "7.0.1",
     "org.scalatestplus"           %% "scalacheck-1-15"            % "3.2.11.0",
     "com.softwaremill.macwire"    %% "macros"                     % "2.5.9",
