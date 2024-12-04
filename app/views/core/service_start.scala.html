@@ -14,12 +14,14 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
+
 @this(
   main: views.html.main_start,
   viewsHelpers: views.ViewsHelpers,
-  eligibilityConfig: ssttpeligibility.EligibilityServiceConfig
+  eligibilityConfig: ssttpeligibility.EligibilityServiceConfig,
+  appConfig: AppConfig
 )
-
 
 @()(implicit
     messages: play.api.i18n.Messages,
@@ -45,10 +47,15 @@
 
     <p class="govuk-body">@messages("ssttp.landing.p4")</p>
 
-  <h2 class="govuk-heading-m">@messages("ssttp.landing.before-you-start")</h2>
+    <h2 class="govuk-heading-m">@messages("essttp.landing.pay-now-to-pay-less")</h2>
 
-  <p class="govuk-body">@messages("ssttp.landing.before-you-start.p1")</p>
-  <p class="govuk-body govuk-!-margin-bottom-6" >@messages("ssttp.landing.before-you-start.p2")</p>
+    <p class="govuk-body">@messages("essttp.landing.pay-now-to-pay-less.p1")</p>
+    <p class="govuk-body">@Html(messages("essttp.landing.pay-now-to-pay-less.p2", appConfig.payNowUrl))</p>
+
+    <h2 class="govuk-heading-m">@messages("ssttp.landing.before-you-start")</h2>
+
+    <p class="govuk-body">@messages("ssttp.landing.before-you-start.p1")</p>
+    <p class="govuk-body govuk-!-margin-bottom-6" >@messages("ssttp.landing.before-you-start.p2")</p>
 
     @viewsHelpers.form(ssttpeligibility.routes.SelfServiceTimeToPayController.doStart, Symbol("class") -> "group",Symbol("id") -> "start") {
         @viewsHelpers.startNow()

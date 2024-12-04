@@ -38,4 +38,6 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
   lazy val maxLengthOfPaymentPlan: Int = servicesConfig.getInt("calculatorConfig.maximumLengthOfPaymentPlan")
 
   lazy val numberOfWorkingDaysToAdd = servicesConfig.getInt("calculatorConfig.firstPaymentTakenInNumberOfWorkingDays")
+
+  lazy val payNowUrl = servicesConfig.getString("urls.pay-now")
 }

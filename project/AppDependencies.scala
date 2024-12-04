@@ -10,7 +10,7 @@ object AppDependencies {
   val compile: Seq[ModuleID] = Seq(
     ws,
     "uk.gov.hmrc"         %% "time-to-pay-taxpayer-cor"              % "0.64.0",
-    "uk.gov.hmrc"         %% "play-frontend-hmrc-play-30"            % "11.6.0",
+    "uk.gov.hmrc"         %% "play-frontend-hmrc-play-30"            % "11.7.0",
     "uk.gov.hmrc"         %% "bootstrap-frontend-play-30"            % boostrapVersion,
     "uk.gov.hmrc.mongo"   %% "hmrc-mongo-play-30"                    % "2.3.0",
     "uk.gov.hmrc"         %% "play-conditional-form-mapping-play-30" % "3.2.0",
@@ -23,7 +23,7 @@ object AppDependencies {
 
   val test = Seq(
     "org.scalatest"               %% "scalatest"                  % "3.2.19",
-    "org.wiremock"                % "wiremock-standalone"         % "3.9.2",
+    "org.wiremock"                % "wiremock-standalone"         % "3.10.0",
     "org.scalatestplus.play"      %% "scalatestplus-play"         % "7.0.1",
     "org.scalatestplus"           %% "scalacheck-1-15"            % "3.2.11.0",
     "com.softwaremill.macwire"    %% "macros"                     % "2.6.4",

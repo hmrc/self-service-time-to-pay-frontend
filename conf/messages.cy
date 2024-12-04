@@ -83,6 +83,10 @@ ssttp.landing.p4 = Gallwch ddefnyddio’r gwasanaeth hwn cyn pen 60 diwrnod i’
 
 ssttp.landing.start-button.label = Dechrau nawr
 
+essttp.landing.pay-now-to-pay-less = Talwch nawr er mwyn talu llai o log neu ddim llog o gwbl
+essttp.landing.pay-now-to-pay-less.p1 = Bydd yn rhaid i chi dalu llog ar unrhyw daliadau a wneir ar ôl y dyddiad cau.
+essttp.landing.pay-now-to-pay-less.p2 = <a id="pay-now" class="govuk-link" href="{0}">Talwch eich bil yn llawn</a> er mwyn osgoi llog neu dalu llai ohono.
+
 ssttp.landing.before-you-start = Cyn i chi ddechrau
 ssttp.landing.before-you-start.p1 = Bwriad CThEF yw y bydd hwn yn gynllun talu un-tro er mwyn rhoi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch, mae’n bosibl y bydd CThEF yn gofyn i chi dalu’r swm cyfan sy’n weddill.
 ssttp.landing.before-you-start.p2 = Er mwyn sefydlu’r cynllun talu, bydd angen i chi wybod beth yw’ch incwm a’ch gwariant misol, ac unrhyw gynilion neu fuddsoddiadau.
