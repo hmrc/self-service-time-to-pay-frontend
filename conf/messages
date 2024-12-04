@@ -82,6 +82,10 @@ ssttp.landing.p3list.3 = have no other tax debts
 ssttp.landing.p3list.4 = have no other HMRC payment plans set up
 ssttp.landing.p4 = You can use this service within 60 days of the payment deadline.
 
+essttp.landing.pay-now-to-pay-less = Pay now to pay less or no interest
+essttp.landing.pay-now-to-pay-less.p1 = You’ll have to pay interest on any payments made after the deadline.
+essttp.landing.pay-now-to-pay-less.p2 = <a id="pay-now" class="govuk-link" href="{0}">Pay your bill in full</a> to avoid or pay less interest.
+
 ssttp.landing.start-button.label = Start now
 
 ssttp.landing.before-you-start = Before you start
