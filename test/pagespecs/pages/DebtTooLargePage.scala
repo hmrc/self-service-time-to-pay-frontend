@@ -72,7 +72,7 @@ class DebtTooLargePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends 
           |If you are outside the UK: +44 2890 538 192.
           |
           |Before you call, make sure you have:
-          |your 10-digit Unique Taxpayer Reference (UTR) number
+          |your Self Assessment Unique Taxpayer Reference (UTR) which is 10 digits long, like 1234567890
           |information on any savings or investments you have
           |your bank details
           |details of your income and spending
@@ -93,7 +93,7 @@ class DebtTooLargePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends 
           |Os ydych y tu allan i’r DU: +44 300 200 1900.
           |
           |Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
-          |eich Cyfeirnod Unigryw y Trethdalwr (UTR) 10 digid
+          |eich Cyfeirnod Unigryw y Trethdalwr (UTR) ar gyfer Hunanasesiad sy’n 10 digid o hyd, fel 1234567890
           |gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
           |eich manylion banc
           |manylion eich incwm a’ch gwariant

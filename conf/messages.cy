@@ -345,7 +345,7 @@ ssttp.call-us.generic.p1 = Ffoniwch ni ar <strong>0300 200 1900</strong> oherwyd
 ssttp.call-us.generic.p2 = Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
 
 ssttp.call-us.before-call-have.h2 = Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
-ssttp.call-us.before-call-have.li1 = eich Cyfeirnod Unigryw y Trethdalwr (UTR) 10 digid
+ssttp.call-us.before-call-have.li1 = eich Cyfeirnod Unigryw y Trethdalwr (UTR) ar gyfer Hunanasesiad sy’n 10 digid o hyd, fel 1234567890
 ssttp.call-us.before-call-have.li2 = gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
 ssttp.call-us.before-call-have.li3 = eich manylion banc
 ssttp.call-us.before-call-have.li4 = manylion eich incwm a’ch gwariant
