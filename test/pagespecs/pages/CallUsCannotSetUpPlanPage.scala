@@ -70,7 +70,7 @@ class CallUsCannotSetUpPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
           |You can also use Relay UK if you cannot hear or speak on the phone: dial 18001 then 0345 300 3900.
           |If you are outside the UK: +44 2890 538 192.
           |Before you call, make sure you have:
-          |your 10-digit Unique Taxpayer Reference (UTR) number
+          |your Self Assessment Unique Taxpayer Reference (UTR) which is 10 digits long, like 1234567890
           |information on any savings or investments you have
           |your bank details
           |details of your income and spending
@@ -89,7 +89,7 @@ class CallUsCannotSetUpPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
           |Gallwch hefyd ddefnyddio Relay UK os na allwch glywed na siarad dros y ffôn: deialwch 18001 ac yna 0345 300 3900. Sylwer – dim ond galwadau ffôn Saesneg eu hiaith y mae Relay UK yn gallu ymdrin â nhw.
           |Os ydych y tu allan i’r DU: +44 300 200 1900.
           |Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
-          |eich Cyfeirnod Unigryw y Trethdalwr (UTR) 10 digid
+          |eich Cyfeirnod Unigryw y Trethdalwr (UTR) ar gyfer Hunanasesiad sy’n 10 digid o hyd, fel 1234567890
           |gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
           |eich manylion banc
           |manylion eich incwm a’ch gwariant

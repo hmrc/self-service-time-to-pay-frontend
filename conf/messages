@@ -405,7 +405,7 @@ ssttp.call-us.generic.p1 = Call us on <strong>0300 123 1813</strong> as you may 
 ssttp.call-us.generic.p2 = Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
 
 ssttp.call-us.before-call-have.h2 = Before you call, make sure you have:
-ssttp.call-us.before-call-have.li1 = your 10-digit Unique Taxpayer Reference (UTR) number
+ssttp.call-us.before-call-have.li1 = your Self Assessment Unique Taxpayer Reference (UTR) which is 10 digits long, like 1234567890
 ssttp.call-us.before-call-have.li2 = information on any savings or investments you have
 ssttp.call-us.before-call-have.li3 = your bank details
 ssttp.call-us.before-call-have.li4 = details of your income and spending
