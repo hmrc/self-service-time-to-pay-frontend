@@ -9,7 +9,7 @@ object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
     ws,
-    "uk.gov.hmrc"         %% "time-to-pay-taxpayer-cor"              % "0.64.0",
+    "uk.gov.hmrc"         %% "time-to-pay-taxpayer-cor"              % "0.65.0",
     "uk.gov.hmrc"         %% "play-frontend-hmrc-play-30"            % "11.7.0",
     "uk.gov.hmrc"         %% "bootstrap-frontend-play-30"            % boostrapVersion,
     "uk.gov.hmrc.mongo"   %% "hmrc-mongo-play-30"                    % "2.3.0",
