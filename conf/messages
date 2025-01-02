@@ -406,9 +406,9 @@ ssttp.call-us.generic.p2 = Our opening times are Monday to Friday, 8am to 6pm. W
 
 ssttp.call-us.before-call-have.h2 = Before you call, make sure you have:
 ssttp.call-us.before-call-have.li1 = your Self Assessment Unique Taxpayer Reference (UTR) which is 10 digits long, like 1234567890
-ssttp.call-us.before-call-have.li2 = information on any savings or investments you have
-ssttp.call-us.before-call-have.li3 = your bank details
-ssttp.call-us.before-call-have.li4 = details of your income and spending
+ssttp.call-us.before-call-have.li2 = your bank details
+ssttp.call-us.before-call-have.li3 = details of your income and spending
+ssttp.call-us.before-call-have.li4 = information on any savings or investments you have
 
 ssttp.call-us.ask.h2 = We’re likely to ask:
 ssttp.call-us.ask.li1 = what you’ve done to try to pay the bill

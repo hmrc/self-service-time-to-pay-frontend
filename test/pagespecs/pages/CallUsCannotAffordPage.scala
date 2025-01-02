@@ -73,7 +73,8 @@ class CallUsCannotAffordPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |Before you call, make sure you have:
           |your Self Assessment Unique Taxpayer Reference (UTR) which is 10 digits long, like 1234567890
           |information on any savings or investments you have
-          |your bank details
+          |details of your income and spending
+
           |details of your income and spending
           |We’re likely to ask:
           |what you’ve done to try to pay the bill
