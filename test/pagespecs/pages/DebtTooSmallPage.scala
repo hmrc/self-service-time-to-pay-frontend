@@ -71,8 +71,7 @@ class DebtTooSmallPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends 
           |If you are outside the UK: +44 2890 538 192.
           |Before you call, make sure you have:
           |your Self Assessment Unique Taxpayer Reference (UTR) which is 10 digits long, like 1234567890
-          |details of your income and spending
-
+          |your bank details
           |We’re likely to ask:
           |what you’ve done to try to pay the bill
           |if you can pay some of the bill now

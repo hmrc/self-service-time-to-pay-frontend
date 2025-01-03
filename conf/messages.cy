@@ -346,9 +346,9 @@ ssttp.call-us.generic.p2 = Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 
 
 ssttp.call-us.before-call-have.h2 = Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
 ssttp.call-us.before-call-have.li1 = eich Cyfeirnod Unigryw y Trethdalwr (UTR) ar gyfer Hunanasesiad sy’n 10 digid o hyd, fel 1234567890
-ssttp.call-us.before-call-have.li2 = gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
-ssttp.call-us.before-call-have.li3 = eich manylion banc
-ssttp.call-us.before-call-have.li4 = manylion eich incwm a’ch gwariant
+ssttp.call-us.before-call-have.li2 = eich manylion banc
+ssttp.call-us.before-call-have.li3 = manylion eich incwm a’ch gwariant
+ssttp.call-us.before-call-have.li4 = gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
 
 ssttp.call-us.ask.h2 = Rydym yn debygol o ofyn y canlynol:
 ssttp.call-us.ask.li1 = beth rydych wedi’i wneud i geisio talu’r bil
