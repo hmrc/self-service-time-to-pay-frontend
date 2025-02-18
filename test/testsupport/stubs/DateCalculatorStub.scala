@@ -42,7 +42,7 @@ object DateCalculatorStub {
 
   def stubAddWorkingDays(result: LocalDate): StubMapping =
     stubAddWorkingDays(Right(
-      Json.parse(s"""{"result": "${result.format(DateTimeFormatter.ofPattern("YYYY-MM-dd"))}" }""")
+      Json.parse(s"""{"result": "${result.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))}" }""")
     ))
 
   def verifyAddWorkingDaysCalled(date: LocalDate, numberOfWorkingDays: Int): Unit =
@@ -53,7 +53,7 @@ object DateCalculatorStub {
           equalToJson(
             s"""
             |{
-            |  "date": "${date.format(DateTimeFormatter.ofPattern("YYYY-MM-dd"))}",
+            |  "date": "${date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))}",
             |  "numberOfWorkingDaysToAdd": ${numberOfWorkingDays.toString},
             |  "regions": [ "EW" ]
             |}
