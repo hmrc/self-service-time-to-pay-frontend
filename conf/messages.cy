@@ -94,8 +94,8 @@ ssttp.landing.before-you-start.p2 = Er mwyn sefydlu’r cynllun talu, bydd angen
 
 #affordability
 
-ssttp.affordability.start.h1 = Mae angen i ni wirio eich bod yn gallu fforddio’r cynllun talu
-ssttp.affordability.start.p1 = I wneud yn siŵr eich bod yn gallu fforddio’r cynllun talu ar gyfer y <strong>{0}</strong> sy’n weddill, mae angen i ni ofyn i chi am eich incwm a’ch gwariant. Byddwn yn defnyddio’r wybodaeth hon i wirio faint o incwm sy’n weddill gennych yn dilyn eich gwariant misol hanfodol.
+ssttp.affordability.start.h1 = Mae angen i chi roi’ch incwm a’ch gwariant
+ssttp.affordability.start.p1 = Er mwyn gwneud yn siŵr eich bod yn gallu fforddio cynllun talu ar gyfer y <strong>{0}</strong> sy’n weddill, mae angen i ni ofyn i chi am eich incwm a’ch gwariant. Bydd hyn yn eich helpu i drefnu cynllun talu sy’n iawn i chi.
 ssttp.affordability.start.p2 = Mae’n bosibl y bydd angen i chi edrych ar gyfriflenni banc neu filiau cyfleustodau cyn i chi fynd yn eich blaen. Mae’n bosibl y bydd CThEF yn gofyn am dystiolaeth o’ch incwm a’ch gwariant.
 ssttp.affordability.start.p3 = <strong>Os byddwch yn penderfynu ein ffonio, byddwn yn dal i ofyn i chi am eich incwm a’ch gwariant.</strong>
 ssttp.affordability.start.detail = Sut yr ydym yn cyfrifo’ch cynllun
