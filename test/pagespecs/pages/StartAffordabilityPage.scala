@@ -27,8 +27,8 @@ class StartAffordabilityPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
   override def path: String = "/pay-what-you-owe-in-instalments/start-affordability"
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Language.English => "We need to check you can afford the payment plan"
-    case Language.Welsh   => "Mae angen i ni wirio eich bod yn gallu fforddio’r cynllun talu"
+    case Language.English => "You need to provide your income and spending"
+    case Language.Welsh   => "Mae angen i chi roi’ch incwm a’ch gwariant"
   }
 
   def clickContinue(): Unit = {
@@ -65,10 +65,8 @@ class StartAffordabilityPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
       }
 
       private val mainTextEnglish =
-        s"""We need to check you can afford the payment plan
-           |To make sure you can afford your payment plan for the remaining £4,900, we need to ask about your income and spending. We will use this information to check how much income you have left over after your essential monthly spending.
-           |
-           |You may need to look at bank statements or utility bills before you continue. HMRC may ask for proof of your income and spending.
+        s"""You need to provide your income and spending
+           |To make sure you can afford a payment plan for the remaining £4,900, we need to ask about your income and spending. This will help you set up a payment plan that is right for you.
            |
            |If you decide to call us, we will still ask you about your income and spending.
            |
@@ -77,10 +75,8 @@ class StartAffordabilityPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
         """.stripMargin
 
       private val mainTextWelsh =
-        s"""Mae angen i ni wirio eich bod yn gallu fforddio’r cynllun talu
-           |I wneud yn siŵr eich bod yn gallu fforddio’r cynllun talu ar gyfer y £4,900 sy’n weddill, mae angen i ni ofyn i chi am eich incwm a’ch gwariant. Byddwn yn defnyddio’r wybodaeth hon i wirio faint o incwm sy’n weddill gennych yn dilyn eich gwariant misol hanfodol.
-           |
-           |Mae’n bosibl y bydd angen i chi edrych ar gyfriflenni banc neu filiau cyfleustodau cyn i chi fynd yn eich blaen. Mae’n bosibl y bydd CThEF yn gofyn am dystiolaeth o’ch incwm a’ch gwariant.
+        s"""Mae angen i chi roi’ch incwm a’ch gwariant
+           |Er mwyn gwneud yn siŵr eich bod yn gallu fforddio cynllun talu ar gyfer y £4,900 sy’n weddill, mae angen i ni ofyn i chi am eich incwm a’ch gwariant. Bydd hyn yn eich helpu i drefnu cynllun talu sy’n iawn i chi.
            |
            |Os byddwch yn penderfynu ein ffonio, byddwn yn dal i ofyn i chi am eich incwm a’ch gwariant.
            |
