@@ -22,11 +22,13 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Singleton
 import ssttpcalculator.model.InterestRate
 import util.Logging
+
 import javax.inject.Inject
 import play.api.mvc.Request
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 
+import java.util.Locale
 import scala.io.Source
 
 @Singleton
@@ -35,7 +37,7 @@ class InterestRateService @Inject() (clockProvider: ClockProvider) extends Loggi
   lazy val rates: Seq[InterestRate] = streamInterestRates()
   val filename: String = "/interestRates.csv"
   val source: Source = Source.fromInputStream(getClass.getResourceAsStream(filename))
-  val DATE_TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+  val DATE_TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.UK)
 
   private def interestRateConsumer(rates: Seq[InterestRate], line: String): Seq[InterestRate] = {
     line.split(",").toSeq match {
