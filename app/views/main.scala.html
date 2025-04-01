@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import req.RequestSupport.isLoggedIn
 @import uk.gov.hmrc.govukfrontend.views.Aliases.BackLink
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.Header
@@ -29,7 +30,8 @@
         hmrcTrackingConsentSnippet: uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet,
         hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
         hmrcStandardFooter: HmrcStandardFooter,
-        mainScripts: views.html.scripts
+        mainScripts: views.html.scripts,
+        appConfig: AppConfig
 )(implicit viewConfig: config.ViewConfig)
 
 
@@ -42,6 +44,8 @@
         navTitle: String = "ssttp.common.title"
 )(
         mainContent: Html)(implicit messages: play.api.i18n.Messages, request: RequestHeader)
+
+@signOutContinue = @{ s"${appConfig.BaseUrl.ssttpFrontend}${ssttpeligibility.routes.SelfServiceTimeToPayController.signOut.url}" }
 
 @head = {
     @if(allowTimeoutDialog) {
@@ -91,7 +95,7 @@
     headerBlock = Some(hmrcHeader(Header(
         homepageUrl = "https://www.gov.uk",
         serviceName = Some(messages(navTitle)),
-        signOutHref = if (isLoggedIn) Some(ssttpeligibility.routes.SelfServiceTimeToPayController.signOut.url) else None,
+        signOutHref = if (isLoggedIn) Some(appConfig.signOutUrl(signOutContinue)) else None,
         serviceUrl = ssttpeligibility.routes.SelfServiceTimeToPayController.start.url,
         language = if (messages.lang.code == "cy") Cy else En,
         classes = "govuk-!-display-none-print"
