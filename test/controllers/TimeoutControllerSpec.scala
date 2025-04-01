@@ -34,6 +34,8 @@ class TimeoutControllerSpec extends ItSpec {
 
         status(result) shouldBe Status.OK
         session(result) shouldBe Session()
+        contentAsString(result) should include(controllers.routes.TimeoutController.signInAgain.url)
+        controllers.routes.TimeoutController.killSession.url shouldBe "/pay-what-you-owe-in-instalments/delete-answers"
       }
     }
     ".signInAgain" - {

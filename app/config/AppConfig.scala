@@ -16,11 +16,12 @@
 
 package config
 
+import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Inject
 
-class AppConfig @Inject() (servicesConfig: ServicesConfig) {
+class AppConfig @Inject() (servicesConfig: ServicesConfig, config: Configuration) {
 
   private val feedbackSurveyUrl =
     servicesConfig.getConfString(
@@ -32,6 +33,12 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
 
   lazy val loginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
   lazy val logoutUrl: String = s"$feedbackSurveyUrl"
+
+  private val signOutBaseUrl: String = BaseUrl.platformHost.getOrElse(config.get[String]("baseUrl.sign-out-local"))
+
+  def signOutUrl(continueUrl: String): String =
+    s"$signOutBaseUrl/bas-gateway/sign-out-without-state?continue=$continueUrl"
+
   lazy val backToTaxAccountUrl: String = servicesConfig.getString("urls.back-to-tax-account")
   lazy val webchatUrl: String = servicesConfig.getString("urls.webchat")
 
@@ -40,4 +47,10 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
   lazy val numberOfWorkingDaysToAdd = servicesConfig.getInt("calculatorConfig.firstPaymentTakenInNumberOfWorkingDays")
 
   lazy val payNowUrl = servicesConfig.getString("urls.pay-now")
+
+  object BaseUrl {
+    val platformHost: Option[String] = config.getOptional[String]("platform.frontend.host")
+    val ssttpFrontend: String =
+      platformHost.getOrElse(config.get[String]("baseUrl.ssttp-frontend-local"))
+  }
 }

@@ -14,19 +14,20 @@
  * limitations under the License.
  *@
 
-@import config.ViewConfig
+@import config.{AppConfig, ViewConfig}
 @import play.api.mvc.RequestHeader
 
 @this(
         timeoutDialogue: uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTimeoutDialogHelper,
+        appConfig: AppConfig,
 )
 
 @(isLoggedIn: Boolean)(implicit r: RequestHeader, m: Messages, viewConf: ViewConfig)
 
-
+@timedOutContinue = @{ s"${appConfig.BaseUrl.ssttpFrontend}${routes.TimeoutController.killSession.url}"  }
 
 @timeoutDialogue(
-    signOutUrl = routes.TimeoutController.killSession.url,
+    signOutUrl = appConfig.signOutUrl(timedOutContinue),
     keepAliveUrl = Some(controllers.routes.TimeoutController.keepAliveSession.url),
     timeout = Some(viewConf.timeoutDialogTimeout),
     countdown = Some(viewConf.timeoutDialogCountdown),
