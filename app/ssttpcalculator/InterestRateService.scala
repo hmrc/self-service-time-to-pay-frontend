@@ -37,7 +37,7 @@ class InterestRateService @Inject() (clockProvider: ClockProvider) extends Loggi
   lazy val rates: Seq[InterestRate] = streamInterestRates()
   val filename: String = "/interestRates.csv"
   val source: Source = Source.fromInputStream(getClass.getResourceAsStream(filename))
-  val DATE_TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.UK)
+  val DATE_TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.US)
 
   private def interestRateConsumer(rates: Seq[InterestRate], line: String): Seq[InterestRate] = {
     line.split(",").toSeq match {
