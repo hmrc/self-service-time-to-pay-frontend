@@ -16,7 +16,7 @@
 
 package controllers
 
-import com.google.inject.Inject
+import com.google.inject.{Inject, Singleton}
 import play.api.i18n.Messages
 import play.api.mvc.Results.Unauthorized
 import play.api.mvc.{RequestHeader, Result}
@@ -24,6 +24,7 @@ import req.RequestSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class UnhappyPathResponses @Inject() (
     errorHandler:   ErrorHandler,
     requestSupport: RequestSupport)(implicit val ec: ExecutionContext) {
