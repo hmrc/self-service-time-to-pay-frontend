@@ -44,7 +44,7 @@ class DataEventFactorySpec extends ItSpec {
   private val tdRequest = TdRequest
   private val directDebitTd = DirectDebitTd
   private implicit val request: FakeRequest[AnyContentAsEmpty.type] = tdRequest.request
-  private val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
+  private lazy val calculatorService: CalculatorService = app.injector.instanceOf[CalculatorService]
 
   val journey: Journey = {
     val fixedClock: Clock = {

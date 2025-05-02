@@ -16,7 +16,7 @@
 
 package enrolforsa
 
-import com.google.inject.Inject
+import com.google.inject.{Inject, Singleton}
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.Request
 import timetopaytaxpayer.cor.model.SaUtr
@@ -28,6 +28,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AddTaxesConnector @Inject() (
     servicesConfig: ServicesConfig,
     httpClient:     HttpClientV2)(

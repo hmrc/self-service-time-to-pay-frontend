@@ -25,9 +25,9 @@ import java.time.LocalDate
 
 class CalculatorServiceSpecAlternate extends ItSpec with Logging {
 
-  val interestRateService = fakeApplication().injector.instanceOf[InterestRateService]
-  val durationService = fakeApplication().injector.instanceOf[DurationService]
-  val calculatorService = fakeApplication().injector.instanceOf[CalculatorService]
+  lazy val interestRateService = app.injector.instanceOf[InterestRateService]
+  lazy val durationService = app.injector.instanceOf[DurationService]
+  lazy val calculatorService = app.injector.instanceOf[CalculatorService]
 
   def debit(amt: BigDecimal, due: String) = TaxLiability(amount  = amt.setScale(2), dueDate = LocalDate.parse(due))
   def date(date: String): LocalDate = LocalDate.parse(date)

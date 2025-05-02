@@ -25,7 +25,7 @@ import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import pagespecs.pages._
 import play.api.inject.bind
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
-import play.api.test.{DefaultTestServerFactory, RunningServer}
+import play.api.test.{DefaultTestServerFactory, TestServerFactory}
 import play.api.{Application, Mode}
 import play.core.server.ServerConfig
 import testsupport.testdata.TdAll.frozenDateString
@@ -124,15 +124,14 @@ class ItSpec
     dropMongo()
   }
 
-  override implicit protected lazy val runningServer: RunningServer =
-    TestServerFactory.start(app)
-
-  object TestServerFactory extends DefaultTestServerFactory {
+  object CustomTestServerFactory extends DefaultTestServerFactory {
     override protected def serverConfig(app: Application): ServerConfig = {
       val sc = ServerConfig(port    = Some(testPort), sslPort = None, mode = Mode.Test, rootDir = app.path)
       sc.copy(configuration = sc.configuration.withFallback(overrideServerConfiguration(app)))
     }
   }
+
+  override protected def testServerFactory: TestServerFactory = CustomTestServerFactory
 
   lazy val startPage: StartPage = wire[StartPage]
   lazy val ggSignInPage: GgSignInPage = wire[GgSignInPage]
