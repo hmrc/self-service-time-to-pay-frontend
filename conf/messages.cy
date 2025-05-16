@@ -257,7 +257,7 @@ ssttp.calculator.form.payment_summary.continue = Yn eich blaen
 
 ssttp.calculator.how-we-calculate-interest.detail.title = Sut rydym yn cyfrifo llog
 ssttp.calculator.how-we-calculate-interest.p1 = Rydym yn codi llog ar bob swm sy’n hwyr.
-ssttp.calculator.how-we-calculate-interest.p2 = Rydym yn codi <strong>cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%</strong> y flwyddyn.
+ssttp.calculator.how-we-calculate-interest.p2 = Rydym yn codi <strong>cyfradd sylfaenol Banc Lloegr ynghyd â 4%</strong> y flwyddyn.
 ssttp.calculator.how-we-calculate-interest.p3 = Os bydd y gyfradd llog yn newid yn ystod eich cynllun talu, efallai bydd yn rhaid i chi setlo unrhyw wahaniaeth ar y diwedd. Byddwn yn cysylltu â chi os yw hyn yn wir.
 
 ssttp.calculator.self-assessment-account-summary-page.title = Mae’ch bil treth Hunanasesiad yn dod i gyfanswm o {0}
@@ -322,12 +322,12 @@ ssttp.calculator.results.option.error.no-selection = Dewiswch faint y gallwch ei
 ssttp.calculator.results.month.instalments = Rhandaliadau
 ssttp.calculator.results.month.option.1 = o fisoedd ar
 ssttp.calculator.results.month.option.table.total.interest = Cyfanswm y llog:
-ssttp.calculator.results.month.option.table.total.interest.base.rate = Cyfradd sylfaenol + 2.5%
+ssttp.calculator.results.month.option.table.total.interest.base.rate = Cyfradd sylfaenol + 4%
 ssttp.calculator.results.month.option.table.total.interest.hint = wedi’i ychwanegu at y taliad terfynol
 ssttp.calculator.results.month.option.table.total.paid = Cyfanswm a dalwyd:
 ssttp.calculator.results.section.title = Sut rydym yn cyfrifo llog
 ssttp.calculator.results.section.p1 = Rydym yn codi llog ar symiau hwyr yn unig.
-ssttp.calculator.results.section.p2 = Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%, a gyfrifir fel llog syml.
+ssttp.calculator.results.section.p2 = Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 4%, a gyfrifir fel llog syml.
 ssttp.calculator.results.section.p3 = Os bydd y gyfradd llog yn newid yn ystod eich cynllun, ni fydd eich taliadau misol yn newid. Os bydd angen, byddwn yn setlo’r gwahaniaeth ar ddiwedd y cynllun.
 ssttp.calculator.results.error.title = Mae problem wedi codi
 ssttp.calculator.results.amount.required = Dewiswch gynllun talu

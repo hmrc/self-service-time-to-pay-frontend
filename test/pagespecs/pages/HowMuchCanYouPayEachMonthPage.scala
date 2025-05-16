@@ -216,7 +216,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
         private val mainTextEnglish =
           s"""Select a payment plan
              |Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
-             |We charge the Bank of England base rate plus 2.5% per year.
+             |We charge the Bank of England base rate plus 4% per year.
              |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
              |How much can you pay each month?
              |£490 per month over 10 months
@@ -232,7 +232,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
         private val mainTextWelsh =
           s"""Dewiswch gynllun talu
              |Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn fwy oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
-             |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5% y flwyddyn.
+             |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 4% y flwyddyn.
              |Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
              |Faint y gallwch ei dalu bob mis?
              |£490 y mis, am 10 mis
