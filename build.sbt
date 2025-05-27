@@ -1,5 +1,4 @@
 
-import uk.gov.hmrc.DefaultBuildSettings.defaultSettings
 
 val appName = "self-service-time-to-pay-frontend"
 val appScalaVersion = "2.13.16"
@@ -7,8 +6,7 @@ val appScalaVersion = "2.13.16"
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
-  .settings(defaultSettings(): _*)
-  .settings(SbtUpdatesSettings.sbtUpdatesSettings: _*)
+  .settings(SbtUpdatesSettings.sbtUpdatesSettings *)
   .settings(
     scalaVersion := appScalaVersion,
     majorVersion := 0,
@@ -28,9 +26,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     Test / unmanagedSourceDirectories := Seq(baseDirectory.value / "test", baseDirectory.value / "test-common")
   )
-  .settings(resolvers ++= Seq(
-    sbt.Resolver.jcenterRepo
-  ))
   .settings(PlayKeys.playDefaultPort := 9063)
   .settings(
     Compile / doc / sources  := Seq.empty,
