@@ -20,7 +20,7 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result, Results}
 import uk.gov.hmrc.auth.core.{NoActiveSession, SessionRecordNotFound}
 import uk.gov.hmrc.http.SessionKeys
-import uk.gov.hmrc.play.http.logging.Mdc
+import uk.gov.hmrc.mdc.Mdc.preservingMdc
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,18 +32,18 @@ class JourneyService @Inject() (
 
   import playsession.PlaySessionSupport._
 
-  def saveJourney(journey: Journey): Future[Unit] = Mdc.preservingMdc {
+  def saveJourney(journey: Journey): Future[Unit] = preservingMdc {
     journeyRepo
       .upsert(journey.encrypt)
   }
 
-  def getMaybeJourney()(implicit request: Request[_]): Future[Option[Journey]] = Mdc.preservingMdc {
+  def getMaybeJourney()(implicit request: Request[_]): Future[Option[Journey]] = preservingMdc {
     request.readJourneyId.fold[Future[Option[Journey]]](Future.successful(None))(id =>
       journeyRepo.findById(id).map(maybeEncryptedJourney => maybeEncryptedJourney.map(encryptedJourney => encryptedJourney.decrypt))
     )
   }
 
-  def getJourney()(implicit request: Request[_]): Future[Journey] = Mdc.preservingMdc {
+  def getJourney()(implicit request: Request[_]): Future[Journey] = preservingMdc {
     request.readJourneyId match {
       case Some(id) => getMaybeJourney().flatMap {
         case Some(journey) => Future.successful(journey)
