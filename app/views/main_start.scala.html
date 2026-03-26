@@ -17,7 +17,6 @@
 @import req.RequestSupport.isLoggedIn
 @import uk.gov.hmrc.govukfrontend.views.Aliases.BackLink
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.v2.HeaderParams
 
 @this(
         govukLayout: uk.gov.hmrc.govukfrontend.views.html.components.GovukLayout,
@@ -79,8 +78,7 @@
     headerBlock = Some(hmrcHeader(
         serviceName = None,
         signOutUrl = if (isLoggedIn) Some(ssttpeligibility.routes.SelfServiceTimeToPayController.signOut.url) else None,
-        isWelshTranslationAvailable = true,
-        containerClasses =  HeaderParams.defaultObject.headerTemplateOverrides.containerClasses + " govuk-!-display-none-print"
+        isWelshTranslationAvailable = true
     )),
     scriptsBlock = Some(scripts),
     beforeContentBlock = Some(beforeContentBlock),
