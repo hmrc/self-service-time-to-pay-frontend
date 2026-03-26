@@ -1,7 +1,7 @@
 
 
 val appName = "self-service-time-to-pay-frontend"
-val appScalaVersion = "2.13.16"
+val appScalaVersion = "2.13.18"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)

@@ -24,6 +24,7 @@ import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs.{AuditStub, GgStub, TaxpayerStub}
 import testsupport.testdata.TdAll.{address, communicationPreferences, saUtr, toLocalDate, toOptionLocalDate}
 import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails, Taxpayer}
+import pagespecs.pages.StringOps
 
 class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
 
@@ -150,7 +151,6 @@ class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
     startPage.open()
     startPage.clickOnStartNowButton()
 
-    import taxLiabilitiesPage._
     val expectedLines = LateDebitCase.Expected.MainText()(English).splitIntoLines()
     taxLiabilitiesPage.assertContentMatchesExpectedLines(expectedLines)
 

@@ -16,22 +16,19 @@
 
 @import req.RequestSupport.isLoggedIn
 @import uk.gov.hmrc.govukfrontend.views.Aliases.BackLink
-@import uk.gov.hmrc.hmrcfrontend.views.Aliases.Header
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En}
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.v2.HeaderParams
 
 @this(
         govukLayout: uk.gov.hmrc.govukfrontend.views.html.components.GovukLayout,
         govukBackLink: uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink,
-        hmrcHeader: uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcHeader,
-        hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
+        hmrcHeader: uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardHeader,
         timeoutDialogue: views.html.partials.timeout_dialog_script,
         hmrcTrackingConsentSnippet: uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet,
         hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
         hmrcStandardFooter: HmrcStandardFooter,
         mainScripts: views.html.scripts
 )(implicit viewConfig: config.ViewConfig)
-
 
 @(
         hasErrors: Boolean = false,
@@ -57,8 +54,6 @@
 }
 
 @beforeContentBlock = {
-    @hmrcLanguageSelectHelper()
-
     <div class="js-visible">@govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)</div>
 }
 
@@ -81,13 +76,12 @@
 @govukLayout(
     pageTitle = if (hasErrors) {Some(s"${messages("ssttp.common.title-prefix")} " + fullTitle)} else Some(fullTitle),
     headBlock = Some(head),
-    headerBlock = Some(hmrcHeader(Header(
-        homepageUrl = "https://www.gov.uk",
+    headerBlock = Some(hmrcHeader(
         serviceName = None,
-        signOutHref = if (isLoggedIn) Some(ssttpeligibility.routes.SelfServiceTimeToPayController.signOut.url) else None,
-        language = if (messages.lang.code == "cy") Cy else En,
-        classes = "govuk-!-display-none-print"
-    ))),
+        signOutUrl = if (isLoggedIn) Some(ssttpeligibility.routes.SelfServiceTimeToPayController.signOut.url) else None,
+        isWelshTranslationAvailable = true,
+        containerClasses =  HeaderParams.defaultObject.headerTemplateOverrides.containerClasses + " govuk-!-display-none-print"
+    )),
     scriptsBlock = Some(scripts),
     beforeContentBlock = Some(beforeContentBlock),
     footerBlock = Some(hmrcStandardFooter())

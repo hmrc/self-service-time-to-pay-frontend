@@ -1,7 +1,7 @@
 $govuk-assets-path: "/pay-what-you-owe-in-instalments/assets/lib/govuk-frontend/dist/govuk/assets/";
 $hmrc-assets-path: "/pay-what-you-owe-in-instalments/assets/lib/hmrc-frontend/hmrc/";
 
-@import "lib/govuk-frontend/dist/govuk/all";
+@import "lib/govuk-frontend/dist/govuk/index";
 @import "lib/hmrc-frontend/hmrc/all";
 
 .print-only {
@@ -9,7 +9,7 @@ $hmrc-assets-path: "/pay-what-you-owe-in-instalments/assets/lib/hmrc-frontend/hm
 }
 
 @media print {
-  .no-print, .govuk-back-link {
+  .no-print, .govuk-back-link, .govuk-template__header  {
     display: none;
   }
 

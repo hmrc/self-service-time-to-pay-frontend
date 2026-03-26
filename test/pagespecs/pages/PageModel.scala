@@ -51,6 +51,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
       interval = scaled(Span(150, Millis))
     )
   }
+
   import WebBrowser._
   import richMatchers._
 
@@ -90,7 +91,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
    */
   def readMain(): String = xpath("""//*[@id="content"]""").webElement.getAttribute("textContent")
 
-  def readGlobalHeaderText(): String = className("govuk-header__service-name").element.text
+  def readGlobalHeaderText(): String = className("govuk-service-navigation__service-name").element.text
 
   def href(id: String): Option[String] = find(IdQuery(id)).fold(Option.empty[String])(e => e.attribute("href"))
 
@@ -162,23 +163,5 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
     }
   }
 
-  implicit class StringOps(s: String) {
-    /**
-     * Transforms string so it's easier it to compare.
-     * It also replaces `unchecked`
-     *
-     */
-    def stripSpaces(): String = s
-      .replaceAll("unchecked", "") //when you run tests from intellij webdriver.getText adds extra 'unchecked' around selection
-      .replaceAll("[^\\S\\r\\n]+", " ") //replace many consecutive white-spaces (but not new lines) with one space
-      .replaceAll("[\r\n]+", "\n") //replace many consecutive new lines with one new line
-      .split("\n").map(_.trim) //trim each line
-      .filterNot(_ == "") //remove any empty lines
-      .mkString("\n")
-
-    def splitIntoLines(): Seq[String] = s
-      .stripSpaces()
-      .split("\n")
-      .toIndexedSeq
-  }
 }
+

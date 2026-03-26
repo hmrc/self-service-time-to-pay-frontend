@@ -16,6 +16,7 @@
 
 package testsupport
 
+import com.gargoylesoftware.htmlunit.WebClient
 import com.google.inject.{AbstractModule, Provides}
 import com.softwaremill.macwire._
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -99,11 +100,7 @@ class ItSpec
     }
   }
 
-  implicit lazy val webDriver: HtmlUnitDriver = {
-    val wd = new HtmlUnitDriver(true)
-    wd.setJavascriptEnabled(false)
-    wd
-  }
+  implicit lazy val webDriver: HtmlUnitDriver = new CustomHtmlUnitDriver
 
   lazy val mongo = app.injector.instanceOf[MongoComponent]
 
@@ -176,4 +173,16 @@ class ItSpec
   lazy val debtTooSmallPage: DebtTooSmallPage = wire[DebtTooSmallPage]
 
   lazy val callUsCannotSetUpPlan: CallUsCannotSetUpPlanPage = wire[CallUsCannotSetUpPlanPage]
+}
+
+class CustomHtmlUnitDriver extends HtmlUnitDriver {
+
+  override def modifyWebClient(client: WebClient): WebClient = {
+    val modifiedClient: WebClient = super.modifyWebClient(client)
+    modifiedClient.getOptions.setThrowExceptionOnScriptError(false)
+    modifiedClient.getOptions.setJavaScriptEnabled(false)
+    modifiedClient.getOptions.setCssEnabled(false) // needed to silence warnings
+    modifiedClient
+  }
+
 }

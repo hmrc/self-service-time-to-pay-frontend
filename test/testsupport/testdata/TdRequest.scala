@@ -43,7 +43,7 @@ object TdRequest {
     .withTrueClientPort()
     .withDeviceId()
 
-  implicit class FakeRequestOps[T](r: FakeRequest[T]) {
+  implicit class FakeRequestOps[T](private val r: FakeRequest[T]) extends AnyVal {
     def withLang(lang: Language = English): FakeRequest[T] = {
       val code = lang match {
         case Language.English => "EN"
@@ -54,6 +54,7 @@ object TdRequest {
     }
 
     def withLangWelsh(): FakeRequest[T] = r.withLang(Welsh)
+
     def withLangEnglish(): FakeRequest[T] = r.withLang(English)
 
     def withAuthToken(authToken: String = authToken): FakeRequest[T] = r.withSession((SessionKeys.authToken, authToken))
